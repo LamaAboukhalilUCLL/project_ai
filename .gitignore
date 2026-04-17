@@ -5,3 +5,4 @@ __pycache__/
 .ipynb_checkpoints/
 *.xml
 *.7z
+embeddings/history.json
