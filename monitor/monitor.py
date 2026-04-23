@@ -3,6 +3,8 @@ import pickle
 import re
 import sys
 import os
+import json
+import datetime
 import psycopg2
 import numpy as np
 import torch
@@ -26,6 +28,7 @@ DB_CONFIG = {
 
 SLOW_THRESHOLD_MS = 100
 POLL_INTERVAL_SECONDS = 5
+LOG_FILE = "dashboard/query_log.json"
 
 class QueryClassifier(nn.Module):
     def __init__(self):
@@ -165,6 +168,24 @@ def get_recent_slow_queries(conn):
     finally:
         cur.close()
 
+def log_query(query, avg_time_ms, confidence, reason, fix, speedup_ms):
+    log = []
+    if os.path.exists(LOG_FILE):
+        with open(LOG_FILE, "r") as f:
+            log = json.load(f)
+    log.append({
+        "query": query[:200],
+        "avg_time_ms": round(avg_time_ms, 1),
+        "confidence": round(confidence * 100, 1),
+        "reason": reason,
+        "fix": fix,
+        "speedup_ms": round(speedup_ms, 1) if speedup_ms else 0,
+        "flagged": True,
+        "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    })
+    with open(LOG_FILE, "w") as f:
+        json.dump(log, f, indent=2)
+
 def main():
     print("=" * 60)
     print("  SQL Query Monitor — starting up")
@@ -210,6 +231,14 @@ def main():
             gpt_response = ask_gpt(query, schema, similar)
             print(f"\n{gpt_response}")
 
+            reason = ""
+            fix_query = ""
+            speedup = 0
+
+            reason_match = re.search(r"REASON:\s*(.+?)(?=FIX:|$)", gpt_response, re.DOTALL)
+            if reason_match:
+                reason = reason_match.group(1).strip()
+
             fix_match = re.search(r"FIX:\s*(.+?)(?=INDEX:|$)", gpt_response, re.DOTALL)
             if fix_match:
                 fix_query = fix_match.group(1).strip()
@@ -222,6 +251,15 @@ def main():
                     if speedup > 0:
                         store_fix(query, fix_query, speedup)
                         print("Fix stored in history.")
+
+            log_query(
+                query=query,
+                avg_time_ms=mean_time,
+                confidence=confidence,
+                reason=reason,
+                fix=fix_query,
+                speedup_ms=speedup
+            )
 
             print("-" * 60)
 

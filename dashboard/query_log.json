@@ -1,0 +1,22 @@
+[
+  {
+    "query": "SELECT u.display_name, \n       (SELECT COUNT(*) FROM posts WHERE owner_user_id = u.id) as post_count,\n       (SELECT AVG(score) FROM posts WHERE owner_user_id = u.id) as avg_score,\n       (SELECT SUM(",
+    "avg_time_ms": 1590.1,
+    "confidence": 100.0,
+    "reason": "The query is slow due to multiple correlated subqueries that execute separately for each user, leading to inefficient performance as the number of users increases.",
+    "fix": "SELECT u.display_name, \n             COUNT(p.id) as post_count, \n             AVG(p.score) as avg_score, \n             SUM(p.view_count) as total_views \n      FROM users u \n      LEFT JOIN posts p ON p.owner_user_id = u.id \n      WHERE u.reputation > $1 \n      GROUP BY u.id \n      ORDER BY avg_score DESC;",
+    "speedup_ms": 0,
+    "flagged": true,
+    "timestamp": "2026-04-23 14:22:45"
+  },
+  {
+    "query": "SELECT u.display_name, \n       (SELECT COUNT(*) FROM posts WHERE owner_user_id = u.id) as post_count,\n       (SELECT AVG(score) FROM posts WHERE owner_user_id = u.id) as avg_score,\n       (SELECT SUM(",
+    "avg_time_ms": 1590.1,
+    "confidence": 100.0,
+    "reason": "The query is slow due to multiple correlated subqueries that execute separately for each user, leading to inefficient performance as the number of users increases.",
+    "fix": "SELECT u.display_name, \n             COUNT(p.id) as post_count, \n             AVG(p.score) as avg_score, \n             SUM(p.view_count) as total_views \n      FROM users u \n      LEFT JOIN posts p ON p.owner_user_id = u.id \n      WHERE u.reputation > $1 \n      GROUP BY u.id \n      ORDER BY avg_score DESC;",
+    "speedup_ms": 0,
+    "flagged": true,
+    "timestamp": "2026-04-23 14:23:48"
+  }
+]

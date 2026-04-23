@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="refresh" content="5">
+<title>SQL Query Monitor</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', sans-serif; background: #0f1117; color: #e2e8f0; padding: 24px; }
+  h1 { font-size: 20px; font-weight: 600; margin-bottom: 20px; color: #fff; }
+  .stats { display: flex; gap: 16px; margin-bottom: 24px; }
+  .stat { background: #1a1d27; border: 1px solid #2a2d3a; border-radius: 10px; padding: 16px 24px; flex: 1; }
+  .stat-val { font-size: 28px; font-weight: 700; color: #a78bfa; }
+  .stat-lbl { font-size: 12px; color: #6b7280; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .query-card { background: #1a1d27; border: 1px solid #2a2d3a; border-radius: 10px; padding: 20px; margin-bottom: 16px; border-left: 3px solid #f05252; }
+  .query-card.fixed { border-left-color: #38c97d; }
+  .query-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .query-time { font-size: 13px; color: #6b7280; }
+  .badge { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: 500; }
+  .badge-slow { background: rgba(240,82,82,0.15); color: #f05252; }
+  .badge-fixed { background: rgba(56,201,125,0.15); color: #38c97d; }
+  .badge-conf { background: rgba(167,139,250,0.15); color: #a78bfa; }
+  .section-label { font-size: 11px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; margin-top: 12px; }
+  .code { background: #0a0c10; border: 1px solid #1e2230; border-radius: 6px; padding: 10px 14px; font-family: 'Consolas', monospace; font-size: 12px; color: #a0aec0; white-space: pre-wrap; word-break: break-all; }
+  .reason { font-size: 13px; color: #94a3b8; line-height: 1.6; margin-top: 8px; }
+  .speedup { font-size: 13px; color: #38c97d; font-weight: 600; margin-top: 8px; }
+  .empty { text-align: center; color: #6b7280; padding: 60px; font-size: 14px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: #38c97d; display: inline-block; margin-right: 8px; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+</style>
+</head>
+<body>
+<h1><span class="dot"></span>SQL Query Monitor</h1>
+
+<div class="stats" id="stats">
+  <div class="stat"><div class="stat-val">-</div><div class="stat-lbl">Queries flagged</div></div>
+  <div class="stat"><div class="stat-val">-</div><div class="stat-lbl">Total monitored</div></div>
+  <div class="stat"><div class="stat-val">-</div><div class="stat-lbl">Avg speedup (ms)</div></div>
+</div>
+
+<div id="queries"></div>
+
+<script>
+async function load() {
+  const [statsRes, queriesRes] = await Promise.all([
+    fetch('/api/stats'),
+    fetch('/api/queries')
+  ]);
+  const stats = await statsRes.json();
+  const queries = await queriesRes.json();
+
+  const statsEl = document.getElementById('stats');
+  statsEl.innerHTML = `
+    <div class="stat"><div class="stat-val">${stats.flagged}</div><div class="stat-lbl">Queries flagged</div></div>
+    <div class="stat"><div class="stat-val">${stats.total}</div><div class="stat-lbl">Total monitored</div></div>
+    <div class="stat"><div class="stat-val">${stats.avg_speedup}ms</div><div class="stat-lbl">Avg speedup</div></div>
+  `;
+
+  const el = document.getElementById('queries');
+  if (queries.length === 0) {
+    el.innerHTML = '<div class="empty">No slow queries detected yet. Run a slow query in pgAdmin to see it appear here.</div>';
+    return;
+  }
+
+  el.innerHTML = [...queries].reverse().map(q => `
+    <div class="query-card ${q.speedup_ms > 0 ? 'fixed' : ''}">
+      <div class="query-header">
+        <div style="display:flex;gap:8px;align-items:center">
+          <span class="badge badge-slow">${q.avg_time_ms}ms</span>
+          <span class="badge badge-conf">${q.confidence}% slow</span>
+          ${q.speedup_ms > 0 ? `<span class="badge badge-fixed">Fixed</span>` : ''}
+        </div>
+        <span class="query-time">${q.timestamp}</span>
+      </div>
+      <div class="section-label">Slow query</div>
+      <div class="code">${q.query}</div>
+      ${q.reason ? `<div class="section-label">Why it's slow</div><div class="reason">${q.reason}</div>` : ''}
+      ${q.fix ? `<div class="section-label">Suggested fix</div><div class="code">${q.fix}</div>` : ''}
+      ${q.speedup_ms > 0 ? `<div class="speedup">Speedup: ${q.speedup_ms}ms faster</div>` : ''}
+    </div>
+  `).join('');
+}
+load();
+</script>
+</body>
+</html>
