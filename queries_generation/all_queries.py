@@ -1,6 +1,94 @@
 import psycopg2
+import psycopg2.errors
 import csv
 import re
+import time
+import statistics
+
+"""
+For each query, run it 6 times back-to-back with DISCARD ALL before the first run:
+
+- Run 1 = "cold-ish" timing. PostgreSQL's session-level state is cleared. Buffer pool isn't, but it's the most representative first-run number we can practically get.
+- Runs 2–6 = warm cache. Take the median (not mean — median ignores the occasional weird outlier).
+- We save both numbers as separate columns (execution_time_cold_ms, execution_time_warm_ms) plus the standard deviation of the warm runs (so we can show stability) and the raw list of all 6 runs (for transparency in the report).
+
+"""
+
+RUNS_PER_QUERY = 6  # 1 first-run + 5 warm-cache runs (reduced for slow queries)
+SLOW_THRESHOLD_MS = 100
+TIMEOUT_MS = 10000  # 10s statement timeout cap
+
+
+def run_explain_analyze(cur, query):
+    """
+    Run EXPLAIN ANALYZE and return (execution_time_ms, timed_out_bool).
+    A timeout returns (TIMEOUT_MS, True) so we still capture the query
+    as a (very) slow data point instead of throwing it away.
+    """
+    try:
+        cur.execute(f"SET statement_timeout = '{TIMEOUT_MS}ms'")
+        cur.execute(f"EXPLAIN ANALYZE {query}")
+        output = cur.fetchall()
+        for row in output:
+            if "Execution Time:" in row[0]:
+                m = re.search(r"Execution Time: ([\d.]+)", row[0])
+                if m:
+                    return float(m.group(1)), False
+        return None, False
+    except psycopg2.errors.QueryCanceled:
+        return float(TIMEOUT_MS), True
+
+
+def measure_query(conn, query):
+    """
+    Run the query several times and return cold + warm timings.
+    Adapts the number of warm runs based on how slow the cold run was —
+    no point running a 10-second query 5 more times.
+    """
+    cur = conn.cursor()
+    times = []
+    timed_out_count = 0
+    try:
+        cur.execute("DISCARD ALL")
+
+        # Cold run
+        t, to = run_explain_analyze(cur, query)
+        if t is None:
+            return None  # genuine error, not a timeout
+        times.append(t)
+        if to:
+            timed_out_count += 1
+
+        # Adapt warm-run count to cold time
+        if to or t > 2000:
+            warm_runs = 1   # very slow — one confirmation is enough
+        elif t > 500:
+            warm_runs = 2
+        else:
+            warm_runs = 5   # fast — get a stable median
+
+        for _ in range(warm_runs):
+            t, to = run_explain_analyze(cur, query)
+            if t is None:
+                break
+            times.append(t)
+            if to:
+                timed_out_count += 1
+            time.sleep(0.05)
+    except Exception as e:
+        print(f"[ERROR: {e}]", end=" ", flush=True)
+        return None
+    finally:
+        cur.close()
+
+    if not times:
+        return None
+
+    cold_time = times[0]
+    warm_times = times[1:] if len(times) > 1 else [times[0]]
+    warm_median = statistics.median(warm_times)
+    warm_std = statistics.pstdev(warm_times) if len(warm_times) > 1 else 0.0
+    return cold_time, warm_median, warm_std, times, timed_out_count
 
 conn = psycopg2.connect(
     dbname="stackexchange_db",
@@ -9,6 +97,7 @@ conn = psycopg2.connect(
     host="localhost",
     port="5432"
 )
+conn.autocommit = True
 cur = conn.cursor()
 
 queries = [
@@ -554,50 +643,54 @@ def extract_features(query):
     }
 
 results = []
+n = len(queries)
 
-for i, query in enumerate(queries):
-    try:
-        cur.execute("SET statement_timeout = '10s'")
-        cur.execute(f"EXPLAIN ANALYZE {query}")
-        explain_output = cur.fetchall()
-        time_ms = None
-        for row in explain_output:
-            line = row[0]
-            if "Execution Time:" in line:
-                time_ms = float(re.search(r"Execution Time: ([\d.]+)", line).group(1))
-                break
-        if time_ms is None:
-            time_ms = 0
-        features = extract_features(query)
-        label = "slow" if time_ms > 100 else "fast"
-        results.append({
-            "query_id": i + 1,
-            "query_text": query,
-            "execution_time_ms": round(time_ms, 2),
-            "label": label,
-            **features
-        })
-        print(f"Q{i+1}: {round(time_ms, 2)}ms → {label}")
-    except Exception as e:
-        conn.rollback()
-        print(f"Q{i+1}: TIMEOUT/ERROR — skipped")
+#queries = queries[:5] # limit to 5 for quick testing; replace with `queries` for full run
+
+for i, query in enumerate(queries, start=1):
+    print(f"[{i}/{n}] running... ", end="", flush=True)
+    m = measure_query(conn, query)
+    if m is None:
+        print("ERROR — skipped")
         continue
 
-fieldnames = ["query_id", "query_text", "execution_time_ms", "label",
-              "has_select_star", "has_like_wildcard", "join_count",
-              "has_subquery", "has_group_by", "has_order_by_no_limit",
-              "has_or", "has_function_in_where"]
+    cold, warm_median, warm_std, all_times, timed_out_count = m
+    features = extract_features(query)
+    label = "slow" if warm_median > SLOW_THRESHOLD_MS else "fast"
+
+    results.append({
+        "query_id": i,
+        "query_text": query,
+        "execution_time_cold_ms": round(cold, 2),
+        "execution_time_warm_ms": round(warm_median, 2),
+        "execution_time_warm_std_ms": round(warm_std, 2),
+        "all_runs_ms": ";".join(f"{t:.2f}" for t in all_times),
+        "timed_out_runs": timed_out_count,
+        "label": label,
+        **features,
+    })
+    suffix = f"  [{timed_out_count} timeout(s)]" if timed_out_count > 0 else ""
+    print(f"cold={cold:.1f}ms  warm_median={warm_median:.1f}ms  → {label}{suffix}")
+
+fieldnames = [
+    "query_id", "query_text",
+    "execution_time_cold_ms", "execution_time_warm_ms",
+    "execution_time_warm_std_ms", "all_runs_ms",
+    "timed_out_runs",
+    "label",
+    "has_select_star", "has_like_wildcard", "join_count",
+    "has_subquery", "has_group_by", "has_order_by_no_limit",
+    "has_or", "has_function_in_where",
+]
 
 with open("training_data.csv", "w", newline="", encoding="utf-8") as f:
-    writer = csv.DictWriter(f, fieldnames=fieldnames)
+    writer = csv.DictWriter(f, fieldnames=fieldnames, quoting=csv.QUOTE_MINIMAL)
     writer.writeheader()
     writer.writerows(results)
 
 slow = sum(1 for r in results if r["label"] == "slow")
 fast = sum(1 for r in results if r["label"] == "fast")
-print(f"\nDone!")
-print(f"Slow: {slow}")
-print(f"Fast: {fast}")
-print(f"Total: {len(results)}")
+print(f"\nDone! Slow: {slow}  Fast: {fast}  Total: {len(results)}")
+
 cur.close()
 conn.close()
