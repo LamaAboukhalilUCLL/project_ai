@@ -1,464 +1,466 @@
-query_id,query_text,execution_time_ms,label,has_select_star,has_like_wildcard,join_count,has_subquery,has_group_by,has_order_by_no_limit,has_or,has_function_in_where
-1,SELECT * FROM posts,30.89,fast,1,0,0,0,0,0,0,0
-2,SELECT * FROM users,15.15,fast,1,0,0,0,0,0,0,0
-3,SELECT * FROM votes,89.42,fast,1,0,0,0,0,0,0,0
-4,SELECT * FROM posts ORDER BY score DESC,78.49,fast,1,0,0,0,0,1,0,0
-5,SELECT * FROM users ORDER BY reputation DESC,82.94,fast,1,0,0,0,0,1,0,0
-6,SELECT * FROM votes ORDER BY creation_date ASC,454.71,slow,1,0,0,0,0,1,0,0
-7,SELECT * FROM posts ORDER BY view_count DESC,123.18,slow,1,0,0,0,0,1,0,0
-8,SELECT * FROM users ORDER BY creation_date ASC,88.08,fast,1,0,0,0,0,1,0,0
-9,SELECT * FROM posts ORDER BY answer_count DESC,115.25,slow,1,0,0,0,0,1,0,0
-10,SELECT * FROM votes ORDER BY vote_type_id ASC,391.66,slow,1,0,0,0,0,1,0,0
-11,SELECT * FROM posts p JOIN users u ON p.owner_user_id = u.id,254.49,slow,1,0,1,0,0,0,0,0
-12,SELECT * FROM posts p JOIN votes v ON v.post_id = p.id,684.84,slow,1,0,1,0,0,0,0,0
-13,SELECT * FROM posts p JOIN users u ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id,1431.48,slow,1,0,2,0,0,0,0,0
-14,SELECT * FROM posts p JOIN users u ON p.owner_user_id = u.id ORDER BY p.score DESC,659.88,slow,1,0,1,0,0,1,0,0
-15,SELECT * FROM posts p JOIN votes v ON v.post_id = p.id ORDER BY p.score DESC,1050.58,slow,1,0,1,0,0,1,0,0
-16,SELECT * FROM posts p JOIN users u ON p.owner_user_id = u.id ORDER BY u.reputation DESC,471.41,slow,1,0,1,0,0,1,0,0
-17,SELECT * FROM posts p JOIN users u ON p.owner_user_id = u.id ORDER BY p.view_count DESC,387.85,slow,1,0,1,0,0,1,0,0
-18,SELECT * FROM posts p JOIN users u ON p.owner_user_id = u.id ORDER BY p.creation_date DESC,403.23,slow,1,0,1,0,0,1,0,0
-19,SELECT * FROM votes v JOIN posts p ON v.post_id = p.id ORDER BY p.score DESC,1064.99,slow,1,0,1,0,0,1,0,0
-20,SELECT * FROM votes v JOIN posts p ON v.post_id = p.id JOIN users u ON p.owner_user_id = u.id,1886.83,slow,1,0,2,0,0,0,0,0
-21,SELECT * FROM users WHERE location LIKE '%United States%',22.02,fast,1,1,0,0,0,0,0,0
-22,SELECT * FROM users WHERE location LIKE '%Germany%',23.44,fast,1,1,0,0,0,0,0,0
-23,SELECT * FROM users WHERE location LIKE '%United Kingdom%',21.58,fast,1,1,0,0,0,0,0,0
-24,SELECT * FROM users WHERE location LIKE '%Canada%',22.23,fast,1,1,0,0,0,0,0,0
-25,SELECT * FROM users WHERE location LIKE '%France%',131.68,slow,1,1,0,0,0,0,0,0
-26,SELECT * FROM users WHERE location LIKE '%Australia%',22.44,fast,1,1,0,0,0,0,0,0
-27,SELECT * FROM users WHERE location LIKE '%India%',19.87,fast,1,1,0,0,0,0,0,0
-28,SELECT * FROM users WHERE location LIKE '%Netherlands%',22.6,fast,1,1,0,0,0,0,0,0
-29,SELECT * FROM users WHERE location LIKE '%Brazil%',21.55,fast,1,1,0,0,0,0,0,0
-30,SELECT * FROM users WHERE location LIKE '%Spain%',22.39,fast,1,1,0,0,0,0,0,0
-31,SELECT * FROM users WHERE location LIKE '%Italy%',21.78,fast,1,1,0,0,0,0,0,0
-32,SELECT * FROM users WHERE location LIKE '%Sweden%',21.38,fast,1,1,0,0,0,0,0,0
-33,SELECT * FROM users WHERE location LIKE '%Norway%',21.67,fast,1,1,0,0,0,0,0,0
-34,SELECT * FROM users WHERE location LIKE '%Japan%',26.97,fast,1,1,0,0,0,0,0,0
-35,SELECT * FROM users WHERE location LIKE '%China%',21.18,fast,1,1,0,0,0,0,0,0
-36,SELECT * FROM users WHERE location LIKE '%New York%',21.78,fast,1,1,0,0,0,0,0,0
-37,SELECT * FROM users WHERE location LIKE '%California%',21.58,fast,1,1,0,0,0,0,0,0
-38,SELECT * FROM users WHERE location LIKE '%London%',21.01,fast,1,1,0,0,0,0,0,0
-39,SELECT * FROM users WHERE location LIKE '%Berlin%',20.83,fast,1,1,0,0,0,0,0,0
-40,SELECT * FROM users WHERE location LIKE '%Paris%',119.42,slow,1,1,0,0,0,0,0,0
-41,SELECT * FROM users WHERE location LIKE '%Toronto%',21.22,fast,1,1,0,0,0,0,0,0
-42,SELECT * FROM users WHERE location LIKE '%Amsterdam%',35.18,fast,1,1,0,0,0,0,0,0
-43,SELECT * FROM users WHERE location LIKE '%Singapore%',131.31,slow,1,1,0,0,0,0,0,0
-44,SELECT * FROM users WHERE location LIKE '%Moscow%',23.3,fast,1,1,0,0,0,0,0,0
-45,SELECT * FROM users WHERE location LIKE '%Sydney%',22.07,fast,1,1,0,0,0,0,0,0
-46,SELECT * FROM users WHERE display_name LIKE '%john%',26.39,fast,1,1,0,0,0,0,0,0
-47,SELECT * FROM users WHERE display_name LIKE '%smith%',24.73,fast,1,1,0,0,0,0,0,0
-48,SELECT * FROM users WHERE display_name LIKE '%data%',131.76,slow,1,1,0,0,0,0,0,0
-49,SELECT * FROM users WHERE display_name LIKE '%stat%',25.65,fast,1,1,0,0,0,0,0,0
-50,SELECT * FROM users WHERE display_name LIKE '%user%',31.54,fast,1,1,0,0,0,0,0,0
-51,SELECT * FROM users WHERE display_name LIKE '%alex%',27.66,fast,1,1,0,0,0,0,0,0
-52,SELECT * FROM users WHERE display_name LIKE '%mike%',26.32,fast,1,1,0,0,0,0,0,0
-53,SELECT * FROM users WHERE display_name LIKE '%chris%',27.82,fast,1,1,0,0,0,0,0,0
-54,SELECT * FROM users WHERE display_name LIKE '%admin%',27.33,fast,1,1,0,0,0,0,0,0
-55,SELECT * FROM users WHERE display_name LIKE '%dev%',25.51,fast,1,1,0,0,0,0,0,0
-56,SELECT * FROM users WHERE display_name LIKE '%stats%',27.86,fast,1,1,0,0,0,0,0,0
-57,SELECT * FROM users WHERE display_name LIKE '%math%',25.29,fast,1,1,0,0,0,0,0,0
-58,SELECT * FROM users WHERE display_name LIKE '%professor%',122.04,slow,1,1,0,0,0,0,0,0
-59,SELECT * FROM users WHERE display_name LIKE '%doctor%',125.99,slow,1,1,0,0,0,0,0,0
-60,SELECT * FROM users WHERE display_name LIKE '%analyst%',29.69,fast,1,1,0,0,0,0,0,0
-61,SELECT * FROM posts WHERE title LIKE '%regression%',58.71,fast,1,1,0,0,0,0,0,0
-62,SELECT * FROM posts WHERE title LIKE '%machine learning%',127.0,slow,1,1,0,0,0,0,0,0
-63,SELECT * FROM posts WHERE title LIKE '%neural%',131.4,slow,1,1,0,0,0,0,0,0
-64,SELECT * FROM posts WHERE title LIKE '%bayesian%',29.9,fast,1,1,0,0,0,0,0,0
-65,SELECT * FROM posts WHERE title LIKE '%clustering%',29.92,fast,1,1,0,0,0,0,0,0
-66,SELECT * FROM posts WHERE title LIKE '%classification%',118.28,slow,1,1,0,0,0,0,0,0
-67,SELECT * FROM posts WHERE title LIKE '%hypothesis%',30.42,fast,1,1,0,0,0,0,0,0
-68,SELECT * FROM posts WHERE title LIKE '%variance%',30.36,fast,1,1,0,0,0,0,0,0
-69,SELECT * FROM posts WHERE title LIKE '%distribution%',48.14,fast,1,1,0,0,0,0,0,0
-70,SELECT * FROM posts WHERE title LIKE '%probability%',31.79,fast,1,1,0,0,0,0,0,0
-71,SELECT * FROM posts WHERE title LIKE '%linear%',30.68,fast,1,1,0,0,0,0,0,0
-72,SELECT * FROM posts WHERE title LIKE '%logistic%',30.71,fast,1,1,0,0,0,0,0,0
-73,SELECT * FROM posts WHERE title LIKE '%time series%',36.84,fast,1,1,0,0,0,0,0,0
-74,SELECT * FROM posts WHERE title LIKE '%p-value%',30.93,fast,1,1,0,0,0,0,0,0
-75,SELECT * FROM posts WHERE title LIKE '%confidence%',30.19,fast,1,1,0,0,0,0,0,0
-76,SELECT * FROM posts WHERE title LIKE '%correlation%',31.57,fast,1,1,0,0,0,0,0,0
-77,SELECT * FROM posts WHERE title LIKE '%random forest%',32.41,fast,1,1,0,0,0,0,0,0
-78,SELECT * FROM posts WHERE title LIKE '%deep learning%',31.1,fast,1,1,0,0,0,0,0,0
-79,SELECT * FROM posts WHERE title LIKE '%sampling%',31.82,fast,1,1,0,0,0,0,0,0
-80,SELECT * FROM posts WHERE title LIKE '%bootstrap%',29.11,fast,1,1,0,0,0,0,0,0
-81,"SELECT p.title, p.score, u.display_name, u.location FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE u.location LIKE '%United States%' ORDER BY p.score DESC",135.36,slow,0,1,1,0,0,1,0,0
-82,"SELECT p.title, p.score, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE u.location LIKE '%Germany%' ORDER BY p.score DESC",45.28,fast,0,1,1,0,0,1,0,0
-83,"SELECT p.title, p.score, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE u.location LIKE '%United Kingdom%'",130.82,slow,0,1,1,0,0,0,0,0
-84,"SELECT p.title, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE u.display_name LIKE '%john%'",31.48,fast,0,1,1,0,0,0,0,0
-85,"SELECT p.title, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE p.title LIKE '%regression%'",61.29,fast,0,1,1,0,0,0,0,0
-86,"SELECT p.title, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE u.location LIKE '%Canada%'",42.33,fast,0,1,1,0,0,0,0,0
-87,"SELECT p.title, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE p.title LIKE '%bayesian%'",30.11,fast,0,1,1,0,0,0,0,0
-88,"SELECT p.title, u.location FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE u.location LIKE '%Australia%'",41.43,fast,0,1,1,0,0,0,0,0
-89,"SELECT p.title, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE u.display_name LIKE '%data%'",25.34,fast,0,1,1,0,0,0,0,0
-90,"SELECT p.title, p.score FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE p.title LIKE '%neural%' ORDER BY p.score DESC",33.88,fast,0,1,1,0,0,1,0,0
-91,"SELECT p.title, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE u.location LIKE '%New York%' ORDER BY p.score DESC",42.17,fast,0,1,1,0,0,1,0,0
-92,"SELECT p.title, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE u.location LIKE '%London%' ORDER BY p.score DESC",41.96,fast,0,1,1,0,0,1,0,0
-93,"SELECT p.title, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE u.location LIKE '%California%'",23.27,fast,0,1,1,0,0,0,0,0
-94,"SELECT p.title, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE p.title LIKE '%linear%' ORDER BY p.score DESC",61.77,fast,0,1,1,0,0,1,0,0
-95,"SELECT p.title, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE p.title LIKE '%logistic%'",57.77,fast,0,1,1,0,0,0,0,0
-96,"SELECT p.title, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE p.title LIKE '%time series%'",60.03,fast,0,1,1,0,0,0,0,0
-97,"SELECT p.title, u.location FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE u.location LIKE '%Berlin%'",40.63,fast,0,1,1,0,0,0,0,0
-98,"SELECT p.title, u.location FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE u.location LIKE '%Toronto%'",41.1,fast,0,1,1,0,0,0,0,0
-99,"SELECT p.title, p.score FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE u.display_name LIKE '%stats%'",26.98,fast,0,1,1,0,0,0,0,0
-100,"SELECT p.title, p.score FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE u.display_name LIKE '%math%'",25.63,fast,0,1,1,0,0,0,0,0
-101,SELECT * FROM posts WHERE score > 0,40.47,fast,1,0,0,0,0,0,0,0
-102,SELECT * FROM posts WHERE score >= 0,46.49,fast,1,0,0,0,0,0,0,0
-103,SELECT * FROM posts WHERE view_count >= 0,52.65,fast,1,0,0,0,0,0,0,0
-104,SELECT * FROM users WHERE reputation >= 0,40.95,fast,1,0,0,0,0,0,0,0
-105,SELECT * FROM votes WHERE vote_type_id >= 0,191.27,slow,1,0,0,0,0,0,0,0
-106,SELECT * FROM posts WHERE answer_count >= 0,51.32,fast,1,0,0,0,0,0,0,0
-107,SELECT * FROM posts WHERE post_type_id >= 1,44.25,fast,1,0,0,0,0,0,0,0
-108,SELECT * FROM users WHERE id > 0,32.64,fast,1,0,0,0,0,0,0,0
-109,SELECT * FROM posts WHERE id > 0,45.01,fast,1,0,0,0,0,0,0,0
-110,SELECT * FROM votes WHERE id > 0,157.83,slow,1,0,0,0,0,0,0,0
-111,SELECT * FROM posts WHERE view_count > 1000,31.31,fast,1,0,0,0,0,0,0,0
-112,SELECT * FROM posts WHERE answer_count > 5,26.92,fast,1,0,0,0,0,0,0,0
-113,SELECT * FROM posts WHERE post_type_id = 1,32.41,fast,1,0,0,0,0,0,0,0
-114,SELECT * FROM users WHERE reputation > 1000,21.31,fast,1,0,0,0,0,0,0,0
-115,SELECT * FROM users WHERE reputation BETWEEN 500 AND 2000,19.54,fast,1,0,0,0,0,0,0,0
-116,SELECT * FROM posts WHERE score BETWEEN 10 AND 100,7.77,fast,1,0,0,0,0,0,0,0
-117,SELECT * FROM posts WHERE creation_date > '2020-01-01',35.54,fast,1,0,0,0,0,0,0,0
-118,SELECT * FROM users WHERE creation_date > '2018-01-01',32.16,fast,1,0,0,0,0,0,0,0
-119,SELECT * FROM posts WHERE creation_date BETWEEN '2019-01-01' AND '2021-01-01',34.98,fast,1,0,0,0,0,0,0,0
-120,SELECT * FROM votes WHERE creation_date > '2020-01-01',136.65,slow,1,0,0,0,0,0,0,0
-121,SELECT * FROM posts WHERE score > 10 ORDER BY score DESC,11.72,fast,1,0,0,0,0,1,0,0
-122,SELECT * FROM posts WHERE score > 5 ORDER BY view_count DESC,45.97,fast,1,0,0,0,0,1,0,0
-123,SELECT * FROM users WHERE reputation > 100 ORDER BY reputation DESC,62.34,fast,1,0,0,0,0,1,0,0
-124,SELECT * FROM users WHERE reputation > 0 ORDER BY creation_date DESC,159.65,slow,1,0,0,0,0,1,0,0
-125,SELECT * FROM posts WHERE answer_count > 0 ORDER BY answer_count DESC,112.48,slow,1,0,0,0,0,1,0,0
-126,SELECT * FROM posts WHERE post_type_id = 1 ORDER BY score DESC,99.48,fast,1,0,0,0,0,1,0,0
-127,SELECT * FROM votes WHERE vote_type_id = 2 ORDER BY creation_date DESC,706.67,slow,1,0,0,0,0,1,0,0
-128,SELECT * FROM posts WHERE view_count > 100 ORDER BY view_count DESC,121.35,slow,1,0,0,0,0,1,0,0
-129,SELECT * FROM users WHERE reputation > 500 ORDER BY reputation ASC,22.86,fast,1,0,0,0,0,1,0,0
-130,SELECT * FROM posts WHERE score > 20 ORDER BY creation_date DESC,4.82,fast,1,0,0,0,0,1,0,0
-131,SELECT * FROM posts WHERE owner_user_id IN (SELECT id FROM users WHERE reputation > 1000),61.79,fast,1,0,0,1,0,0,0,0
-132,SELECT * FROM posts WHERE owner_user_id IN (SELECT id FROM users WHERE reputation > 500),66.98,fast,1,0,0,1,0,0,0,0
-133,SELECT * FROM posts WHERE owner_user_id IN (SELECT id FROM users WHERE reputation > 2000),56.72,fast,1,0,0,1,0,0,0,0
-134,SELECT * FROM posts WHERE owner_user_id IN (SELECT id FROM users WHERE reputation > 5000),121.04,slow,1,0,0,1,0,0,0,0
-135,SELECT * FROM posts WHERE owner_user_id IN (SELECT id FROM users WHERE location LIKE '%United States%'),43.9,fast,1,1,0,1,0,0,0,0
-136,SELECT * FROM posts WHERE owner_user_id IN (SELECT id FROM users WHERE location LIKE '%Germany%'),42.61,fast,1,1,0,1,0,0,0,0
-137,SELECT * FROM votes WHERE post_id IN (SELECT id FROM posts WHERE score > 50),94.89,fast,1,0,0,1,0,0,0,0
-138,SELECT * FROM votes WHERE post_id IN (SELECT id FROM posts WHERE score > 100),76.03,fast,1,0,0,1,0,0,0,0
-139,SELECT * FROM votes WHERE post_id IN (SELECT id FROM posts WHERE answer_count > 5),90.96,fast,1,0,0,1,0,0,0,0
-140,SELECT * FROM votes WHERE post_id IN (SELECT id FROM posts WHERE view_count > 1000),308.89,slow,1,0,0,1,0,0,0,0
-141,SELECT * FROM posts WHERE owner_user_id IN (SELECT id FROM users WHERE reputation > 3000),56.41,fast,1,0,0,1,0,0,0,0
-142,SELECT * FROM posts WHERE owner_user_id IN (SELECT id FROM users WHERE reputation > 4000),134.92,slow,1,0,0,1,0,0,0,0
-143,SELECT * FROM posts WHERE owner_user_id IN (SELECT id FROM users WHERE reputation BETWEEN 1000 AND 5000),48.14,fast,1,0,0,1,0,0,0,0
-144,SELECT * FROM votes WHERE post_id IN (SELECT id FROM posts WHERE score > 200),70.48,fast,1,0,0,1,0,0,0,0
-145,SELECT * FROM votes WHERE post_id IN (SELECT id FROM posts WHERE view_count > 5000),118.37,slow,1,0,0,1,0,0,0,0
-146,SELECT * FROM votes WHERE post_id IN (SELECT id FROM posts WHERE answer_count > 3),96.32,fast,1,0,0,1,0,0,0,0
-147,SELECT * FROM posts WHERE owner_user_id IN (SELECT id FROM users WHERE creation_date > '2015-01-01'),458.52,slow,1,0,0,1,0,0,0,0
-148,SELECT * FROM posts WHERE owner_user_id IN (SELECT id FROM users WHERE creation_date > '2018-01-01'),399.93,slow,1,0,0,1,0,0,0,0
-149,SELECT * FROM votes WHERE post_id IN (SELECT id FROM posts WHERE post_type_id = 1 AND score > 10),96.64,fast,1,0,0,1,0,0,0,0
-150,SELECT * FROM posts WHERE score > (SELECT AVG(score) FROM posts WHERE post_type_id = 1),86.75,fast,1,0,0,1,0,0,0,0
-151,SELECT * FROM posts WHERE id IN (SELECT post_id FROM votes WHERE post_id IN (SELECT id FROM posts WHERE score > 10)),414.31,slow,1,0,0,1,0,0,0,0
-152,SELECT * FROM posts WHERE id IN (SELECT post_id FROM votes WHERE post_id IN (SELECT id FROM posts WHERE score > 50)),105.06,slow,1,0,0,1,0,0,0,0
-153,SELECT * FROM posts WHERE id IN (SELECT post_id FROM votes WHERE post_id IN (SELECT id FROM posts WHERE score > 100)),73.38,fast,1,0,0,1,0,0,0,0
-154,SELECT * FROM users WHERE id IN (SELECT owner_user_id FROM posts WHERE score > (SELECT AVG(score) FROM posts)),283.04,slow,1,0,0,1,0,0,0,0
-155,SELECT * FROM users WHERE id IN (SELECT owner_user_id FROM posts WHERE view_count > (SELECT AVG(view_count) FROM posts)),171.04,slow,1,0,0,1,0,0,0,0
-156,SELECT * FROM users WHERE id IN (SELECT owner_user_id FROM posts WHERE id IN (SELECT post_id FROM votes WHERE vote_type_id = 2)),414.13,slow,1,0,0,1,0,0,0,0
-157,SELECT * FROM users WHERE id IN (SELECT owner_user_id FROM posts WHERE id IN (SELECT post_id FROM votes WHERE vote_type_id = 1)),190.75,slow,1,0,0,1,0,0,0,0
-158,SELECT * FROM posts WHERE owner_user_id IN (SELECT id FROM users WHERE reputation > (SELECT AVG(reputation) FROM users)),219.48,slow,1,0,0,1,0,0,0,0
-159,SELECT * FROM votes WHERE post_id IN (SELECT id FROM posts WHERE owner_user_id IN (SELECT id FROM users WHERE reputation > 1000)),209.96,slow,1,0,0,1,0,0,0,0
-160,SELECT * FROM posts WHERE score > (SELECT AVG(score) FROM posts) AND view_count > (SELECT AVG(view_count) FROM posts),112.83,slow,1,0,0,1,0,0,0,0
-161,"SELECT display_name, (SELECT COUNT(*) FROM posts WHERE owner_user_id = users.id) as post_count FROM users",698.0,slow,0,0,0,1,0,0,0,0
-162,"SELECT display_name, (SELECT AVG(score) FROM posts WHERE owner_user_id = users.id) as avg_score FROM users",947.58,slow,0,0,0,1,0,0,0,0
-163,"SELECT display_name, (SELECT SUM(view_count) FROM posts WHERE owner_user_id = users.id) as total_views FROM users",848.54,slow,0,0,0,1,0,0,0,0
-164,"SELECT display_name, (SELECT MAX(score) FROM posts WHERE owner_user_id = users.id) as max_score FROM users",887.98,slow,0,0,0,1,0,0,0,0
-165,"SELECT display_name, (SELECT MIN(score) FROM posts WHERE owner_user_id = users.id) as min_score FROM users",853.91,slow,0,0,0,1,0,0,0,0
-166,"SELECT display_name, (SELECT COUNT(*) FROM posts WHERE owner_user_id = users.id) as post_count FROM users WHERE reputation > 500",37.88,fast,0,0,0,1,0,0,0,0
-167,"SELECT display_name, (SELECT COUNT(*) FROM posts WHERE owner_user_id = users.id) as post_count FROM users WHERE reputation > 1000",29.88,fast,0,0,0,1,0,0,0,0
-169,"SELECT display_name, (SELECT AVG(score) FROM posts WHERE owner_user_id = users.id) as avg_score, (SELECT COUNT(*) FROM posts WHERE owner_user_id = users.id) as post_count FROM users",1614.72,slow,0,0,0,1,0,0,0,0
-170,"SELECT display_name, (SELECT MAX(view_count) FROM posts WHERE owner_user_id = users.id) as max_views FROM users WHERE reputation > 200",177.09,slow,0,0,0,1,0,0,0,0
-171,"SELECT display_name, (SELECT COUNT(*) FROM posts WHERE owner_user_id = users.id AND score > 0) as good_posts FROM users",873.61,slow,0,0,0,1,0,0,0,0
-172,"SELECT display_name, (SELECT MAX(view_count) FROM posts WHERE owner_user_id = users.id) as max_views FROM users",851.31,slow,0,0,0,1,0,0,0,0
-173,"SELECT display_name, (SELECT MIN(score) FROM posts WHERE owner_user_id = users.id) as min_score FROM users WHERE reputation > 100",341.14,slow,0,0,0,1,0,0,0,0
-175,"SELECT display_name, (SELECT AVG(view_count) FROM posts WHERE owner_user_id = users.id) as avg_views FROM users WHERE reputation > 200",185.83,slow,0,0,0,1,0,0,0,0
-176,"SELECT display_name, (SELECT SUM(score) FROM posts WHERE owner_user_id = users.id) as total_score FROM users WHERE reputation > 300",142.18,slow,0,0,0,1,0,0,0,0
-177,"SELECT display_name, (SELECT COUNT(*) FROM posts WHERE owner_user_id = users.id AND answer_count > 0) as answered FROM users",845.27,slow,0,0,0,1,0,0,0,0
-178,"SELECT display_name, (SELECT MAX(score) FROM posts WHERE owner_user_id = users.id) as best_score, (SELECT COUNT(*) FROM posts WHERE owner_user_id = users.id) as total FROM users WHERE reputation > 100",547.62,slow,0,0,0,1,0,0,0,0
-179,"SELECT display_name, (SELECT AVG(score) FROM posts WHERE owner_user_id = users.id) as avg_score FROM users WHERE id IN (SELECT owner_user_id FROM posts WHERE view_count > 1000)",246.63,slow,0,0,0,1,0,0,0,0
-180,"SELECT display_name, (SELECT COUNT(*) FROM posts WHERE owner_user_id = users.id) as posts FROM users ORDER BY posts DESC",761.83,slow,0,0,0,1,0,1,0,0
-181,"SELECT COUNT(*), AVG(score), MAX(score), MIN(score) FROM posts",33.29,fast,0,0,0,0,0,0,0,0
-182,"SELECT COUNT(*), AVG(reputation), MAX(reputation), MIN(reputation) FROM users",29.94,fast,0,0,0,0,0,0,0,0
-183,"SELECT COUNT(*), AVG(view_count), MAX(view_count) FROM posts",31.79,fast,0,0,0,0,0,0,0,0
-184,"SELECT COUNT(*), AVG(answer_count), MAX(answer_count) FROM posts",131.37,slow,0,0,0,0,0,0,0,0
-185,"SELECT u.location, COUNT(*) as user_count, AVG(u.reputation) FROM users u GROUP BY u.location ORDER BY user_count DESC",54.35,fast,0,0,0,0,1,1,0,0
-186,"SELECT u.display_name, SUM(p.view_count) as total_views FROM users u JOIN posts p ON p.owner_user_id = u.id GROUP BY u.display_name ORDER BY total_views DESC",439.04,slow,0,0,1,0,1,1,0,0
-187,"SELECT u.display_name, COUNT(p.id) as post_count, AVG(p.score) FROM users u JOIN posts p ON p.owner_user_id = u.id GROUP BY u.display_name ORDER BY post_count DESC",497.55,slow,0,0,1,0,1,1,0,0
-188,"SELECT post_type_id, COUNT(*), AVG(score), MAX(score) FROM posts GROUP BY post_type_id ORDER BY COUNT(*) DESC",42.07,fast,0,0,0,0,1,1,0,0
-189,"SELECT vote_type_id, COUNT(*) FROM votes GROUP BY vote_type_id ORDER BY COUNT(*) DESC",92.76,fast,0,0,0,0,1,1,0,0
-190,"SELECT EXTRACT(YEAR FROM creation_date), COUNT(*) FROM posts GROUP BY EXTRACT(YEAR FROM creation_date) ORDER BY 1",196.98,slow,0,0,0,0,1,1,0,1
-191,"SELECT u.display_name, u.location, COUNT(p.id) as post_count, AVG(p.score) as avg_score, SUM(p.view_count) as total_views FROM users u JOIN posts p ON p.owner_user_id = u.id WHERE u.location LIKE '%United States%' AND p.score > 0 GROUP BY u.display_name, u.location ORDER BY avg_score DESC",47.48,fast,0,1,1,0,1,1,0,0
-192,"SELECT u.display_name, COUNT(v.id) as vote_count FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY u.display_name ORDER BY vote_count DESC",574.88,slow,0,0,2,0,1,1,0,0
-193,"SELECT u.location, COUNT(p.id), AVG(p.score), SUM(p.view_count) FROM users u JOIN posts p ON p.owner_user_id = u.id GROUP BY u.location ORDER BY AVG(p.score) DESC",103.82,slow,0,0,1,0,1,1,0,0
-194,"SELECT u.display_name, COUNT(DISTINCT v.vote_type_id), SUM(p.score) FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY u.display_name ORDER BY SUM(p.score) DESC",1534.25,slow,0,0,2,0,1,1,0,0
-195,"SELECT u.display_name, u.location, COUNT(p.id), AVG(p.score), SUM(p.view_count), MAX(p.score) FROM users u JOIN posts p ON p.owner_user_id = u.id GROUP BY u.display_name, u.location ORDER BY SUM(p.view_count) DESC",636.68,slow,0,0,1,0,1,1,0,0
-196,"SELECT u.display_name, COUNT(p.id), AVG(p.score), SUM(p.view_count) FROM users u JOIN posts p ON p.owner_user_id = u.id WHERE u.location LIKE '%Germany%' GROUP BY u.display_name ORDER BY AVG(p.score) DESC",44.62,fast,0,1,1,0,1,1,0,0
-197,"SELECT u.display_name, COUNT(p.id), AVG(p.score) FROM users u JOIN posts p ON p.owner_user_id = u.id WHERE u.location LIKE '%United Kingdom%' GROUP BY u.display_name ORDER BY COUNT(p.id) DESC",47.21,fast,0,1,1,0,1,1,0,0
-198,"SELECT u.display_name, SUM(p.score), COUNT(v.id) FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY u.display_name ORDER BY SUM(p.score) DESC",539.87,slow,0,0,2,0,1,1,0,0
-199,"SELECT u.location, AVG(p.score), COUNT(p.id), SUM(p.view_count) FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY u.location ORDER BY AVG(p.score) DESC",326.31,slow,0,0,2,0,1,1,0,0
-200,"SELECT u.display_name, COUNT(DISTINCT p.id), COUNT(DISTINCT v.id), AVG(p.score) FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY u.display_name ORDER BY COUNT(DISTINCT p.id) DESC",1916.7,slow,0,0,2,0,1,1,0,0
-201,"SELECT u.display_name, COUNT(p.id), AVG(p.score), MAX(p.score), MIN(p.score), SUM(p.view_count) FROM users u JOIN posts p ON p.owner_user_id = u.id GROUP BY u.display_name ORDER BY AVG(p.score) DESC",587.54,slow,0,0,1,0,1,1,0,0
-202,"SELECT u.location, COUNT(DISTINCT u.id), COUNT(p.id), AVG(p.score) FROM users u JOIN posts p ON p.owner_user_id = u.id GROUP BY u.location ORDER BY COUNT(p.id) DESC",820.37,slow,0,0,1,0,1,1,0,0
-203,"SELECT u.display_name, COUNT(p.id), SUM(p.view_count), AVG(p.score) FROM users u JOIN posts p ON p.owner_user_id = u.id WHERE p.post_type_id = 1 GROUP BY u.display_name ORDER BY SUM(p.view_count) DESC",488.35,slow,0,0,1,0,1,1,0,0
-204,"SELECT u.display_name, COUNT(v.id) FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id WHERE v.vote_type_id = 2 GROUP BY u.display_name ORDER BY COUNT(v.id) DESC",512.08,slow,0,0,2,0,1,1,0,0
-205,"SELECT u.location, AVG(p.score), COUNT(p.id) FROM users u JOIN posts p ON p.owner_user_id = u.id WHERE u.location LIKE '%United States%' GROUP BY u.location",47.56,fast,0,1,1,0,1,0,0,0
-206,"SELECT EXTRACT(YEAR FROM p.creation_date), COUNT(p.id), AVG(p.score) FROM posts p JOIN users u ON p.owner_user_id = u.id GROUP BY EXTRACT(YEAR FROM p.creation_date) ORDER BY 1",551.4,slow,0,0,1,0,1,1,0,1
-207,"SELECT EXTRACT(MONTH FROM creation_date), COUNT(*), AVG(score) FROM posts GROUP BY EXTRACT(MONTH FROM creation_date) ORDER BY 1",290.8,slow,0,0,0,0,1,1,0,1
-208,"SELECT u.display_name, COUNT(DISTINCT p.post_type_id), AVG(p.score) FROM users u JOIN posts p ON p.owner_user_id = u.id GROUP BY u.display_name HAVING COUNT(p.id) > 5 ORDER BY AVG(p.score) DESC",1527.68,slow,0,0,1,0,1,1,0,0
-209,"SELECT u.location, COUNT(p.id), AVG(p.score), SUM(p.view_count), MAX(p.score) FROM users u JOIN posts p ON p.owner_user_id = u.id WHERE p.score > 0 GROUP BY u.location ORDER BY SUM(p.view_count) DESC",99.78,fast,0,0,1,0,1,1,0,0
-210,"SELECT p.post_type_id, u.location, COUNT(*), AVG(p.score) FROM posts p JOIN users u ON p.owner_user_id = u.id GROUP BY p.post_type_id, u.location ORDER BY COUNT(*) DESC",105.05,slow,0,0,1,0,1,1,0,0
-211,"SELECT p.title, p.score, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id ORDER BY p.view_count DESC",217.33,slow,0,0,1,0,0,1,0,0
-212,"SELECT p.title, p.score FROM posts p JOIN users u ON p.owner_user_id = u.id ORDER BY u.reputation DESC",195.23,slow,0,0,1,0,0,1,0,0
-213,"SELECT id, title, score, view_count FROM posts ORDER BY view_count DESC",207.33,slow,0,0,0,0,0,1,0,0
-214,"SELECT id, display_name, reputation FROM users ORDER BY reputation DESC",127.87,slow,0,0,0,0,0,1,0,0
-215,"SELECT id, display_name, reputation, location FROM users ORDER BY reputation DESC",138.37,slow,0,0,0,0,0,1,0,0
-216,"SELECT id, title, answer_count FROM posts ORDER BY answer_count DESC",388.7,slow,0,0,0,0,0,1,0,0
-217,"SELECT id, title, score FROM posts ORDER BY score ASC",133.66,slow,0,0,0,0,0,1,0,0
-218,"SELECT id, display_name FROM users ORDER BY creation_date DESC",160.11,slow,0,0,0,0,0,1,0,0
-219,"SELECT id, title FROM posts ORDER BY creation_date ASC",226.29,slow,0,0,0,0,0,1,0,0
-220,"SELECT id, post_id, vote_type_id FROM votes ORDER BY creation_date DESC",791.4,slow,0,0,0,0,0,1,0,0
-221,SELECT * FROM users WHERE location LIKE '%United States%' OR location LIKE '%Canada%' OR location LIKE '%United Kingdom%',35.02,fast,1,1,0,0,0,0,1,0
-222,SELECT * FROM users WHERE location LIKE '%Germany%' OR location LIKE '%France%' OR location LIKE '%Italy%',30.26,fast,1,1,0,0,0,0,1,0
-223,SELECT * FROM posts WHERE score > 50 OR view_count > 10000 OR answer_count > 10,28.41,fast,1,0,0,0,0,0,1,0
-224,SELECT * FROM posts WHERE score > 100 OR view_count > 50000,26.64,fast,1,0,0,0,0,0,1,0
-225,SELECT * FROM votes WHERE vote_type_id = 1 OR vote_type_id = 2 OR vote_type_id = 3 OR vote_type_id = 4,177.98,slow,1,0,0,0,0,0,1,0
-226,SELECT * FROM users WHERE location LIKE '%Australia%' OR location LIKE '%New Zealand%',27.29,fast,1,1,0,0,0,0,1,0
-227,SELECT * FROM posts WHERE answer_count = 0 OR score < 0,48.71,fast,1,0,0,0,0,0,1,0
-228,SELECT * FROM users WHERE reputation > 10000 OR reputation < 0,24.32,fast,1,0,0,0,0,0,1,0
-229,SELECT * FROM posts WHERE post_type_id = 1 OR post_type_id = 2 OR post_type_id = 3,45.89,fast,1,0,0,0,0,0,1,0
-230,SELECT * FROM users WHERE location LIKE '%Spain%' OR location LIKE '%Portugal%' OR location LIKE '%Mexico%',27.95,fast,1,1,0,0,0,0,1,0
-231,SELECT * FROM posts WHERE score > 100 OR answer_count > 20 OR view_count > 100000,26.79,fast,1,0,0,0,0,0,1,0
-232,SELECT * FROM users WHERE location LIKE '%New York%' OR location LIKE '%Los Angeles%' OR location LIKE '%Chicago%',26.39,fast,1,1,0,0,0,0,1,0
-233,SELECT * FROM posts WHERE post_type_id = 1 OR post_type_id = 2 OR score > 50,47.86,fast,1,0,0,0,0,0,1,0
-234,SELECT * FROM users WHERE reputation > 5000 OR reputation < 10,34.26,fast,1,0,0,0,0,0,1,0
-235,SELECT * FROM votes WHERE vote_type_id = 1 OR vote_type_id = 5 OR vote_type_id = 8,57.01,fast,1,0,0,0,0,0,1,0
-236,SELECT p.title FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE u.location LIKE '%United States%' OR u.location LIKE '%Canada%',46.16,fast,0,1,1,0,0,0,1,0
-237,SELECT * FROM posts WHERE score < 0 OR answer_count = 0 OR view_count < 10,48.31,fast,1,0,0,0,0,0,1,0
-238,SELECT * FROM users WHERE display_name LIKE '%test%' OR display_name LIKE '%admin%' OR display_name LIKE '%user%',61.53,fast,1,1,0,0,0,0,1,0
-239,SELECT * FROM posts WHERE title LIKE '%help%' OR title LIKE '%error%' OR title LIKE '%problem%',51.14,fast,1,1,0,0,0,0,1,0
-240,SELECT * FROM posts WHERE creation_date < '2012-01-01' OR creation_date > '2023-01-01',35.72,fast,1,0,0,0,0,0,1,0
-241,SELECT * FROM users WHERE LOWER(display_name) = 'john',51.21,fast,1,0,0,0,0,0,0,1
-242,SELECT * FROM users WHERE LOWER(display_name) = 'smith',45.59,fast,1,0,0,0,0,0,0,1
-243,SELECT * FROM users WHERE UPPER(location) = 'UNITED STATES',32.02,fast,1,0,0,0,0,0,0,1
-244,SELECT * FROM posts WHERE EXTRACT(YEAR FROM creation_date) = 2020,39.07,fast,1,0,0,0,0,0,0,1
-245,SELECT * FROM posts WHERE EXTRACT(YEAR FROM creation_date) = 2019,36.21,fast,1,0,0,0,0,0,0,1
-246,SELECT * FROM posts WHERE EXTRACT(MONTH FROM creation_date) = 6,126.39,slow,1,0,0,0,0,0,0,1
-247,SELECT * FROM users WHERE LENGTH(location) > 20,20.98,fast,1,0,0,0,0,0,0,1
-248,SELECT * FROM users WHERE LENGTH(display_name) > 15,25.82,fast,1,0,0,0,0,0,0,1
-249,SELECT * FROM posts WHERE LENGTH(title) > 100,43.79,fast,1,0,0,0,0,0,0,1
-250,SELECT * FROM posts WHERE EXTRACT(YEAR FROM creation_date) = 2018,39.28,fast,1,0,0,0,0,0,0,1
-251,SELECT * FROM posts WHERE EXTRACT(YEAR FROM creation_date) = 2021,38.67,fast,1,0,0,0,0,0,0,1
-252,SELECT * FROM posts WHERE EXTRACT(YEAR FROM creation_date) = 2022,36.24,fast,1,0,0,0,0,0,0,1
-253,SELECT * FROM posts WHERE EXTRACT(MONTH FROM creation_date) = 1,35.89,fast,1,0,0,0,0,0,0,1
-254,SELECT * FROM posts WHERE EXTRACT(MONTH FROM creation_date) = 12,36.22,fast,1,0,0,0,0,0,0,1
-255,SELECT * FROM users WHERE LOWER(display_name) = 'anonymous',43.89,fast,1,0,0,0,0,0,0,1
-256,SELECT * FROM users WHERE LOWER(display_name) LIKE '%user%',50.73,fast,1,1,0,0,0,0,0,1
-257,SELECT * FROM users WHERE LENGTH(location) > 30,20.16,fast,1,0,0,0,0,0,0,1
-258,SELECT * FROM posts WHERE LENGTH(title) > 80,46.2,fast,1,0,0,0,0,0,0,1
-259,SELECT * FROM users WHERE UPPER(location) LIKE '%UNITED%',34.39,fast,1,1,0,0,0,0,0,1
-260,SELECT * FROM posts WHERE EXTRACT(DAY FROM creation_date) = 1,119.42,slow,1,0,0,0,0,0,0,1
-261,SELECT DISTINCT location FROM users,42.87,fast,0,0,0,0,0,0,0,0
-262,SELECT DISTINCT post_type_id FROM posts,35.84,fast,0,0,0,0,0,0,0,0
-263,SELECT DISTINCT vote_type_id FROM votes,82.72,fast,0,0,0,0,0,0,0,0
-264,SELECT DISTINCT owner_user_id FROM posts,63.32,fast,0,0,0,0,0,0,0,0
-265,"SELECT DISTINCT u.location, p.post_type_id FROM users u JOIN posts p ON p.owner_user_id = u.id",99.32,fast,0,0,1,0,0,0,0,0
-266,SELECT DISTINCT location FROM users ORDER BY location,74.04,fast,0,0,0,0,0,1,0,0
-267,SELECT DISTINCT display_name FROM users ORDER BY display_name,1245.16,slow,0,0,0,0,0,1,0,0
-268,SELECT DISTINCT score FROM posts ORDER BY score DESC,45.87,fast,0,0,0,0,0,1,0,0
-269,SELECT DISTINCT answer_count FROM posts ORDER BY answer_count DESC,33.59,fast,0,0,0,0,0,1,0,0
-270,"SELECT DISTINCT u.location, p.post_type_id, AVG(p.score) FROM users u JOIN posts p ON p.owner_user_id = u.id GROUP BY u.location, p.post_type_id",108.02,slow,0,0,1,0,1,0,0,0
-271,SELECT DISTINCT owner_user_id FROM posts WHERE score > 10,18.25,fast,0,0,0,0,0,0,0,0
-272,SELECT DISTINCT post_id FROM votes WHERE vote_type_id = 2,496.08,slow,0,0,0,0,0,0,0,0
-273,SELECT DISTINCT u.display_name FROM users u JOIN posts p ON p.owner_user_id = u.id WHERE p.score > 50,22.8,fast,0,0,1,0,0,0,0,0
-274,SELECT DISTINCT u.location FROM users u JOIN posts p ON p.owner_user_id = u.id WHERE p.score > 100,1.17,fast,0,0,1,0,0,0,0,0
-275,SELECT DISTINCT p.post_type_id FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE u.reputation > 1000,52.32,fast,0,0,1,0,0,0,0,0
-276,"SELECT p.title, p.score, p.view_count, u.display_name, u.location, u.reputation FROM posts p JOIN users u ON p.owner_user_id = u.id ORDER BY p.score DESC",678.95,slow,0,0,1,0,0,1,0,0
-277,"SELECT p.title, p.score, u.display_name, COUNT(v.id) as votes FROM posts p JOIN users u ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY p.title, p.score, u.display_name ORDER BY votes DESC",2379.34,slow,0,0,2,0,1,1,0,0
-278,"SELECT u.display_name, u.reputation, u.location, COUNT(p.id), AVG(p.score) FROM users u JOIN posts p ON p.owner_user_id = u.id GROUP BY u.display_name, u.reputation, u.location ORDER BY u.reputation DESC",1142.09,slow,0,0,1,0,1,1,0,0
-279,"SELECT p.title, p.score, p.view_count, p.answer_count, u.display_name, u.reputation FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE p.score > 10 ORDER BY p.view_count DESC",58.81,fast,0,0,1,0,0,1,0,0
-280,"SELECT u.display_name, p.title, p.score, v.vote_type_id FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id WHERE u.reputation > 500 ORDER BY p.score DESC",509.4,slow,0,0,2,0,0,1,0,0
-281,"SELECT u.location, COUNT(p.id), AVG(p.score), AVG(u.reputation) FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY u.location ORDER BY COUNT(p.id) DESC",423.61,slow,0,0,2,0,1,1,0,0
-282,"SELECT p.title, COUNT(v.id), AVG(p.score) FROM posts p JOIN votes v ON v.post_id = p.id GROUP BY p.title ORDER BY COUNT(v.id) DESC",1541.89,slow,0,0,1,0,1,1,0,0
-283,"SELECT u.display_name, u.location, SUM(p.view_count), COUNT(p.id) FROM users u JOIN posts p ON p.owner_user_id = u.id WHERE u.location LIKE '%United States%' GROUP BY u.display_name, u.location ORDER BY SUM(p.view_count) DESC",48.45,fast,0,1,1,0,1,1,0,0
-284,"SELECT p.post_type_id, COUNT(p.id), AVG(p.score), SUM(p.view_count) FROM posts p JOIN users u ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY p.post_type_id ORDER BY SUM(p.view_count) DESC",269.7,slow,0,0,2,0,1,1,0,0
-285,"SELECT u.display_name, COUNT(p.id), SUM(p.score), AVG(p.view_count), MAX(p.score) FROM users u JOIN posts p ON p.owner_user_id = u.id WHERE u.reputation > 100 GROUP BY u.display_name ORDER BY SUM(p.score) DESC",266.0,slow,0,0,1,0,1,1,0,0
-286,"SELECT id, title, score FROM posts WHERE id = 100",0.03,fast,0,0,0,0,0,0,0,0
-287,"SELECT id, title, score FROM posts WHERE id = 500",0.03,fast,0,0,0,0,0,0,0,0
-288,"SELECT id, title, score FROM posts WHERE id = 1000",0.02,fast,0,0,0,0,0,0,0,0
-289,"SELECT id, title, score FROM posts WHERE id = 5000",0.02,fast,0,0,0,0,0,0,0,0
-290,"SELECT id, title, score FROM posts WHERE id = 10000",0.02,fast,0,0,0,0,0,0,0,0
-291,"SELECT id, title, score FROM posts WHERE id = 20000",0.02,fast,0,0,0,0,0,0,0,0
-292,"SELECT id, title, score FROM posts WHERE id = 50000",0.02,fast,0,0,0,0,0,0,0,0
-293,"SELECT id, title, score FROM posts WHERE id = 100000",0.02,fast,0,0,0,0,0,0,0,0
-294,"SELECT id, display_name, reputation FROM users WHERE id = 10",0.01,fast,0,0,0,0,0,0,0,0
-295,"SELECT id, display_name, reputation FROM users WHERE id = 100",0.01,fast,0,0,0,0,0,0,0,0
-296,"SELECT id, display_name, reputation FROM users WHERE id = 500",0.01,fast,0,0,0,0,0,0,0,0
-297,"SELECT id, display_name, reputation FROM users WHERE id = 1000",0.01,fast,0,0,0,0,0,0,0,0
-298,"SELECT id, display_name, reputation FROM users WHERE id = 5000",0.08,fast,0,0,0,0,0,0,0,0
-299,"SELECT id, display_name, reputation FROM users WHERE id = 10000",0.02,fast,0,0,0,0,0,0,0,0
-300,"SELECT id, display_name, reputation FROM users WHERE id = 50000",0.03,fast,0,0,0,0,0,0,0,0
-301,"SELECT id, post_id, vote_type_id FROM votes WHERE id = 100",0.03,fast,0,0,0,0,0,0,0,0
-302,"SELECT id, post_id, vote_type_id FROM votes WHERE id = 1000",0.02,fast,0,0,0,0,0,0,0,0
-303,"SELECT id, post_id, vote_type_id FROM votes WHERE id = 10000",0.02,fast,0,0,0,0,0,0,0,0
-304,"SELECT id, post_id, vote_type_id FROM votes WHERE id = 100000",0.03,fast,0,0,0,0,0,0,0,0
-305,"SELECT id, post_id, vote_type_id FROM votes WHERE id = 500000",0.02,fast,0,0,0,0,0,0,0,0
-306,SELECT COUNT(*) FROM posts WHERE post_type_id = 1,29.62,fast,0,0,0,0,0,0,0,0
-307,SELECT COUNT(*) FROM posts WHERE post_type_id = 2,26.64,fast,0,0,0,0,0,0,0,0
-308,SELECT COUNT(*) FROM votes WHERE post_id = 500,38.53,fast,0,0,0,0,0,0,0,0
-309,SELECT COUNT(*) FROM votes WHERE post_id = 1000,41.1,fast,0,0,0,0,0,0,0,0
-310,SELECT COUNT(*) FROM votes WHERE vote_type_id = 2,65.69,fast,0,0,0,0,0,0,0,0
-311,SELECT COUNT(*) FROM users WHERE reputation > 10000,19.99,fast,0,0,0,0,0,0,0,0
-312,SELECT COUNT(*) FROM posts WHERE score > 100,0.08,fast,0,0,0,0,0,0,0,0
-313,SELECT COUNT(*) FROM posts WHERE answer_count = 0,123.19,slow,0,0,0,0,0,0,0,0
-314,SELECT COUNT(*) FROM posts WHERE score < 0,0.32,fast,0,0,0,0,0,0,0,0
-315,SELECT COUNT(*) FROM votes WHERE vote_type_id = 1,122.34,slow,0,0,0,0,0,0,0,0
-316,SELECT COUNT(*) FROM votes WHERE vote_type_id = 3,46.19,fast,0,0,0,0,0,0,0,0
-317,SELECT COUNT(*) FROM votes WHERE vote_type_id = 5,44.1,fast,0,0,0,0,0,0,0,0
-318,SELECT COUNT(*) FROM posts WHERE score = 0,7.63,fast,0,0,0,0,0,0,0,0
-319,SELECT COUNT(*) FROM users WHERE reputation = 1,25.64,fast,0,0,0,0,0,0,0,0
-320,SELECT COUNT(*) FROM posts WHERE answer_count > 10,28.75,fast,0,0,0,0,0,0,0,0
-321,SELECT COUNT(*) FROM posts WHERE view_count > 10000,27.66,fast,0,0,0,0,0,0,0,0
-322,SELECT COUNT(*) FROM users WHERE reputation > 5000,20.55,fast,0,0,0,0,0,0,0,0
-323,SELECT COUNT(*) FROM posts WHERE score > 50,0.17,fast,0,0,0,0,0,0,0,0
-324,SELECT COUNT(*) FROM posts WHERE post_type_id = 1 AND score > 10,11.63,fast,0,0,0,0,0,0,0,0
-325,SELECT COUNT(*) FROM votes WHERE vote_type_id = 2 AND post_id < 10000,46.04,fast,0,0,0,0,0,0,0,0
-326,"SELECT id, title, score FROM posts LIMIT 10",0.12,fast,0,0,0,0,0,0,0,0
-327,"SELECT id, title, score FROM posts LIMIT 20",0.01,fast,0,0,0,0,0,0,0,0
-328,"SELECT id, title, score FROM posts LIMIT 50",0.01,fast,0,0,0,0,0,0,0,0
-329,"SELECT id, display_name, reputation FROM users LIMIT 10",0.01,fast,0,0,0,0,0,0,0,0
-330,"SELECT id, display_name, reputation FROM users LIMIT 20",0.01,fast,0,0,0,0,0,0,0,0
-331,"SELECT id, display_name, location FROM users LIMIT 50",0.01,fast,0,0,0,0,0,0,0,0
-332,"SELECT id, post_id, vote_type_id FROM votes LIMIT 10",0.11,fast,0,0,0,0,0,0,0,0
-333,"SELECT id, post_id, vote_type_id FROM votes LIMIT 20",0.07,fast,0,0,0,0,0,0,0,0
-334,"SELECT id, title, score, view_count FROM posts LIMIT 100",0.1,fast,0,0,0,0,0,0,0,0
-335,"SELECT id, display_name, reputation FROM users LIMIT 100",0.02,fast,0,0,0,0,0,0,0,0
-336,"SELECT id, title FROM posts LIMIT 5",0.01,fast,0,0,0,0,0,0,0,0
-337,"SELECT id, display_name FROM users LIMIT 5",0.01,fast,0,0,0,0,0,0,0,0
-338,"SELECT id, post_id FROM votes LIMIT 5",0.01,fast,0,0,0,0,0,0,0,0
-339,"SELECT id, title, answer_count FROM posts LIMIT 10",0.01,fast,0,0,0,0,0,0,0,0
-340,"SELECT id, title, creation_date FROM posts LIMIT 10",0.01,fast,0,0,0,0,0,0,0,0
-341,"SELECT id, display_name, creation_date FROM users LIMIT 10",0.01,fast,0,0,0,0,0,0,0,0
-342,"SELECT id, score, view_count FROM posts LIMIT 20",0.01,fast,0,0,0,0,0,0,0,0
-343,"SELECT id, reputation, location FROM users LIMIT 20",0.01,fast,0,0,0,0,0,0,0,0
-344,"SELECT id, vote_type_id, creation_date FROM votes LIMIT 20",0.08,fast,0,0,0,0,0,0,0,0
-345,"SELECT id, title, post_type_id FROM posts LIMIT 50",0.01,fast,0,0,0,0,0,0,0,0
-346,"SELECT id, title, score FROM posts WHERE score > 50 LIMIT 10",0.02,fast,0,0,0,0,0,0,0,0
-347,"SELECT id, title, score FROM posts WHERE score > 100 LIMIT 20",0.06,fast,0,0,0,0,0,0,0,0
-348,"SELECT id, title, score FROM posts WHERE score > 200 LIMIT 10",0.02,fast,0,0,0,0,0,0,0,0
-349,"SELECT id, display_name FROM users WHERE reputation > 1000 LIMIT 10",0.01,fast,0,0,0,0,0,0,0,0
-350,"SELECT id, display_name FROM users WHERE reputation > 5000 LIMIT 20",0.03,fast,0,0,0,0,0,0,0,0
-351,"SELECT id, title FROM posts WHERE answer_count > 5 LIMIT 10",0.88,fast,0,0,0,0,0,0,0,0
-352,"SELECT id, title FROM posts WHERE view_count > 1000 LIMIT 10",0.02,fast,0,0,0,0,0,0,0,0
-353,"SELECT id, title FROM posts WHERE post_type_id = 1 LIMIT 20",0.01,fast,0,0,0,0,0,0,0,0
-354,"SELECT id, post_id FROM votes WHERE vote_type_id = 2 LIMIT 10",0.01,fast,0,0,0,0,0,0,0,0
-355,"SELECT id, post_id FROM votes WHERE vote_type_id = 1 LIMIT 20",0.04,fast,0,0,0,0,0,0,0,0
-356,"SELECT id, title FROM posts WHERE score > 500 LIMIT 5",0.01,fast,0,0,0,0,0,0,0,0
-357,"SELECT id, display_name FROM users WHERE reputation > 20000 LIMIT 5",0.02,fast,0,0,0,0,0,0,0,0
-358,"SELECT id, title FROM posts WHERE answer_count > 20 LIMIT 5",3.9,fast,0,0,0,0,0,0,0,0
-359,"SELECT id, title FROM posts WHERE score > 50 AND answer_count > 2 LIMIT 10",0.23,fast,0,0,0,0,0,0,0,0
-360,"SELECT id, display_name FROM users WHERE reputation > 1000 AND reputation < 5000 LIMIT 10",0.02,fast,0,0,0,0,0,0,0,0
-361,"SELECT id, title FROM posts WHERE post_type_id = 2 AND score > 10 LIMIT 10",0.01,fast,0,0,0,0,0,0,0,0
-362,"SELECT id, post_id FROM votes WHERE vote_type_id = 3 LIMIT 10",0.21,fast,0,0,0,0,0,0,0,0
-363,"SELECT id, title FROM posts WHERE view_count > 5000 LIMIT 10",0.01,fast,0,0,0,0,0,0,0,0
-364,"SELECT id, display_name FROM users WHERE reputation BETWEEN 1000 AND 2000 LIMIT 10",0.02,fast,0,0,0,0,0,0,0,0
-365,"SELECT id, title FROM posts WHERE creation_date > '2021-01-01' LIMIT 10",22.96,fast,0,0,0,0,0,0,0,0
-366,"SELECT p.title, p.score, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE p.score > 50 LIMIT 10",0.09,fast,0,0,1,0,0,0,0,0
-367,"SELECT p.title, p.score, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE p.score > 100 LIMIT 20",0.09,fast,0,0,1,0,0,0,0,0
-368,"SELECT p.title, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE u.reputation > 1000 LIMIT 10",0.04,fast,0,0,1,0,0,0,0,0
-369,"SELECT p.title, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id LIMIT 10",0.25,fast,0,0,1,0,0,0,0,0
-370,"SELECT p.id, p.score, v.vote_type_id FROM posts p JOIN votes v ON v.post_id = p.id WHERE p.score > 100 LIMIT 10",2.1,fast,0,0,1,0,0,0,0,0
-371,"SELECT p.title, COUNT(v.id) as vote_count FROM posts p JOIN votes v ON v.post_id = p.id WHERE p.score > 50 GROUP BY p.title LIMIT 10",121.95,slow,0,0,1,0,1,0,0,0
-372,"SELECT u.display_name, COUNT(p.id) FROM users u JOIN posts p ON p.owner_user_id = u.id GROUP BY u.display_name LIMIT 10",598.33,slow,0,0,1,0,1,0,0,0
-373,"SELECT p.title, p.score FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE p.score > 200 ORDER BY p.score DESC LIMIT 10",0.1,fast,0,0,1,0,0,0,0,0
-374,"SELECT p.title, p.score FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE p.answer_count > 3 LIMIT 20",0.95,fast,0,0,1,0,0,0,0,0
-375,"SELECT p.title, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE p.post_type_id = 1 LIMIT 10",0.15,fast,0,0,1,0,0,0,0,0
-376,"SELECT p.title, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE p.score > 500 LIMIT 5",0.03,fast,0,0,1,0,0,0,0,0
-377,"SELECT p.title, u.reputation FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE u.reputation > 5000 LIMIT 10",0.03,fast,0,0,1,0,0,0,0,0
-378,"SELECT p.id, p.score FROM posts p JOIN votes v ON v.post_id = p.id WHERE v.vote_type_id = 2 LIMIT 10",0.63,fast,0,0,1,0,0,0,0,0
-379,"SELECT p.title, p.answer_count FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE p.answer_count > 5 LIMIT 10",1.15,fast,0,0,1,0,0,0,0,0
-380,"SELECT u.display_name, p.score FROM users u JOIN posts p ON p.owner_user_id = u.id WHERE u.reputation > 2000 LIMIT 10",0.02,fast,0,0,1,0,0,0,0,0
-381,"SELECT p.title, p.score FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE p.score > 100 AND u.reputation > 500 LIMIT 10",0.15,fast,0,0,1,0,0,0,0,0
-382,"SELECT p.title, p.view_count FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE p.view_count > 500 LIMIT 10",0.15,fast,0,0,1,0,0,0,0,0
-383,"SELECT u.display_name, COUNT(p.id) FROM users u JOIN posts p ON p.owner_user_id = u.id WHERE u.reputation > 1000 GROUP BY u.display_name LIMIT 10",22.02,fast,0,0,1,0,1,0,0,0
-384,"SELECT p.title, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE p.creation_date > '2021-01-01' LIMIT 10",0.12,fast,0,0,1,0,0,0,0,0
-385,"SELECT p.id, v.vote_type_id FROM posts p JOIN votes v ON v.post_id = p.id WHERE p.score > 50 LIMIT 20",0.81,fast,0,0,1,0,0,0,0,0
-386,"SELECT id, title, score FROM posts ORDER BY score DESC LIMIT 10",0.02,fast,0,0,0,0,0,0,0,0
-387,"SELECT id, title, score FROM posts ORDER BY score DESC LIMIT 20",0.02,fast,0,0,0,0,0,0,0,0
-388,"SELECT id, display_name, reputation FROM users ORDER BY reputation DESC LIMIT 10",39.03,fast,0,0,0,0,0,0,0,0
-389,"SELECT id, display_name, reputation FROM users ORDER BY reputation DESC LIMIT 20",39.33,fast,0,0,0,0,0,0,0,0
-390,"SELECT id, title, view_count FROM posts ORDER BY view_count DESC LIMIT 10",39.92,fast,0,0,0,0,0,0,0,0
-391,"SELECT id, title, answer_count FROM posts ORDER BY answer_count DESC LIMIT 10",37.98,fast,0,0,0,0,0,0,0,0
-392,"SELECT id, display_name FROM users ORDER BY reputation DESC LIMIT 5",37.7,fast,0,0,0,0,0,0,0,0
-393,"SELECT id, title FROM posts ORDER BY creation_date DESC LIMIT 10",43.08,fast,0,0,0,0,0,0,0,0
-394,"SELECT id, display_name FROM users ORDER BY creation_date DESC LIMIT 10",38.1,fast,0,0,0,0,0,0,0,0
-395,"SELECT id, post_id FROM votes ORDER BY creation_date DESC LIMIT 10",87.64,fast,0,0,0,0,0,0,0,0
-396,"SELECT id, title, score FROM posts ORDER BY score ASC LIMIT 10",0.04,fast,0,0,0,0,0,0,0,0
-397,"SELECT id, title FROM posts ORDER BY view_count DESC LIMIT 5",37.79,fast,0,0,0,0,0,0,0,0
-398,"SELECT id, display_name FROM users ORDER BY reputation ASC LIMIT 10",37.9,fast,0,0,0,0,0,0,0,0
-399,"SELECT id, title FROM posts ORDER BY answer_count DESC LIMIT 5",38.87,fast,0,0,0,0,0,0,0,0
-400,"SELECT id, title FROM posts ORDER BY score DESC LIMIT 100",0.06,fast,0,0,0,0,0,0,0,0
-401,"SELECT id, display_name FROM users ORDER BY reputation DESC LIMIT 100",38.16,fast,0,0,0,0,0,0,0,0
-402,"SELECT id, title, score FROM posts WHERE score > 10 ORDER BY score DESC LIMIT 10",0.03,fast,0,0,0,0,0,0,0,0
-403,"SELECT id, display_name FROM users WHERE reputation > 100 ORDER BY reputation DESC LIMIT 10",26.17,fast,0,0,0,0,0,0,0,0
-404,"SELECT id, title FROM posts WHERE answer_count > 0 ORDER BY answer_count DESC LIMIT 10",31.36,fast,0,0,0,0,0,0,0,0
-405,"SELECT id, post_id FROM votes WHERE vote_type_id = 2 ORDER BY creation_date DESC LIMIT 10",87.18,fast,0,0,0,0,0,0,0,0
-406,SELECT AVG(score) FROM posts WHERE post_type_id = 1,30.37,fast,0,0,0,0,0,0,0,0
-407,SELECT MAX(score) FROM posts WHERE post_type_id = 1,0.03,fast,0,0,0,0,0,0,0,0
-408,SELECT MIN(score) FROM posts WHERE score > 0,0.07,fast,0,0,0,0,0,0,0,0
-409,SELECT AVG(reputation) FROM users WHERE reputation > 0,29.89,fast,0,0,0,0,0,0,0,0
-410,SELECT MAX(reputation) FROM users,27.58,fast,0,0,0,0,0,0,0,0
-411,SELECT MIN(creation_date) FROM posts,32.29,fast,0,0,0,0,0,0,0,0
-412,SELECT MAX(creation_date) FROM posts,30.67,fast,0,0,0,0,0,0,0,0
-413,"SELECT COUNT(*), AVG(score) FROM posts WHERE answer_count > 0",28.91,fast,0,0,0,0,0,0,0,0
-414,SELECT COUNT(*) FROM posts WHERE creation_date > '2021-01-01',26.78,fast,0,0,0,0,0,0,0,0
-415,SELECT COUNT(*) FROM users WHERE creation_date > '2020-01-01',23.97,fast,0,0,0,0,0,0,0,0
-416,SELECT AVG(score) FROM posts WHERE score > 0,26.22,fast,0,0,0,0,0,0,0,0
-417,SELECT MAX(view_count) FROM posts WHERE post_type_id = 1,28.11,fast,0,0,0,0,0,0,0,0
-418,SELECT MIN(reputation) FROM users WHERE reputation > 0,29.52,fast,0,0,0,0,0,0,0,0
-419,SELECT AVG(answer_count) FROM posts WHERE post_type_id = 1,27.89,fast,0,0,0,0,0,0,0,0
-420,"SELECT COUNT(*), AVG(reputation) FROM users WHERE reputation > 100",23.14,fast,0,0,0,0,0,0,0,0
-421,"SELECT MAX(score), MIN(score) FROM posts WHERE post_type_id = 2",0.05,fast,0,0,0,0,0,0,0,0
-422,SELECT COUNT(*) FROM posts WHERE score > 0 AND answer_count > 0,27.68,fast,0,0,0,0,0,0,0,0
-423,SELECT AVG(view_count) FROM posts WHERE score > 10,8.2,fast,0,0,0,0,0,0,0,0
-424,SELECT COUNT(*) FROM votes WHERE creation_date > '2021-01-01',131.89,slow,0,0,0,0,0,0,0,0
-425,SELECT MAX(creation_date) FROM users,30.4,fast,0,0,0,0,0,0,0,0
-426,"SELECT id, title FROM posts WHERE score = 0 LIMIT 10",0.01,fast,0,0,0,0,0,0,0,0
-427,"SELECT id, display_name FROM users WHERE reputation = 1 LIMIT 10",0.02,fast,0,0,0,0,0,0,0,0
-428,"SELECT id, post_id FROM votes WHERE vote_type_id = 3 LIMIT 10",0.11,fast,0,0,0,0,0,0,0,0
-429,"SELECT id, title FROM posts WHERE answer_count = 1 LIMIT 20",0.02,fast,0,0,0,0,0,0,0,0
-430,"SELECT id, title FROM posts WHERE post_type_id = 2 LIMIT 10",0.01,fast,0,0,0,0,0,0,0,0
-431,"SELECT id, display_name FROM users WHERE reputation = 101 LIMIT 10",0.01,fast,0,0,0,0,0,0,0,0
-432,"SELECT id, title FROM posts WHERE view_count = 0 LIMIT 10",0.01,fast,0,0,0,0,0,0,0,0
-433,"SELECT id, post_id FROM votes WHERE vote_type_id = 5 LIMIT 10",27.17,fast,0,0,0,0,0,0,0,0
-434,"SELECT id, title FROM posts WHERE score = 1 LIMIT 10",0.02,fast,0,0,0,0,0,0,0,0
-435,"SELECT id, display_name FROM users WHERE reputation = 11 LIMIT 10",0.06,fast,0,0,0,0,0,0,0,0
-436,"SELECT id, title FROM posts WHERE answer_count = 0 LIMIT 10",0.01,fast,0,0,0,0,0,0,0,0
-437,"SELECT id, post_id FROM votes WHERE vote_type_id = 4 LIMIT 10",126.45,slow,0,0,0,0,0,0,0,0
-438,"SELECT id, title FROM posts WHERE score = 2 LIMIT 10",0.01,fast,0,0,0,0,0,0,0,0
-439,"SELECT id, display_name FROM users WHERE reputation = 21 LIMIT 10",0.05,fast,0,0,0,0,0,0,0,0
-440,"SELECT id, title FROM posts WHERE post_type_id = 1 AND score = 5 LIMIT 10",0.04,fast,0,0,0,0,0,0,0,0
-441,"SELECT id, display_name FROM users WHERE reputation = 51 LIMIT 10",0.08,fast,0,0,0,0,0,0,0,0
-442,"SELECT id, title FROM posts WHERE answer_count = 2 LIMIT 10",0.01,fast,0,0,0,0,0,0,0,0
-443,"SELECT id, post_id FROM votes WHERE vote_type_id = 1 AND post_id < 1000 LIMIT 10",4.0,fast,0,0,0,0,0,0,0,0
-444,"SELECT id, title FROM posts WHERE score = 10 LIMIT 10",0.09,fast,0,0,0,0,0,0,0,0
-445,"SELECT id, display_name FROM users WHERE reputation = 201 LIMIT 10",0.17,fast,0,0,0,0,0,0,0,0
-446,"SELECT id, title, score FROM posts WHERE score > 50 AND answer_count > 0 LIMIT 20",0.16,fast,0,0,0,0,0,0,0,0
-447,"SELECT id, display_name, reputation FROM users WHERE reputation > 500 AND reputation < 1000 LIMIT 20",0.02,fast,0,0,0,0,0,0,0,0
-448,"SELECT id, title FROM posts WHERE post_type_id = 1 AND answer_count > 3 LIMIT 10",0.11,fast,0,0,0,0,0,0,0,0
-449,"SELECT id, display_name FROM users WHERE reputation > 100 LIMIT 50",0.02,fast,0,0,0,0,0,0,0,0
-450,"SELECT id, title, view_count FROM posts WHERE view_count > 100 AND score > 5 LIMIT 10",0.03,fast,0,0,0,0,0,0,0,0
-451,"SELECT id, title FROM posts WHERE score > 20 AND score < 50 LIMIT 10",0.06,fast,0,0,0,0,0,0,0,0
-452,"SELECT id, display_name FROM users WHERE reputation > 200 AND reputation < 500 LIMIT 10",0.02,fast,0,0,0,0,0,0,0,0
-453,"SELECT id, post_id FROM votes WHERE vote_type_id = 2 AND post_id > 100 LIMIT 10",0.05,fast,0,0,0,0,0,0,0,0
-454,"SELECT id, title FROM posts WHERE answer_count BETWEEN 1 AND 5 LIMIT 10",0.01,fast,0,0,0,0,0,0,0,0
-455,"SELECT id, display_name FROM users WHERE reputation BETWEEN 100 AND 500 LIMIT 10",0.01,fast,0,0,0,0,0,0,0,0
-456,"SELECT id, title, score FROM posts WHERE score > 0 ORDER BY score DESC LIMIT 5",0.02,fast,0,0,0,0,0,0,0,0
-457,"SELECT id, display_name FROM users WHERE reputation > 1000 ORDER BY reputation DESC LIMIT 5",21.89,fast,0,0,0,0,0,0,0,0
-458,"SELECT id, title FROM posts WHERE creation_date > '2022-01-01' LIMIT 10",0.01,fast,0,0,0,0,0,0,0,0
-459,"SELECT id, display_name FROM users WHERE creation_date > '2021-01-01' LIMIT 10",11.77,fast,0,0,0,0,0,0,0,0
-460,"SELECT id, post_id FROM votes WHERE creation_date > '2022-01-01' LIMIT 10",0.27,fast,0,0,0,0,0,0,0,0
-461,"SELECT id, title FROM posts WHERE score > 100 AND view_count > 100 LIMIT 10",0.06,fast,0,0,0,0,0,0,0,0
-462,"SELECT id, display_name FROM users WHERE reputation > 500 LIMIT 30",0.02,fast,0,0,0,0,0,0,0,0
-463,"SELECT id, title FROM posts WHERE post_type_id = 2 AND answer_count = 0 LIMIT 10",0.01,fast,0,0,0,0,0,0,0,0
-464,"SELECT id, post_id FROM votes WHERE vote_type_id IN (1, 2) LIMIT 10",0.01,fast,0,0,0,0,0,0,0,0
-465,"SELECT id, title FROM posts WHERE score BETWEEN 50 AND 200 LIMIT 10",0.02,fast,0,0,0,0,0,0,0,0
+query_id,query_text,execution_time_cold_ms,execution_time_warm_ms,execution_time_warm_std_ms,all_runs_ms,timed_out_runs,label,has_select_star,has_like_wildcard,join_count,has_subquery,has_group_by,has_order_by_no_limit,has_or,has_function_in_where
+1,SELECT * FROM posts,2.34,11.15,4.09,2.34;2.65;10.94;11.15;14.79;12.33,0,fast,1,0,0,0,0,0,0,0
+2,SELECT * FROM users,29.47,28.73,3.37,29.47;25.12;29.33;28.47;35.49;28.73,0,fast,1,0,0,0,0,0,0,0
+3,SELECT * FROM votes,19.86,12.14,9.09,19.86;8.20;29.14;12.14;25.29;7.11,0,fast,1,0,0,0,0,0,0,0
+4,SELECT * FROM posts ORDER BY score DESC,15.24,17.92,4.84,15.24;14.35;21.51;17.92;7.65;19.30,0,fast,1,0,0,0,0,1,0,0
+5,SELECT * FROM users ORDER BY reputation DESC,54.3,38.1,1.81,54.30;38.44;38.10;38.77;33.89;36.40,0,fast,1,0,0,0,0,1,0,0
+6,SELECT * FROM votes ORDER BY creation_date ASC,65.47,38.31,8.97,65.47;45.44;38.31;37.76;38.02;61.12,0,fast,1,0,0,0,0,1,0,0
+7,SELECT * FROM posts ORDER BY view_count DESC,8.3,9.29,0.91,8.30;9.29;9.84;8.46;8.01;10.52,0,fast,1,0,0,0,0,1,0,0
+8,SELECT * FROM users ORDER BY creation_date ASC,61.12,158.12,60.76,61.12;55.56;48.52;189.56;175.26;158.12,0,slow,1,0,0,0,0,1,0,0
+9,SELECT * FROM posts ORDER BY answer_count DESC,32.5,23.24,14.42,32.50;45.32;39.38;15.85;6.59;23.24,0,fast,1,0,0,0,0,1,0,0
+10,SELECT * FROM votes ORDER BY vote_type_id ASC,114.47,35.41,25.71,114.47;99.54;35.03;35.41;33.77;37.09,0,fast,1,0,0,0,0,1,0,0
+11,SELECT * FROM posts p JOIN users u ON p.owner_user_id = u.id,24.73,133.69,56.96,24.73;32.99;21.83;133.69;139.34;154.77,0,slow,1,0,1,0,0,0,0,0
+12,SELECT * FROM posts p JOIN votes v ON v.post_id = p.id,109.98,178.09,63.03,109.98;121.69;189.67;178.09;205.16;32.70,0,slow,1,0,1,0,0,0,0,0
+13,SELECT * FROM posts p JOIN users u ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id,357.93,344.05,46.54,357.93;264.29;344.05;288.18;350.26;394.57,0,slow,1,0,2,0,0,0,0,0
+14,SELECT * FROM posts p JOIN users u ON p.owner_user_id = u.id ORDER BY p.score DESC,181.6,112.75,34.74,181.60;112.75;64.76;95.48;142.28;163.81,0,slow,1,0,1,0,0,1,0,0
+15,SELECT * FROM posts p JOIN votes v ON v.post_id = p.id ORDER BY p.score DESC,413.28,315.46,70.53,413.28;418.73;299.98;301.97;315.46;471.72,0,slow,1,0,1,0,0,1,0,0
+16,SELECT * FROM posts p JOIN users u ON p.owner_user_id = u.id ORDER BY u.reputation DESC,260.12,222.25,29.78,260.12;234.06;238.89;156.13;213.47;222.25,0,slow,1,0,1,0,0,1,0,0
+17,SELECT * FROM posts p JOIN users u ON p.owner_user_id = u.id ORDER BY p.view_count DESC,233.28,124.97,48.74,233.28;201.31;106.47;124.97;118.61;226.79,0,slow,1,0,1,0,0,1,0,0
+18,SELECT * FROM posts p JOIN users u ON p.owner_user_id = u.id ORDER BY p.creation_date DESC,161.06,187.52,78.96,161.06;187.52;64.27;120.45;247.98;277.75,0,slow,1,0,1,0,0,1,0,0
+19,SELECT * FROM votes v JOIN posts p ON v.post_id = p.id ORDER BY p.score DESC,406.13,426.06,72.35,406.13;451.70;416.12;271.06;479.59;426.06,0,slow,1,0,1,0,0,1,0,0
+20,SELECT * FROM votes v JOIN posts p ON v.post_id = p.id JOIN users u ON p.owner_user_id = u.id,339.64,335.52,37.19,339.64;335.52;395.08;314.34;375.06;295.06,0,slow,1,0,2,0,0,0,0,0
+21,SELECT * FROM users WHERE location LIKE '%United States%',38.59,32.01,7.57,38.59;50.04;31.30;32.01;29.16;38.12,0,fast,1,1,0,0,0,0,0,0
+22,SELECT * FROM users WHERE location LIKE '%Germany%',39.56,32.91,7.63,39.56;48.64;32.91;31.26;36.95;25.89,0,fast,1,1,0,0,0,0,0,0
+23,SELECT * FROM users WHERE location LIKE '%United Kingdom%',25.66,18.42,11.95,25.66;46.08;15.35;18.42;13.63;27.60,0,fast,1,1,0,0,0,0,0,0
+24,SELECT * FROM users WHERE location LIKE '%Canada%',17.36,31.11,6.36,17.36;35.09;18.05;31.11;35.67;29.30,0,fast,1,1,0,0,0,0,0,0
+25,SELECT * FROM users WHERE location LIKE '%France%',35.64,30.13,6.94,35.64;40.86;34.73;19.98;28.23;30.13,0,fast,1,1,0,0,0,0,0,0
+26,SELECT * FROM users WHERE location LIKE '%Australia%',8.78,31.25,3.94,8.78;27.45;34.25;31.25;27.76;37.79,0,fast,1,1,0,0,0,0,0,0
+27,SELECT * FROM users WHERE location LIKE '%India%',36.76,33.68,7.51,36.76;48.75;29.82;39.42;33.68;28.01,0,fast,1,1,0,0,0,0,0,0
+28,SELECT * FROM users WHERE location LIKE '%Netherlands%',33.2,20.15,8.94,33.20;39.98;24.38;20.15;13.69;19.10,0,fast,1,1,0,0,0,0,0,0
+29,SELECT * FROM users WHERE location LIKE '%Brazil%',43.6,33.01,9.59,43.60;46.74;38.55;33.01;31.34;17.57,0,fast,1,1,0,0,0,0,0,0
+30,SELECT * FROM users WHERE location LIKE '%Spain%',21.34,36.39,3.81,21.34;42.75;43.35;34.51;35.24;36.39,0,fast,1,1,0,0,0,0,0,0
+31,SELECT * FROM users WHERE location LIKE '%Italy%',33.78,28.8,7.82,33.78;47.93;28.80;27.68;27.42;30.29,0,fast,1,1,0,0,0,0,0,0
+32,SELECT * FROM users WHERE location LIKE '%Sweden%',32.81,33.31,4.92,32.81;43.75;28.98;34.89;33.31;32.52,0,fast,1,1,0,0,0,0,0,0
+33,SELECT * FROM users WHERE location LIKE '%Norway%',33.02,28.51,12.81,33.02;46.67;34.93;23.78;7.83;28.51,0,fast,1,1,0,0,0,0,0,0
+34,SELECT * FROM users WHERE location LIKE '%Japan%',30.98,24.56,8.47,30.98;24.56;24.59;17.05;37.61;12.75,0,fast,1,1,0,0,0,0,0,0
+35,SELECT * FROM users WHERE location LIKE '%China%',33.62,29.43,10.04,33.62;48.36;29.65;22.12;29.43;19.80,0,fast,1,1,0,0,0,0,0,0
+36,SELECT * FROM users WHERE location LIKE '%New York%',47.53,7.88,12.44,47.53;38.77;7.88;7.51;4.90;14.71,0,fast,1,1,0,0,0,0,0,0
+37,SELECT * FROM users WHERE location LIKE '%California%',7.49,8.19,13.33,7.49;6.15;4.97;29.38;36.89;8.19,0,fast,1,1,0,0,0,0,0,0
+38,SELECT * FROM users WHERE location LIKE '%London%',25.52,26.94,10.82,25.52;45.32;27.40;22.66;26.94;11.82,0,fast,1,1,0,0,0,0,0,0
+39,SELECT * FROM users WHERE location LIKE '%Berlin%',9.53,19.47,10.04,9.53;19.47;5.11;30.65;11.63;30.06,0,fast,1,1,0,0,0,0,0,0
+40,SELECT * FROM users WHERE location LIKE '%Paris%',31.67,25.79,8.15,31.67;32.06;17.78;11.90;25.79;32.89,0,fast,1,1,0,0,0,0,0,0
+41,SELECT * FROM users WHERE location LIKE '%Toronto%',4.87,22.71,12.15,4.87;5.99;22.71;29.52;9.49;38.48,0,fast,1,1,0,0,0,0,0,0
+42,SELECT * FROM users WHERE location LIKE '%Amsterdam%',27.55,14.75,8.87,27.55;29.56;14.75;17.93;5.97;5.41,0,fast,1,1,0,0,0,0,0,0
+43,SELECT * FROM users WHERE location LIKE '%Singapore%',17.29,20.09,5.18,17.29;8.47;20.09;16.21;21.92;22.52,0,fast,1,1,0,0,0,0,0,0
+44,SELECT * FROM users WHERE location LIKE '%Moscow%',36.31,30.34,12.76,36.31;40.96;15.04;30.43;30.34;4.89,0,fast,1,1,0,0,0,0,0,0
+45,SELECT * FROM users WHERE location LIKE '%Sydney%',20.54,29.9,5.29,20.54;35.37;19.68;29.90;29.06;32.51,0,fast,1,1,0,0,0,0,0,0
+46,SELECT * FROM users WHERE display_name LIKE '%john%',37.97,47.77,10.98,37.97;52.86;23.60;47.77;35.08;50.11,0,fast,1,1,0,0,0,0,0,0
+47,SELECT * FROM users WHERE display_name LIKE '%smith%',55.64,38.16,13.24,55.64;38.16;52.56;47.99;25.59;17.41,0,fast,1,1,0,0,0,0,0,0
+48,SELECT * FROM users WHERE display_name LIKE '%data%',36.91,42.11,10.42,36.91;57.04;30.60;42.11;29.14;47.01,0,fast,1,1,0,0,0,0,0,0
+49,SELECT * FROM users WHERE display_name LIKE '%stat%',28.43,30.8,10.71,28.43;30.80;34.03;29.72;38.31;7.50,0,fast,1,1,0,0,0,0,0,0
+50,SELECT * FROM users WHERE display_name LIKE '%user%',39.96,42.98,10.87,39.96;28.61;42.98;38.53;43.50;62.07,0,fast,1,1,0,0,0,0,0,0
+51,SELECT * FROM users WHERE display_name LIKE '%alex%',16.5,31.18,19.24,16.50;7.83;26.69;31.18;65.30;45.60,0,fast,1,1,0,0,0,0,0,0
+52,SELECT * FROM users WHERE display_name LIKE '%mike%',60.33,20.89,14.29,60.33;48.89;14.50;33.82;20.89;9.32,0,fast,1,1,0,0,0,0,0,0
+53,SELECT * FROM users WHERE display_name LIKE '%chris%',10.17,32.53,6.28,10.17;29.11;18.98;37.80;32.85;32.53,0,fast,1,1,0,0,0,0,0,0
+54,SELECT * FROM users WHERE display_name LIKE '%admin%',18.49,38.24,13.33,18.49;53.24;26.03;38.24;40.88;14.24,0,fast,1,1,0,0,0,0,0,0
+55,SELECT * FROM users WHERE display_name LIKE '%dev%',6.38,23.2,11.18,6.38;6.19;22.74;23.20;29.98;40.47,0,fast,1,1,0,0,0,0,0,0
+56,SELECT * FROM users WHERE display_name LIKE '%stats%',49.35,43.63,8.08,49.35;61.98;41.52;39.39;43.63;44.48,0,fast,1,1,0,0,0,0,0,0
+57,SELECT * FROM users WHERE display_name LIKE '%math%',44.7,30.82,9.68,44.70;31.69;54.60;30.20;29.25;30.82,0,fast,1,1,0,0,0,0,0,0
+58,SELECT * FROM users WHERE display_name LIKE '%professor%',13.12,9.43,6.62,13.12;20.60;8.97;9.43;8.32;23.89,0,fast,1,1,0,0,0,0,0,0
+59,SELECT * FROM users WHERE display_name LIKE '%doctor%',26.86,40.6,10.47,26.86;21.03;40.60;44.29;41.02;20.49,0,fast,1,1,0,0,0,0,0,0
+60,SELECT * FROM users WHERE display_name LIKE '%analyst%',47.27,55.02,12.72,47.27;27.33;55.02;35.50;57.05;58.21,0,fast,1,1,0,0,0,0,0,0
+61,SELECT * FROM posts WHERE title LIKE '%regression%',26.98,27.13,3.0,26.98;31.90;28.26;26.17;22.64;27.13,0,fast,1,1,0,0,0,0,0,0
+62,SELECT * FROM posts WHERE title LIKE '%machine learning%',13.29,22.31,6.63,13.29;5.69;22.31;22.34;23.11;20.84,0,fast,1,1,0,0,0,0,0,0
+63,SELECT * FROM posts WHERE title LIKE '%neural%',20.27,25.08,1.4,20.27;25.35;21.87;25.08;25.27;23.16,0,fast,1,1,0,0,0,0,0,0
+64,SELECT * FROM posts WHERE title LIKE '%bayesian%',17.8,20.09,2.54,17.80;17.07;15.25;21.63;20.09;21.52,0,fast,1,1,0,0,0,0,0,0
+65,SELECT * FROM posts WHERE title LIKE '%clustering%',13.62,11.74,1.87,13.62;13.70;11.74;13.63;8.70;10.77,0,fast,1,1,0,0,0,0,0,0
+66,SELECT * FROM posts WHERE title LIKE '%classification%',8.1,19.06,5.32,8.10;5.91;19.25;19.46;19.06;19.00,0,fast,1,1,0,0,0,0,0,0
+67,SELECT * FROM posts WHERE title LIKE '%hypothesis%',19.13,23.43,1.91,19.13;18.76;22.51;23.43;23.87;23.76,0,fast,1,1,0,0,0,0,0,0
+68,SELECT * FROM posts WHERE title LIKE '%variance%',16.98,18.6,1.58,16.98;20.38;18.60;18.19;17.30;21.68,0,fast,1,1,0,0,0,0,0,0
+69,SELECT * FROM posts WHERE title LIKE '%distribution%',22.5,22.13,1.74,22.50;22.47;19.55;19.22;23.69;22.13,0,fast,1,1,0,0,0,0,0,0
+70,SELECT * FROM posts WHERE title LIKE '%probability%',20.41,18.79,1.85,20.41;23.20;18.15;18.64;18.79;20.55,0,fast,1,1,0,0,0,0,0,0
+71,SELECT * FROM posts WHERE title LIKE '%linear%',21.56,15.09,5.98,21.56;28.58;11.96;17.97;13.07;15.09,0,fast,1,1,0,0,0,0,0,0
+72,SELECT * FROM posts WHERE title LIKE '%logistic%',19.81,19.45,6.83,19.81;27.54;7.68;19.45;16.46;24.05,0,fast,1,1,0,0,0,0,0,0
+73,SELECT * FROM posts WHERE title LIKE '%time series%',25.31,24.95,4.93,25.31;36.79;28.96;24.95;23.88;23.82,0,fast,1,1,0,0,0,0,0,0
+74,SELECT * FROM posts WHERE title LIKE '%p-value%',19.61,18.4,2.27,19.61;23.88;17.86;19.66;17.88;18.40,0,fast,1,1,0,0,0,0,0,0
+75,SELECT * FROM posts WHERE title LIKE '%confidence%',11.45,20.65,5.7,11.45;11.20;24.82;12.83;24.23;20.65,0,fast,1,1,0,0,0,0,0,0
+76,SELECT * FROM posts WHERE title LIKE '%correlation%',19.39,20.2,2.66,19.39;26.34;20.20;19.09;19.61;20.20,0,fast,1,1,0,0,0,0,0,0
+77,SELECT * FROM posts WHERE title LIKE '%random forest%',28.94,22.66,5.79,28.94;31.60;24.01;22.66;20.97;13.55,0,fast,1,1,0,0,0,0,0,0
+78,SELECT * FROM posts WHERE title LIKE '%deep learning%',15.68,19.91,5.33,15.68;19.91;8.20;17.45;22.19;22.94,0,fast,1,1,0,0,0,0,0,0
+79,SELECT * FROM posts WHERE title LIKE '%sampling%',25.4,25.36,3.86,25.40;31.78;21.10;21.41;25.55;25.36,0,fast,1,1,0,0,0,0,0,0
+80,SELECT * FROM posts WHERE title LIKE '%bootstrap%',9.18,16.31,5.4,9.18;4.44;16.31;19.86;14.23;18.07,0,fast,1,1,0,0,0,0,0,0
+81,"SELECT p.title, p.score, u.display_name, u.location FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE u.location LIKE '%United States%' ORDER BY p.score DESC",35.3,68.85,8.05,35.30;65.63;68.85;70.95;54.23;78.96,0,fast,0,1,1,0,0,1,0,0
+82,"SELECT p.title, p.score, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE u.location LIKE '%Germany%' ORDER BY p.score DESC",32.81,66.42,6.7,32.81;58.40;72.77;66.42;60.72;75.81,0,fast,0,1,1,0,0,1,0,0
+83,"SELECT p.title, p.score, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE u.location LIKE '%United Kingdom%'",16.51,61.94,18.58,16.51;15.77;48.53;65.64;61.94;63.02,0,fast,0,1,1,0,0,0,0,0
+84,"SELECT p.title, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE u.display_name LIKE '%john%'",68.05,68.38,9.23,68.05;53.59;51.54;68.38;70.10;74.31,0,fast,0,1,1,0,0,0,0,0
+85,"SELECT p.title, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE p.title LIKE '%regression%'",25.45,25.08,7.63,25.45;26.04;25.08;7.21;23.14;28.71,0,fast,0,1,1,0,0,0,0,0
+86,"SELECT p.title, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE u.location LIKE '%Canada%'",67.24,69.9,10.76,67.24;45.38;69.90;70.77;71.89;53.89,0,fast,0,1,1,0,0,0,0,0
+87,"SELECT p.title, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE p.title LIKE '%bayesian%'",7.28,6.7,4.76,7.28;8.33;4.92;17.61;4.70;6.70,0,fast,0,1,1,0,0,0,0,0
+88,"SELECT p.title, u.location FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE u.location LIKE '%Australia%'",61.23,40.7,24.4,61.23;77.79;40.70;14.76;26.05;69.77,0,fast,0,1,1,0,0,0,0,0
+89,"SELECT p.title, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE u.display_name LIKE '%data%'",63.77,54.0,16.93,63.77;57.23;78.67;26.37;46.12;54.00,0,fast,0,1,1,0,0,0,0,0
+90,"SELECT p.title, p.score FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE p.title LIKE '%neural%' ORDER BY p.score DESC",41.6,35.7,10.61,41.60;51.15;35.70;30.12;22.41;47.05,0,fast,0,1,1,0,0,1,0,0
+91,"SELECT p.title, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE u.location LIKE '%New York%' ORDER BY p.score DESC",69.31,51.07,16.64,69.31;69.98;58.81;28.96;51.07;27.62,0,fast,0,1,1,0,0,1,0,0
+92,"SELECT p.title, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE u.location LIKE '%London%' ORDER BY p.score DESC",38.33,40.35,14.52,38.33;68.35;68.93;37.18;40.35;39.75,0,fast,0,1,1,0,0,1,0,0
+93,"SELECT p.title, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE u.location LIKE '%California%'",16.33,38.9,17.59,16.33;10.29;56.08;57.84;30.22;38.90,0,fast,0,1,1,0,0,0,0,0
+94,"SELECT p.title, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE p.title LIKE '%linear%' ORDER BY p.score DESC",23.1,23.83,5.28,23.10;31.25;23.83;24.25;14.74;21.91,0,fast,0,1,1,0,0,1,0,0
+95,"SELECT p.title, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE p.title LIKE '%logistic%'",24.1,24.88,3.27,24.10;30.59;20.96;25.72;24.88;22.68,0,fast,0,1,1,0,0,0,0,0
+96,"SELECT p.title, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE p.title LIKE '%time series%'",29.14,18.71,9.97,29.14;33.81;25.76;18.71;12.61;5.18,0,fast,0,1,1,0,0,0,0,0
+97,"SELECT p.title, u.location FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE u.location LIKE '%Berlin%'",47.55,63.73,7.97,47.55;66.36;55.96;63.73;46.27;67.66,0,fast,0,1,1,0,0,0,0,0
+98,"SELECT p.title, u.location FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE u.location LIKE '%Toronto%'",37.07,63.31,9.13,37.07;74.30;48.64;56.86;63.31;69.78,0,fast,0,1,1,0,0,0,0,0
+99,"SELECT p.title, p.score FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE u.display_name LIKE '%stats%'",25.5,68.7,8.1,25.50;62.91;68.70;66.64;77.84;85.11,0,fast,0,1,1,0,0,0,0,0
+100,"SELECT p.title, p.score FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE u.display_name LIKE '%math%'",29.59,62.42,14.52,29.59;47.91;66.26;27.20;62.90;62.42,0,fast,0,1,1,0,0,0,0,0
+101,SELECT * FROM posts WHERE score > 0,21.31,16.21,4.5,21.31;21.77;16.21;7.72;16.24;16.15,0,fast,1,0,0,0,0,0,0,0
+102,SELECT * FROM posts WHERE score >= 0,17.91,17.92,5.81,17.91;24.24;17.92;21.05;17.50;6.99,0,fast,1,0,0,0,0,0,0,0
+103,SELECT * FROM posts WHERE view_count >= 0,18.24,18.44,1.57,18.24;18.39;19.56;17.99;18.44;22.29,0,fast,1,0,0,0,0,0,0,0
+104,SELECT * FROM users WHERE reputation >= 0,57.23,52.93,23.05,57.23;82.81;12.96;47.44;64.68;52.93,0,fast,1,0,0,0,0,0,0,0
+105,SELECT * FROM votes WHERE vote_type_id >= 0,50.99,19.11,18.63,50.99;31.52;19.11;8.49;8.80;58.52,0,fast,1,0,0,0,0,0,0,0
+106,SELECT * FROM posts WHERE answer_count >= 0,20.2,18.58,7.12,20.20;23.24;17.62;3.32;18.58;21.93,0,fast,1,0,0,0,0,0,0,0
+107,SELECT * FROM posts WHERE post_type_id >= 1,15.89,19.99,1.19,15.89;21.03;17.82;21.13;19.87;19.99,0,fast,1,0,0,0,0,0,0,0
+108,SELECT * FROM users WHERE id > 0,41.84,39.78,12.88,41.84;24.92;52.80;39.78;16.34;41.29,0,fast,1,0,0,0,0,0,0,0
+109,SELECT * FROM posts WHERE id > 0,17.74,20.49,1.74,17.74;21.66;20.49;16.95;19.65;21.64,0,fast,1,0,0,0,0,0,0,0
+110,SELECT * FROM votes WHERE id > 0,54.18,29.57,26.34,54.18;85.23;23.85;65.52;29.57;17.67,0,fast,1,0,0,0,0,0,0,0
+111,SELECT * FROM posts WHERE view_count > 1000,8.41,12.51,2.67,8.41;6.07;12.51;13.06;11.14;13.26,0,fast,1,0,0,0,0,0,0,0
+112,SELECT * FROM posts WHERE answer_count > 5,11.62,10.99,0.91,11.62;10.99;11.02;10.49;12.87;10.29,0,fast,1,0,0,0,0,0,0,0
+113,SELECT * FROM posts WHERE post_type_id = 1,6.27,12.13,1.74,6.27;13.37;8.75;9.65;12.13;12.28,0,fast,1,0,0,0,0,0,0,0
+114,SELECT * FROM users WHERE reputation > 1000,21.53,28.46,8.59,21.53;7.46;23.82;30.80;29.45;28.46,0,fast,1,0,0,0,0,0,0,0
+115,SELECT * FROM users WHERE reputation BETWEEN 500 AND 2000,24.62,28.93,7.41,24.62;43.69;24.54;22.53;28.93;30.61,0,fast,1,0,0,0,0,0,0,0
+116,SELECT * FROM posts WHERE score BETWEEN 10 AND 100,10.59,9.95,0.89,10.59;9.95;9.86;11.79;11.62;9.86,0,fast,1,0,0,0,0,0,0,0
+117,SELECT * FROM posts WHERE creation_date > '2020-01-01',9.07,15.63,4.52,9.07;5.02;9.59;15.63;16.36;16.13,0,fast,1,0,0,0,0,0,0,0
+118,SELECT * FROM users WHERE creation_date > '2018-01-01',52.54,32.92,9.58,52.54;29.26;32.92;31.92;55.81;39.50,0,fast,1,0,0,0,0,0,0,0
+119,SELECT * FROM posts WHERE creation_date BETWEEN '2019-01-01' AND '2021-01-01',14.14,17.61,1.75,14.14;17.61;14.18;19.11;17.68;15.49,0,fast,1,0,0,0,0,0,0,0
+120,SELECT * FROM votes WHERE creation_date > '2020-01-01',9.45,28.38,8.2,9.45;17.49;28.38;24.70;40.31;36.64,0,fast,1,0,0,0,0,0,0,0
+121,SELECT * FROM posts WHERE score > 10 ORDER BY score DESC,13.59,11.2,1.13,13.59;9.53;12.84;11.20;10.41;11.74,0,fast,1,0,0,0,0,1,0,0
+122,SELECT * FROM posts WHERE score > 5 ORDER BY view_count DESC,15.9,13.3,1.6,15.90;16.52;13.30;15.37;12.67;12.49,0,fast,1,0,0,0,0,1,0,0
+123,SELECT * FROM users WHERE reputation > 100 ORDER BY reputation DESC,34.72,59.19,18.73,34.72;59.19;18.95;74.14;61.54;46.61,0,fast,1,0,0,0,0,1,0,0
+124,SELECT * FROM users WHERE reputation > 0 ORDER BY creation_date DESC,249.65,177.04,49.61,249.65;176.49;280.07;234.66;177.04;139.78,0,slow,1,0,0,0,0,1,0,0
+125,SELECT * FROM posts WHERE answer_count > 0 ORDER BY answer_count DESC,24.36,16.46,8.0,24.36;33.95;12.16;18.82;12.40;16.46,0,fast,1,0,0,0,0,1,0,0
+126,SELECT * FROM posts WHERE post_type_id = 1 ORDER BY score DESC,9.29,20.65,4.12,9.29;18.28;20.65;17.97;27.99;26.14,0,fast,1,0,0,0,0,1,0,0
+127,SELECT * FROM votes WHERE vote_type_id = 2 ORDER BY creation_date DESC,219.83,192.22,37.53,219.83;180.01;282.76;190.48;225.45;192.22,0,slow,1,0,0,0,0,1,0,0
+128,SELECT * FROM posts WHERE view_count > 100 ORDER BY view_count DESC,26.57,19.41,18.42,26.57;56.89;5.83;20.83;7.53;19.41,0,fast,1,0,0,0,0,1,0,0
+129,SELECT * FROM users WHERE reputation > 500 ORDER BY reputation ASC,24.14,24.08,2.47,24.14;20.73;24.57;28.26;24.08;22.83,0,fast,1,0,0,0,0,1,0,0
+130,SELECT * FROM posts WHERE score > 20 ORDER BY creation_date DESC,6.28,1.77,4.1,6.28;12.01;1.77;2.03;1.65;1.63,0,fast,1,0,0,0,0,1,0,0
+131,SELECT * FROM posts WHERE owner_user_id IN (SELECT id FROM users WHERE reputation > 1000),8.34,29.45,15.15,8.34;9.08;29.45;48.61;43.44;16.41,0,fast,1,0,0,1,0,0,0,0
+132,SELECT * FROM posts WHERE owner_user_id IN (SELECT id FROM users WHERE reputation > 500),8.79,11.48,19.72,8.79;11.48;8.66;9.76;21.60;60.82,0,fast,1,0,0,1,0,0,0,0
+133,SELECT * FROM posts WHERE owner_user_id IN (SELECT id FROM users WHERE reputation > 2000),55.28,14.86,18.95,55.28;59.36;12.77;14.86;8.23;34.19,0,fast,1,0,0,1,0,0,0,0
+134,SELECT * FROM posts WHERE owner_user_id IN (SELECT id FROM users WHERE reputation > 5000),49.79,18.21,21.46,49.79;68.45;18.21;16.50;7.44;32.06,0,fast,1,0,0,1,0,0,0,0
+135,SELECT * FROM posts WHERE owner_user_id IN (SELECT id FROM users WHERE location LIKE '%United States%'),55.61,62.31,19.3,55.61;82.53;62.31;30.01;77.28;47.67,0,fast,1,1,0,1,0,0,0,0
+136,SELECT * FROM posts WHERE owner_user_id IN (SELECT id FROM users WHERE location LIKE '%Germany%'),29.29,44.5,17.33,29.29;44.50;12.62;48.53;40.11;66.22,0,fast,1,1,0,1,0,0,0,0
+137,SELECT * FROM votes WHERE post_id IN (SELECT id FROM posts WHERE score > 50),97.32,93.72,4.38,97.32;95.44;97.47;89.69;93.72;85.20,0,fast,1,0,0,1,0,0,0,0
+138,SELECT * FROM votes WHERE post_id IN (SELECT id FROM posts WHERE score > 100),55.21,59.18,18.53,55.21;52.73;23.09;71.98;59.18;74.93,0,fast,1,0,0,1,0,0,0,0
+139,SELECT * FROM votes WHERE post_id IN (SELECT id FROM posts WHERE answer_count > 5),69.05,70.8,31.41,69.05;108.09;20.15;70.80;85.57;40.31,0,fast,1,0,0,1,0,0,0,0
+140,SELECT * FROM votes WHERE post_id IN (SELECT id FROM posts WHERE view_count > 1000),29.25,48.87,15.36,29.25;48.87;30.06;14.59;54.06;52.61,0,fast,1,0,0,1,0,0,0,0
+141,SELECT * FROM posts WHERE owner_user_id IN (SELECT id FROM users WHERE reputation > 3000),31.14,45.75,9.92,31.14;29.17;45.75;41.52;58.47;51.89,0,fast,1,0,0,1,0,0,0,0
+142,SELECT * FROM posts WHERE owner_user_id IN (SELECT id FROM users WHERE reputation > 4000),50.18,21.69,6.1,50.18;29.78;11.85;25.45;18.49;21.69,0,fast,1,0,0,1,0,0,0,0
+143,SELECT * FROM posts WHERE owner_user_id IN (SELECT id FROM users WHERE reputation BETWEEN 1000 AND 5000),27.91,27.63,17.28,27.91;27.63;26.42;7.64;60.59;37.64,0,fast,1,0,0,1,0,0,0,0
+144,SELECT * FROM votes WHERE post_id IN (SELECT id FROM posts WHERE score > 200),3.79,6.29,3.54,3.79;3.33;4.11;11.85;11.19;6.29,0,fast,1,0,0,1,0,0,0,0
+145,SELECT * FROM votes WHERE post_id IN (SELECT id FROM posts WHERE view_count > 5000),31.68,40.6,15.1,31.68;40.60;71.19;41.26;26.23;35.59,0,fast,1,0,0,1,0,0,0,0
+146,SELECT * FROM votes WHERE post_id IN (SELECT id FROM posts WHERE answer_count > 3),50.72,78.52,17.41,50.72;39.95;89.25;71.54;78.52;84.27,0,fast,1,0,0,1,0,0,0,0
+147,SELECT * FROM posts WHERE owner_user_id IN (SELECT id FROM users WHERE creation_date > '2015-01-01'),84.5,139.11,42.2,84.50;136.13;187.43;200.09;81.53;139.11,0,slow,1,0,0,1,0,0,0,0
+148,SELECT * FROM posts WHERE owner_user_id IN (SELECT id FROM users WHERE creation_date > '2018-01-01'),123.7,120.02,31.23,123.70;71.65;167.08;100.56;122.88;120.02,0,slow,1,0,0,1,0,0,0,0
+149,SELECT * FROM votes WHERE post_id IN (SELECT id FROM posts WHERE post_type_id = 1 AND score > 10),77.29,63.66,26.0,77.29;104.21;28.33;63.66;85.96;55.58,0,fast,1,0,0,1,0,0,0,0
+150,SELECT * FROM posts WHERE score > (SELECT AVG(score) FROM posts WHERE post_type_id = 1),17.71,27.57,11.32,17.71;9.51;27.57;27.04;42.87;36.93,0,fast,1,0,0,1,0,0,0,0
+151,SELECT * FROM posts WHERE id IN (SELECT post_id FROM votes WHERE post_id IN (SELECT id FROM posts WHERE score > 10)),115.93,108.14,17.41,115.93;86.59;108.14;90.37;129.20;125.22,0,slow,1,0,0,1,0,0,0,0
+152,SELECT * FROM posts WHERE id IN (SELECT post_id FROM votes WHERE post_id IN (SELECT id FROM posts WHERE score > 50)),67.1,69.64,21.63,67.10;69.64;82.67;96.05;38.34;46.43,0,fast,1,0,0,1,0,0,0,0
+153,SELECT * FROM posts WHERE id IN (SELECT post_id FROM votes WHERE post_id IN (SELECT id FROM posts WHERE score > 100)),24.18,80.28,11.17,24.18;56.46;64.73;84.48;83.02;80.28,0,fast,1,0,0,1,0,0,0,0
+154,SELECT * FROM users WHERE id IN (SELECT owner_user_id FROM posts WHERE score > (SELECT AVG(score) FROM posts)),78.52,112.12,32.24,78.52;82.89;62.25;112.12;143.28;142.84,0,slow,1,0,0,1,0,0,0,0
+155,SELECT * FROM users WHERE id IN (SELECT owner_user_id FROM posts WHERE view_count > (SELECT AVG(view_count) FROM posts)),20.38,60.52,53.28,20.38;60.52;27.28;138.41;145.61;22.35,0,fast,1,0,0,1,0,0,0,0
+156,SELECT * FROM users WHERE id IN (SELECT owner_user_id FROM posts WHERE id IN (SELECT post_id FROM votes WHERE vote_type_id = 2)),128.85,211.45,47.88,128.85;129.38;211.45;210.44;269.49;248.69,0,slow,1,0,0,1,0,0,0,0
+157,SELECT * FROM users WHERE id IN (SELECT owner_user_id FROM posts WHERE id IN (SELECT post_id FROM votes WHERE vote_type_id = 1)),135.22,119.75,44.45,135.22;72.92;119.75;163.37;126.58;35.96,0,slow,1,0,0,1,0,0,0,0
+158,SELECT * FROM posts WHERE owner_user_id IN (SELECT id FROM users WHERE reputation > (SELECT AVG(reputation) FROM users)),199.55,143.93,53.96,199.55;81.80;143.93;227.53;215.68;136.91,0,slow,1,0,0,1,0,0,0,0
+159,SELECT * FROM votes WHERE post_id IN (SELECT id FROM posts WHERE owner_user_id IN (SELECT id FROM users WHERE reputation > 1000)),146.82,148.86,57.39,146.82;148.86;29.25;178.54;88.33;175.26,0,slow,1,0,0,1,0,0,0,0
+160,SELECT * FROM posts WHERE score > (SELECT AVG(score) FROM posts) AND view_count > (SELECT AVG(view_count) FROM posts),19.99,47.39,23.49,19.99;32.49;54.44;16.31;86.40;47.39,0,fast,1,0,0,1,0,0,0,0
+161,"SELECT display_name, (SELECT COUNT(*) FROM posts WHERE owner_user_id = users.id) as post_count FROM users",10000.0,10000.0,0.0,10000.00;10000.00,2,slow,0,0,0,1,0,0,0,0
+162,"SELECT display_name, (SELECT AVG(score) FROM posts WHERE owner_user_id = users.id) as avg_score FROM users",10000.0,10000.0,0.0,10000.00;10000.00,2,slow,0,0,0,1,0,0,0,0
+163,"SELECT display_name, (SELECT SUM(view_count) FROM posts WHERE owner_user_id = users.id) as total_views FROM users",10000.0,10000.0,0.0,10000.00;10000.00,2,slow,0,0,0,1,0,0,0,0
+164,"SELECT display_name, (SELECT MAX(score) FROM posts WHERE owner_user_id = users.id) as max_score FROM users",10000.0,10000.0,0.0,10000.00;10000.00,2,slow,0,0,0,1,0,0,0,0
+165,"SELECT display_name, (SELECT MIN(score) FROM posts WHERE owner_user_id = users.id) as min_score FROM users",10000.0,10000.0,0.0,10000.00;10000.00,2,slow,0,0,0,1,0,0,0,0
+166,"SELECT display_name, (SELECT COUNT(*) FROM posts WHERE owner_user_id = users.id) as post_count FROM users WHERE reputation > 500",2297.33,1780.05,0.0,2297.33;1780.05,0,slow,0,0,0,1,0,0,0,0
+167,"SELECT display_name, (SELECT COUNT(*) FROM posts WHERE owner_user_id = users.id) as post_count FROM users WHERE reputation > 1000",992.5,1084.61,57.2,992.50;1141.81;1027.41,0,slow,0,0,0,1,0,0,0,0
+168,"SELECT display_name, (SELECT COUNT(*) FROM votes v JOIN posts p ON v.post_id = p.id WHERE p.owner_user_id = users.id) as vote_count FROM users",10000.0,10000.0,0.0,10000.00;10000.00,2,slow,0,0,1,1,0,0,0,0
+169,"SELECT display_name, (SELECT AVG(score) FROM posts WHERE owner_user_id = users.id) as avg_score, (SELECT COUNT(*) FROM posts WHERE owner_user_id = users.id) as post_count FROM users",10000.0,10000.0,0.0,10000.00;10000.00,2,slow,0,0,0,1,0,0,0,0
+170,"SELECT display_name, (SELECT MAX(view_count) FROM posts WHERE owner_user_id = users.id) as max_views FROM users WHERE reputation > 200",5239.29,7456.14,0.0,5239.29;7456.14,0,slow,0,0,0,1,0,0,0,0
+171,"SELECT display_name, (SELECT COUNT(*) FROM posts WHERE owner_user_id = users.id AND score > 0) as good_posts FROM users",10000.0,10000.0,0.0,10000.00;10000.00,2,slow,0,0,0,1,0,0,0,0
+172,"SELECT display_name, (SELECT MAX(view_count) FROM posts WHERE owner_user_id = users.id) as max_views FROM users",10000.0,10000.0,0.0,10000.00;10000.00,2,slow,0,0,0,1,0,0,0,0
+173,"SELECT display_name, (SELECT MIN(score) FROM posts WHERE owner_user_id = users.id) as min_score FROM users WHERE reputation > 100",10000.0,10000.0,0.0,10000.00;10000.00,2,slow,0,0,0,1,0,0,0,0
+174,"SELECT display_name, (SELECT COUNT(*) FROM votes v JOIN posts p ON v.post_id = p.id WHERE p.owner_user_id = users.id AND v.vote_type_id = 2) as upvotes FROM users",10000.0,10000.0,0.0,10000.00;10000.00,2,slow,0,0,1,1,0,0,0,0
+175,"SELECT display_name, (SELECT AVG(view_count) FROM posts WHERE owner_user_id = users.id) as avg_views FROM users WHERE reputation > 200",7746.21,6725.49,0.0,7746.21;6725.49,0,slow,0,0,0,1,0,0,0,0
+176,"SELECT display_name, (SELECT SUM(score) FROM posts WHERE owner_user_id = users.id) as total_score FROM users WHERE reputation > 300",3761.02,3324.71,0.0,3761.02;3324.71,0,slow,0,0,0,1,0,0,0,0
+177,"SELECT display_name, (SELECT COUNT(*) FROM posts WHERE owner_user_id = users.id AND answer_count > 0) as answered FROM users",10000.0,10000.0,0.0,10000.00;10000.00,2,slow,0,0,0,1,0,0,0,0
+178,"SELECT display_name, (SELECT MAX(score) FROM posts WHERE owner_user_id = users.id) as best_score, (SELECT COUNT(*) FROM posts WHERE owner_user_id = users.id) as total FROM users WHERE reputation > 100",10000.0,10000.0,0.0,10000.00;10000.00,2,slow,0,0,0,1,0,0,0,0
+179,"SELECT display_name, (SELECT AVG(score) FROM posts WHERE owner_user_id = users.id) as avg_score FROM users WHERE id IN (SELECT owner_user_id FROM posts WHERE view_count > 1000)",10000.0,10000.0,0.0,10000.00;10000.00,2,slow,0,0,0,1,0,0,0,0
+180,"SELECT display_name, (SELECT COUNT(*) FROM posts WHERE owner_user_id = users.id) as posts FROM users ORDER BY posts DESC",10000.0,10000.0,0.0,10000.00;10000.00,2,slow,0,0,0,1,0,1,0,0
+181,"SELECT COUNT(*), AVG(score), MAX(score), MIN(score) FROM posts",25.78,5.97,15.24,25.78;44.44;4.61;5.97;13.14;4.88,0,fast,0,0,0,0,0,0,0,0
+182,"SELECT COUNT(*), AVG(reputation), MAX(reputation), MIN(reputation) FROM users",21.25,29.18,14.25,21.25;53.11;9.66;34.93;29.18;23.44,0,fast,0,0,0,0,0,0,0,0
+183,"SELECT COUNT(*), AVG(view_count), MAX(view_count) FROM posts",8.16,7.58,3.47,8.16;8.70;15.25;6.92;7.58;5.11,0,fast,0,0,0,0,0,0,0,0
+184,"SELECT COUNT(*), AVG(answer_count), MAX(answer_count) FROM posts",3.6,14.16,6.23,3.60;3.63;14.16;17.25;19.27;5.73,0,fast,0,0,0,0,0,0,0,0
+185,"SELECT u.location, COUNT(*) as user_count, AVG(u.reputation) FROM users u GROUP BY u.location ORDER BY user_count DESC",31.53,42.28,32.1,31.53;72.44;102.28;19.67;19.28;42.28,0,fast,0,0,0,0,1,1,0,0
+186,"SELECT u.display_name, SUM(p.view_count) as total_views FROM users u JOIN posts p ON p.owner_user_id = u.id GROUP BY u.display_name ORDER BY total_views DESC",151.81,185.69,70.84,151.81;117.97;196.21;185.69;244.01;40.23,0,slow,0,0,1,0,1,1,0,0
+187,"SELECT u.display_name, COUNT(p.id) as post_count, AVG(p.score) FROM users u JOIN posts p ON p.owner_user_id = u.id GROUP BY u.display_name ORDER BY post_count DESC",43.58,203.64,43.82,43.58;203.64;247.16;153.00;228.21;132.04,0,slow,0,0,1,0,1,1,0,0
+188,"SELECT post_type_id, COUNT(*), AVG(score), MAX(score) FROM posts GROUP BY post_type_id ORDER BY COUNT(*) DESC",35.26,40.48,7.31,35.26;40.48;30.15;46.12;41.06;26.59,0,fast,0,0,0,0,1,1,0,0
+189,"SELECT vote_type_id, COUNT(*) FROM votes GROUP BY vote_type_id ORDER BY COUNT(*) DESC",128.08,91.8,47.29,128.08;91.80;127.52;132.86;18.89;32.49,0,fast,0,0,0,0,1,1,0,0
+190,"SELECT EXTRACT(YEAR FROM creation_date), COUNT(*) FROM posts GROUP BY EXTRACT(YEAR FROM creation_date) ORDER BY 1",26.51,57.57,18.03,26.51;57.57;62.41;54.55;64.06;15.37,0,fast,0,0,0,0,1,1,0,1
+191,"SELECT u.display_name, u.location, COUNT(p.id) as post_count, AVG(p.score) as avg_score, SUM(p.view_count) as total_views FROM users u JOIN posts p ON p.owner_user_id = u.id WHERE u.location LIKE '%United States%' AND p.score > 0 GROUP BY u.display_name, u.location ORDER BY avg_score DESC",29.88,56.72,19.55,29.88;46.40;88.58;73.61;33.30;56.72,0,fast,0,1,1,0,1,1,0,0
+192,"SELECT u.display_name, COUNT(v.id) as vote_count FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY u.display_name ORDER BY vote_count DESC",303.31,433.42,82.49,303.31;369.76;433.42;475.94;240.43;434.43,0,slow,0,0,2,0,1,1,0,0
+193,"SELECT u.location, COUNT(p.id), AVG(p.score), SUM(p.view_count) FROM users u JOIN posts p ON p.owner_user_id = u.id GROUP BY u.location ORDER BY AVG(p.score) DESC",192.38,136.21,20.61,192.38;136.21;182.31;130.61;165.28;133.23,0,slow,0,0,1,0,1,1,0,0
+194,"SELECT u.display_name, COUNT(DISTINCT v.vote_type_id), SUM(p.score) FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY u.display_name ORDER BY SUM(p.score) DESC",1183.99,994.79,42.84,1183.99;951.96;1037.63,0,slow,0,0,2,0,1,1,0,0
+195,"SELECT u.display_name, u.location, COUNT(p.id), AVG(p.score), SUM(p.view_count), MAX(p.score) FROM users u JOIN posts p ON p.owner_user_id = u.id GROUP BY u.display_name, u.location ORDER BY SUM(p.view_count) DESC",260.1,146.13,55.24,260.10;111.56;255.84;156.62;146.13;99.07,0,slow,0,0,1,0,1,1,0,0
+196,"SELECT u.display_name, COUNT(p.id), AVG(p.score), SUM(p.view_count) FROM users u JOIN posts p ON p.owner_user_id = u.id WHERE u.location LIKE '%Germany%' GROUP BY u.display_name ORDER BY AVG(p.score) DESC",13.73,9.07,2.26,13.73;14.57;10.48;9.07;8.62;8.57,0,fast,0,1,1,0,1,1,0,0
+197,"SELECT u.display_name, COUNT(p.id), AVG(p.score) FROM users u JOIN posts p ON p.owner_user_id = u.id WHERE u.location LIKE '%United Kingdom%' GROUP BY u.display_name ORDER BY COUNT(p.id) DESC",9.44,9.64,15.21,9.44;9.64;9.14;9.78;47.47;9.21,0,fast,0,1,1,0,1,1,0,0
+198,"SELECT u.display_name, SUM(p.score), COUNT(v.id) FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY u.display_name ORDER BY SUM(p.score) DESC",155.24,277.54,61.51,155.24;277.54;292.21;209.04;193.72;364.15,0,slow,0,0,2,0,1,1,0,0
+199,"SELECT u.location, AVG(p.score), COUNT(p.id), SUM(p.view_count) FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY u.location ORDER BY AVG(p.score) DESC",208.61,141.7,26.76,208.61;206.12;137.45;136.24;141.70;168.15,0,slow,0,0,2,0,1,1,0,0
+200,"SELECT u.display_name, COUNT(DISTINCT p.id), COUNT(DISTINCT v.id), AVG(p.score) FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY u.display_name ORDER BY COUNT(DISTINCT p.id) DESC",1277.11,1267.93,117.85,1277.11;1150.08;1385.77,0,slow,0,0,2,0,1,1,0,0
+201,"SELECT u.display_name, COUNT(p.id), AVG(p.score), MAX(p.score), MIN(p.score), SUM(p.view_count) FROM users u JOIN posts p ON p.owner_user_id = u.id GROUP BY u.display_name ORDER BY AVG(p.score) DESC",277.87,197.69,19.87,277.87;181.22;197.69;217.34;225.15;173.79,0,slow,0,0,1,0,1,1,0,0
+202,"SELECT u.location, COUNT(DISTINCT u.id), COUNT(p.id), AVG(p.score) FROM users u JOIN posts p ON p.owner_user_id = u.id GROUP BY u.location ORDER BY COUNT(p.id) DESC",327.04,267.21,77.56,327.04;428.95;227.82;341.62;267.21;226.22,0,slow,0,0,1,0,1,1,0,0
+203,"SELECT u.display_name, COUNT(p.id), SUM(p.view_count), AVG(p.score) FROM users u JOIN posts p ON p.owner_user_id = u.id WHERE p.post_type_id = 1 GROUP BY u.display_name ORDER BY SUM(p.view_count) DESC",207.83,147.73,23.48,207.83;168.14;118.37;138.82;147.73;186.25,0,slow,0,0,1,0,1,1,0,0
+204,"SELECT u.display_name, COUNT(v.id) FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id WHERE v.vote_type_id = 2 GROUP BY u.display_name ORDER BY COUNT(v.id) DESC",228.62,324.57,41.51,228.62;273.07;402.51;328.40;324.57;320.90,0,slow,0,0,2,0,1,1,0,0
+205,"SELECT u.location, AVG(p.score), COUNT(p.id) FROM users u JOIN posts p ON p.owner_user_id = u.id WHERE u.location LIKE '%United States%' GROUP BY u.location",15.49,52.18,17.66,15.49;22.71;21.35;52.18;62.12;58.13,0,fast,0,1,1,0,1,0,0,0
+206,"SELECT EXTRACT(YEAR FROM p.creation_date), COUNT(p.id), AVG(p.score) FROM posts p JOIN users u ON p.owner_user_id = u.id GROUP BY EXTRACT(YEAR FROM p.creation_date) ORDER BY 1",177.44,158.54,26.1,177.44;158.54;150.48;182.26;133.38;208.21,0,slow,0,0,1,0,1,1,0,1
+207,"SELECT EXTRACT(MONTH FROM creation_date), COUNT(*), AVG(score) FROM posts GROUP BY EXTRACT(MONTH FROM creation_date) ORDER BY 1",57.77,60.13,15.51,57.77;40.92;32.83;60.13;71.29;69.85,0,fast,0,0,0,0,1,1,0,1
+208,"SELECT u.display_name, COUNT(DISTINCT p.post_type_id), AVG(p.score) FROM users u JOIN posts p ON p.owner_user_id = u.id GROUP BY u.display_name HAVING COUNT(p.id) > 5 ORDER BY AVG(p.score) DESC",425.73,491.53,87.8,425.73;671.55;421.60;448.01;491.53;532.23,0,slow,0,0,1,0,1,1,0,0
+209,"SELECT u.location, COUNT(p.id), AVG(p.score), SUM(p.view_count), MAX(p.score) FROM users u JOIN posts p ON p.owner_user_id = u.id WHERE p.score > 0 GROUP BY u.location ORDER BY SUM(p.view_count) DESC",148.97,154.86,24.81,148.97;144.79;154.86;202.55;146.94;195.07,0,slow,0,0,1,0,1,1,0,0
+210,"SELECT p.post_type_id, u.location, COUNT(*), AVG(p.score) FROM posts p JOIN users u ON p.owner_user_id = u.id GROUP BY p.post_type_id, u.location ORDER BY COUNT(*) DESC",148.78,136.3,49.36,148.78;102.91;213.12;185.37;81.19;136.30,0,slow,0,0,1,0,1,1,0,0
+211,"SELECT p.title, p.score, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id ORDER BY p.view_count DESC",174.8,222.15,46.93,174.80;180.95;222.15;234.82;245.23;116.94,0,slow,0,0,1,0,0,1,0,0
+212,"SELECT p.title, p.score FROM posts p JOIN users u ON p.owner_user_id = u.id ORDER BY u.reputation DESC",199.2,135.45,23.95,199.20;89.13;161.85;127.61;135.45;142.51,0,slow,0,0,1,0,0,1,0,0
+213,"SELECT id, title, score, view_count FROM posts ORDER BY view_count DESC",45.18,55.97,14.35,45.18;58.15;54.95;55.97;42.87;86.30,0,fast,0,0,0,0,0,1,0,0
+214,"SELECT id, display_name, reputation FROM users ORDER BY reputation DESC",193.07,190.95,65.67,193.07;317.60;213.56;124.63;157.72;190.95,0,slow,0,0,0,0,0,1,0,0
+215,"SELECT id, display_name, reputation, location FROM users ORDER BY reputation DESC",247.49,208.6,87.45,247.49;208.60;303.38;230.74;82.00;79.87,0,slow,0,0,0,0,0,1,0,0
+216,"SELECT id, title, answer_count FROM posts ORDER BY answer_count DESC",10.85,14.57,16.88,10.85;12.20;54.46;22.04;14.57;7.19,0,fast,0,0,0,0,0,1,0,0
+217,"SELECT id, title, score FROM posts ORDER BY score ASC",7.02,7.42,1.53,7.02;6.94;10.94;7.08;9.12;7.42,0,fast,0,0,0,0,0,1,0,0
+218,"SELECT id, display_name FROM users ORDER BY creation_date DESC",67.04,88.64,33.03,67.04;136.58;76.15;36.99;88.64;106.87,0,fast,0,0,0,0,0,1,0,0
+219,"SELECT id, title FROM posts ORDER BY creation_date ASC",13.2,8.3,2.98,13.20;15.77;8.17;11.52;8.20;8.30,0,fast,0,0,0,0,0,1,0,0
+220,"SELECT id, post_id, vote_type_id FROM votes ORDER BY creation_date DESC",68.62,167.94,30.18,68.62;102.35;187.50;167.94;151.09;179.03,0,slow,0,0,0,0,0,1,0,0
+221,SELECT * FROM users WHERE location LIKE '%United States%' OR location LIKE '%Canada%' OR location LIKE '%United Kingdom%',78.51,15.71,4.89,78.51;19.15;9.69;15.71;8.10;20.20,0,fast,1,1,0,0,0,0,1,0
+222,SELECT * FROM users WHERE location LIKE '%Germany%' OR location LIKE '%France%' OR location LIKE '%Italy%',8.0,8.85,3.26,8.00;14.12;15.89;8.32;8.85;8.20,0,fast,1,1,0,0,0,0,1,0
+223,SELECT * FROM posts WHERE score > 50 OR view_count > 10000 OR answer_count > 10,3.14,4.71,5.02,3.14;3.02;4.71;2.41;7.95;16.12,0,fast,1,0,0,0,0,0,1,0
+224,SELECT * FROM posts WHERE score > 100 OR view_count > 50000,13.16,11.34,2.13,13.16;14.18;11.34;11.42;7.48;11.31,0,fast,1,0,0,0,0,0,1,0
+225,SELECT * FROM votes WHERE vote_type_id = 1 OR vote_type_id = 2 OR vote_type_id = 3 OR vote_type_id = 4,75.76,32.24,12.38,75.76;47.12;58.35;31.64;32.24;23.93,0,fast,1,0,0,0,0,0,1,0
+226,SELECT * FROM users WHERE location LIKE '%Australia%' OR location LIKE '%New Zealand%',57.16,36.17,10.61,57.16;57.87;30.62;31.80;48.90;36.17,0,fast,1,1,0,0,0,0,1,0
+227,SELECT * FROM posts WHERE answer_count = 0 OR score < 0,19.84,17.41,3.31,19.84;20.57;17.40;17.41;10.90;19.16,0,fast,1,0,0,0,0,0,1,0
+228,SELECT * FROM users WHERE reputation > 10000 OR reputation < 0,34.73,28.37,5.02,34.73;17.55;29.31;26.97;28.37;32.44,0,fast,1,0,0,0,0,0,1,0
+229,SELECT * FROM posts WHERE post_type_id = 1 OR post_type_id = 2 OR post_type_id = 3,19.69,18.63,2.31,19.69;14.78;16.99;20.11;18.63;21.32,0,fast,1,0,0,0,0,0,1,0
+230,SELECT * FROM users WHERE location LIKE '%Spain%' OR location LIKE '%Portugal%' OR location LIKE '%Mexico%',69.47,45.61,20.53,69.47;70.93;22.14;62.55;20.38;45.61,0,fast,1,1,0,0,0,0,1,0
+231,SELECT * FROM posts WHERE score > 100 OR answer_count > 20 OR view_count > 100000,5.51,12.96,3.14,5.51;5.64;13.11;12.86;14.46;12.96,0,fast,1,0,0,0,0,0,1,0
+232,SELECT * FROM users WHERE location LIKE '%New York%' OR location LIKE '%Los Angeles%' OR location LIKE '%Chicago%',40.87,69.01,7.76,40.87;85.84;78.37;69.01;67.10;65.47,0,fast,1,1,0,0,0,0,1,0
+233,SELECT * FROM posts WHERE post_type_id = 1 OR post_type_id = 2 OR score > 50,11.26,10.49,5.1,11.26;13.44;6.07;10.49;17.39;3.08,0,fast,1,0,0,0,0,0,1,0
+234,SELECT * FROM users WHERE reputation > 5000 OR reputation < 10,55.9,47.69,12.21,55.90;75.79;47.18;47.69;42.37;61.29,0,fast,1,0,0,0,0,0,1,0
+235,SELECT * FROM votes WHERE vote_type_id = 1 OR vote_type_id = 5 OR vote_type_id = 8,13.91,18.41,8.72,13.91;11.68;26.01;34.01;11.26;18.41,0,fast,1,0,0,0,0,0,1,0
+236,SELECT p.title FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE u.location LIKE '%United States%' OR u.location LIKE '%Canada%',12.05,29.22,17.57,12.05;21.10;31.40;15.13;65.66;29.22,0,fast,0,1,1,0,0,0,1,0
+237,SELECT * FROM posts WHERE score < 0 OR answer_count = 0 OR view_count < 10,11.74,20.06,4.3,11.74;11.15;18.27;22.85;22.76;20.06,0,fast,1,0,0,0,0,0,1,0
+238,SELECT * FROM users WHERE display_name LIKE '%test%' OR display_name LIKE '%admin%' OR display_name LIKE '%user%',99.23,57.6,39.29,99.23;52.89;57.69;18.84;57.60;138.04,0,fast,1,1,0,0,0,0,1,0
+239,SELECT * FROM posts WHERE title LIKE '%help%' OR title LIKE '%error%' OR title LIKE '%problem%',33.96,56.96,6.27,33.96;48.19;58.19;56.96;67.50;54.28,0,fast,1,1,0,0,0,0,1,0
+240,SELECT * FROM posts WHERE creation_date < '2012-01-01' OR creation_date > '2023-01-01',12.16,7.88,4.72,12.16;4.06;5.39;7.88;15.06;15.11,0,fast,1,0,0,0,0,0,1,0
+241,SELECT * FROM users WHERE LOWER(display_name) = 'john',104.67,131.35,19.68,104.67;131.35;170.37;162.31;125.41;123.74,0,slow,1,0,0,0,0,0,0,1
+242,SELECT * FROM users WHERE LOWER(display_name) = 'smith',130.03,148.06,38.85,130.03;148.06;149.19;152.41;49.72;120.99,0,slow,1,0,0,0,0,0,0,1
+243,SELECT * FROM users WHERE UPPER(location) = 'UNITED STATES',32.14,72.73,13.94,32.14;60.96;72.61;72.73;100.75;88.66,0,fast,1,0,0,0,0,0,0,1
+244,SELECT * FROM posts WHERE EXTRACT(YEAR FROM creation_date) = 2020,17.94,23.17,5.58,17.94;18.23;25.06;11.87;23.17;27.62,0,fast,1,0,0,0,0,0,0,1
+245,SELECT * FROM posts WHERE EXTRACT(YEAR FROM creation_date) = 2019,29.98,26.07,6.34,29.98;41.50;24.68;26.07;26.54;25.59,0,fast,1,0,0,0,0,0,0,1
+246,SELECT * FROM posts WHERE EXTRACT(MONTH FROM creation_date) = 6,25.71,24.71,5.21,25.71;12.04;25.28;26.24;22.68;24.71,0,fast,1,0,0,0,0,0,0,1
+247,SELECT * FROM users WHERE LENGTH(location) > 20,43.63,24.97,6.85,43.63;23.88;39.33;31.86;24.97;19.95,0,fast,1,0,0,0,0,0,0,1
+248,SELECT * FROM users WHERE LENGTH(display_name) > 15,14.87,24.49,11.8,14.87;11.70;24.49;21.33;42.48;40.79,0,fast,1,0,0,0,0,0,0,1
+249,SELECT * FROM posts WHERE LENGTH(title) > 100,24.1,21.27,2.88,24.10;28.05;20.00;20.94;21.27;23.27,0,fast,1,0,0,0,0,0,0,1
+250,SELECT * FROM posts WHERE EXTRACT(YEAR FROM creation_date) = 2018,26.54,25.55,6.17,26.54;39.51;21.39;27.08;25.17;25.55,0,fast,1,0,0,0,0,0,0,1
+251,SELECT * FROM posts WHERE EXTRACT(YEAR FROM creation_date) = 2021,25.01,26.33,8.82,25.01;46.41;26.33;21.02;25.28;27.75,0,fast,1,0,0,0,0,0,0,1
+252,SELECT * FROM posts WHERE EXTRACT(YEAR FROM creation_date) = 2022,30.67,28.15,6.66,30.67;44.16;28.15;28.81;26.52;27.07,0,fast,1,0,0,0,0,0,0,1
+253,SELECT * FROM posts WHERE EXTRACT(MONTH FROM creation_date) = 1,26.06,15.59,7.88,26.06;15.59;11.89;21.96;6.68;29.30,0,fast,1,0,0,0,0,0,0,1
+254,SELECT * FROM posts WHERE EXTRACT(MONTH FROM creation_date) = 12,20.49,27.27,3.14,20.49;22.47;29.50;27.27;31.72;26.04,0,fast,1,0,0,0,0,0,0,1
+255,SELECT * FROM users WHERE LOWER(display_name) = 'anonymous',89.2,143.43,14.62,89.20;143.43;135.81;163.09;151.78;119.85,0,slow,1,0,0,0,0,0,0,1
+256,SELECT * FROM users WHERE LOWER(display_name) LIKE '%user%',134.78,166.6,59.9,134.78;166.60;82.70;182.32;29.16;169.23,0,slow,1,1,0,0,0,0,0,1
+257,SELECT * FROM users WHERE LENGTH(location) > 30,25.88,27.91,7.01,25.88;37.68;16.13;31.14;27.91;27.00,0,fast,1,0,0,0,0,0,0,1
+258,SELECT * FROM posts WHERE LENGTH(title) > 80,18.91,24.19,5.07,18.91;14.72;24.19;24.22;13.74;25.21,0,fast,1,0,0,0,0,0,0,1
+259,SELECT * FROM users WHERE UPPER(location) LIKE '%UNITED%',121.31,101.04,38.25,121.31;106.03;108.36;101.04;25.48;29.02,0,slow,1,1,0,0,0,0,0,1
+260,SELECT * FROM posts WHERE EXTRACT(DAY FROM creation_date) = 1,19.56,20.5,4.85,19.56;10.17;20.50;24.72;21.17;18.72,0,fast,1,0,0,0,0,0,0,1
+261,SELECT DISTINCT location FROM users,62.49,105.04,30.07,62.49;106.70;107.79;105.04;100.61;30.11,0,slow,0,0,0,0,0,0,0,0
+262,SELECT DISTINCT post_type_id FROM posts,14.86,25.41,6.71,14.86;25.41;24.34;12.99;33.37;28.22,0,fast,0,0,0,0,0,0,0,0
+263,SELECT DISTINCT vote_type_id FROM votes,76.82,95.82,45.15,76.82;95.82;126.86;131.57;26.40;32.59,0,fast,0,0,0,0,0,0,0,0
+264,SELECT DISTINCT owner_user_id FROM posts,20.09,26.64,13.04,20.09;22.60;26.64;55.66;35.73;19.36,0,fast,0,0,0,0,0,0,0,0
+265,"SELECT DISTINCT u.location, p.post_type_id FROM users u JOIN posts p ON p.owner_user_id = u.id",135.04,150.11,55.59,135.04;136.97;206.63;185.10;150.11;45.22,0,slow,0,0,1,0,0,0,0,0
+266,SELECT DISTINCT location FROM users ORDER BY location,244.52,201.62,49.74,244.52;163.77;294.57;156.07;201.62;221.52,0,slow,0,0,0,0,0,1,0,0
+267,SELECT DISTINCT display_name FROM users ORDER BY display_name,1548.03,923.63,70.56,1548.03;853.07;994.18,0,slow,0,0,0,0,0,1,0,0
+268,SELECT DISTINCT score FROM posts ORDER BY score DESC,4.29,6.35,6.13,4.29;4.31;6.35;5.20;20.01;14.34,0,fast,0,0,0,0,0,1,0,0
+269,SELECT DISTINCT answer_count FROM posts ORDER BY answer_count DESC,27.76,25.83,4.44,27.76;18.95;30.21;31.30;25.83;24.31,0,fast,0,0,0,0,0,1,0,0
+270,"SELECT DISTINCT u.location, p.post_type_id, AVG(p.score) FROM users u JOIN posts p ON p.owner_user_id = u.id GROUP BY u.location, p.post_type_id",139.27,75.69,28.54,139.27;97.95;32.14;75.69;28.01;85.74,0,fast,0,0,1,0,1,0,0,0
+271,SELECT DISTINCT owner_user_id FROM posts WHERE score > 10,3.36,3.08,3.57,3.36;2.65;2.02;5.70;3.08;11.72,0,fast,0,0,0,0,0,0,0,0
+272,SELECT DISTINCT post_id FROM votes WHERE vote_type_id = 2,22.34,66.7,38.04,22.34;30.35;22.36;66.70;89.10;125.40,0,fast,0,0,0,0,0,0,0,0
+273,SELECT DISTINCT u.display_name FROM users u JOIN posts p ON p.owner_user_id = u.id WHERE p.score > 50,2.91,10.03,2.48,2.91;4.08;7.05;10.18;10.03;10.53,0,fast,0,0,1,0,0,0,0,0
+274,SELECT DISTINCT u.location FROM users u JOIN posts p ON p.owner_user_id = u.id WHERE p.score > 100,4.24,9.32,1.2,4.24;8.78;9.32;11.80;8.32;9.56,0,fast,0,0,1,0,0,0,0,0
+275,SELECT DISTINCT p.post_type_id FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE u.reputation > 1000,47.23,38.98,11.5,47.23;31.21;38.98;57.92;24.83;45.66,0,fast,0,0,1,0,0,0,0,0
+276,"SELECT p.title, p.score, p.view_count, u.display_name, u.location, u.reputation FROM posts p JOIN users u ON p.owner_user_id = u.id ORDER BY p.score DESC",162.05,120.0,43.55,162.05;106.87;115.08;120.00;212.42;190.18,0,slow,0,0,1,0,0,1,0,0
+277,"SELECT p.title, p.score, u.display_name, COUNT(v.id) as votes FROM posts p JOIN users u ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY p.title, p.score, u.display_name ORDER BY votes DESC",1005.61,892.12,38.14,1005.61;930.26;853.98,0,slow,0,0,2,0,1,1,0,0
+278,"SELECT u.display_name, u.reputation, u.location, COUNT(p.id), AVG(p.score) FROM users u JOIN posts p ON p.owner_user_id = u.id GROUP BY u.display_name, u.reputation, u.location ORDER BY u.reputation DESC",334.99,295.89,59.53,334.99;216.59;380.45;292.72;369.49;295.89,0,slow,0,0,1,0,1,1,0,0
+279,"SELECT p.title, p.score, p.view_count, p.answer_count, u.display_name, u.reputation FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE p.score > 10 ORDER BY p.view_count DESC",27.0,99.93,32.73,27.00;104.76;130.91;99.93;90.05;31.89,0,fast,0,0,1,0,0,1,0,0
+280,"SELECT u.display_name, p.title, p.score, v.vote_type_id FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id WHERE u.reputation > 500 ORDER BY p.score DESC",138.5,204.76,34.49,138.50;175.76;152.10;204.76;205.57;254.98,0,slow,0,0,2,0,0,1,0,0
+281,"SELECT u.location, COUNT(p.id), AVG(p.score), AVG(u.reputation) FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY u.location ORDER BY COUNT(p.id) DESC",348.91,465.03,43.0,348.91;465.03;470.96;470.87;369.95;395.87,0,slow,0,0,2,0,1,1,0,0
+282,"SELECT p.title, COUNT(v.id), AVG(p.score) FROM posts p JOIN votes v ON v.post_id = p.id GROUP BY p.title ORDER BY COUNT(v.id) DESC",231.13,287.76,37.7,231.13;283.48;326.03;315.14;217.85;287.76,0,slow,0,0,1,0,1,1,0,0
+283,"SELECT u.display_name, u.location, SUM(p.view_count), COUNT(p.id) FROM users u JOIN posts p ON p.owner_user_id = u.id WHERE u.location LIKE '%United States%' GROUP BY u.display_name, u.location ORDER BY SUM(p.view_count) DESC",80.49,64.99,4.87,80.49;65.42;57.54;69.09;64.99;56.50,0,fast,0,1,1,0,1,1,0,0
+284,"SELECT p.post_type_id, COUNT(p.id), AVG(p.score), SUM(p.view_count) FROM posts p JOIN users u ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY p.post_type_id ORDER BY SUM(p.view_count) DESC",261.54,365.56,47.04,261.54;427.48;365.56;375.49;281.07;356.21,0,slow,0,0,2,0,1,1,0,0
+285,"SELECT u.display_name, COUNT(p.id), SUM(p.score), AVG(p.view_count), MAX(p.score) FROM users u JOIN posts p ON p.owner_user_id = u.id WHERE u.reputation > 100 GROUP BY u.display_name ORDER BY SUM(p.score) DESC",139.03,132.9,38.15,139.03;82.56;99.87;187.07;159.69;132.90,0,slow,0,0,1,0,1,1,0,0
+286,"SELECT id, title, score FROM posts WHERE id = 100",0.18,0.1,0.02,0.18;0.06;0.10;0.12;0.10;0.12,0,fast,0,0,0,0,0,0,0,0
+287,"SELECT id, title, score FROM posts WHERE id = 500",0.12,0.1,0.01,0.12;0.09;0.10;0.12;0.10;0.12,0,fast,0,0,0,0,0,0,0,0
+288,"SELECT id, title, score FROM posts WHERE id = 1000",0.12,0.12,0.01,0.12;0.09;0.10;0.12;0.12;0.12,0,fast,0,0,0,0,0,0,0,0
+289,"SELECT id, title, score FROM posts WHERE id = 5000",0.14,0.12,0.02,0.14;0.18;0.12;0.12;0.12;0.13,0,fast,0,0,0,0,0,0,0,0
+290,"SELECT id, title, score FROM posts WHERE id = 10000",0.16,0.12,0.01,0.16;0.10;0.12;0.14;0.12;0.12,0,fast,0,0,0,0,0,0,0,0
+291,"SELECT id, title, score FROM posts WHERE id = 20000",0.09,0.11,0.04,0.09;0.07;0.11;0.14;0.13;0.04,0,fast,0,0,0,0,0,0,0,0
+292,"SELECT id, title, score FROM posts WHERE id = 50000",0.1,0.1,0.03,0.10;0.07;0.08;0.10;0.10;0.15,0,fast,0,0,0,0,0,0,0,0
+293,"SELECT id, title, score FROM posts WHERE id = 100000",0.1,0.1,0.01,0.10;0.08;0.10;0.10;0.12;0.12,0,fast,0,0,0,0,0,0,0,0
+294,"SELECT id, display_name, reputation FROM users WHERE id = 10",0.13,0.12,0.01,0.13;0.10;0.12;0.12;0.14;0.12,0,fast,0,0,0,0,0,0,0,0
+295,"SELECT id, display_name, reputation FROM users WHERE id = 100",0.13,0.12,0.01,0.13;0.10;0.12;0.12;0.12;0.14,0,fast,0,0,0,0,0,0,0,0
+296,"SELECT id, display_name, reputation FROM users WHERE id = 500",0.1,0.12,0.01,0.10;0.09;0.12;0.10;0.12;0.12,0,fast,0,0,0,0,0,0,0,0
+297,"SELECT id, display_name, reputation FROM users WHERE id = 1000",0.1,0.1,0.03,0.10;0.09;0.11;0.03;0.10;0.10,0,fast,0,0,0,0,0,0,0,0
+298,"SELECT id, display_name, reputation FROM users WHERE id = 5000",0.13,0.12,0.01,0.13;0.10;0.12;0.12;0.14;0.14,0,fast,0,0,0,0,0,0,0,0
+299,"SELECT id, display_name, reputation FROM users WHERE id = 10000",0.12,0.12,0.04,0.12;0.11;0.12;0.12;0.20;0.09,0,fast,0,0,0,0,0,0,0,0
+300,"SELECT id, display_name, reputation FROM users WHERE id = 50000",0.07,0.08,0.03,0.07;0.05;0.12;0.12;0.08;0.04,0,fast,0,0,0,0,0,0,0,0
+301,"SELECT id, post_id, vote_type_id FROM votes WHERE id = 100",0.15,0.12,0.02,0.15;0.12;0.10;0.14;0.12;0.17,0,fast,0,0,0,0,0,0,0,0
+302,"SELECT id, post_id, vote_type_id FROM votes WHERE id = 1000",0.16,0.12,0.01,0.16;0.11;0.12;0.12;0.12;0.11,0,fast,0,0,0,0,0,0,0,0
+303,"SELECT id, post_id, vote_type_id FROM votes WHERE id = 10000",0.04,0.12,0.04,0.04;0.02;0.12;0.12;0.14;0.12,0,fast,0,0,0,0,0,0,0,0
+304,"SELECT id, post_id, vote_type_id FROM votes WHERE id = 100000",0.15,0.12,0.01,0.15;0.10;0.12;0.12;0.12;0.12,0,fast,0,0,0,0,0,0,0,0
+305,"SELECT id, post_id, vote_type_id FROM votes WHERE id = 500000",0.13,0.11,0.01,0.13;0.11;0.12;0.08;0.10;0.12,0,fast,0,0,0,0,0,0,0,0
+306,SELECT COUNT(*) FROM posts WHERE post_type_id = 1,8.73,13.66,2.01,8.73;10.26;13.66;15.76;15.70;13.24,0,fast,0,0,0,0,0,0,0,0
+307,SELECT COUNT(*) FROM posts WHERE post_type_id = 2,14.33,13.57,0.62,14.33;14.91;14.12;13.27;13.32;13.57,0,fast,0,0,0,0,0,0,0,0
+308,SELECT COUNT(*) FROM votes WHERE post_id = 500,18.94,19.36,7.57,18.94;3.68;19.36;6.32;21.16;20.45,0,fast,0,0,0,0,0,0,0,0
+309,SELECT COUNT(*) FROM votes WHERE post_id = 1000,22.3,23.26,8.09,22.30;35.36;23.26;25.09;10.72;18.52,0,fast,0,0,0,0,0,0,0,0
+310,SELECT COUNT(*) FROM votes WHERE vote_type_id = 2,8.2,16.85,12.73,8.20;11.53;16.85;40.60;37.02;11.34,0,fast,0,0,0,0,0,0,0,0
+311,SELECT COUNT(*) FROM users WHERE reputation > 10000,4.56,3.96,1.67,4.56;3.89;3.96;3.96;8.14;4.10,0,fast,0,0,0,0,0,0,0,0
+312,SELECT COUNT(*) FROM posts WHERE score > 100,1.94,1.66,0.95,1.94;4.02;1.71;1.61;1.66;1.61,0,fast,0,0,0,0,0,0,0,0
+313,SELECT COUNT(*) FROM posts WHERE answer_count = 0,6.51,3.23,1.55,6.51;4.80;6.97;2.96;3.00;3.23,0,fast,0,0,0,0,0,0,0,0
+314,SELECT COUNT(*) FROM posts WHERE score < 0,1.64,1.67,0.42,1.64;1.62;1.67;1.80;1.65;2.74,0,fast,0,0,0,0,0,0,0,0
+315,SELECT COUNT(*) FROM votes WHERE vote_type_id = 1,3.9,3.96,2.22,3.90;3.87;9.46;3.97;3.90;3.96,0,fast,0,0,0,0,0,0,0,0
+316,SELECT COUNT(*) FROM votes WHERE vote_type_id = 3,32.32,24.75,10.85,32.32;28.15;5.30;8.73;24.75;32.53,0,fast,0,0,0,0,0,0,0,0
+317,SELECT COUNT(*) FROM votes WHERE vote_type_id = 5,4.44,23.44,5.38,4.44;11.86;21.46;26.67;26.19;23.44,0,fast,0,0,0,0,0,0,0,0
+318,SELECT COUNT(*) FROM posts WHERE score = 0,15.86,13.64,1.75,15.86;12.23;13.61;17.01;16.06;13.64,0,fast,0,0,0,0,0,0,0,0
+319,SELECT COUNT(*) FROM users WHERE reputation = 1,38.08,7.36,10.83,38.08;34.58;7.21;7.06;8.55;7.36,0,fast,0,0,0,0,0,0,0,0
+320,SELECT COUNT(*) FROM posts WHERE answer_count > 10,1.77,2.37,2.78,1.77;1.84;9.04;2.48;1.85;2.37,0,fast,0,0,0,0,0,0,0,0
+321,SELECT COUNT(*) FROM posts WHERE view_count > 10000,3.8,1.78,0.86,3.80;3.92;1.78;1.92;1.70;1.67,0,fast,0,0,0,0,0,0,0,0
+322,SELECT COUNT(*) FROM users WHERE reputation > 5000,4.66,4.2,0.54,4.66;5.47;4.20;4.03;4.15;4.79,0,fast,0,0,0,0,0,0,0,0
+323,SELECT COUNT(*) FROM posts WHERE score > 50,6.37,10.7,2.7,6.37;7.74;4.47;10.70;10.96;11.75,0,fast,0,0,0,0,0,0,0,0
+324,SELECT COUNT(*) FROM posts WHERE post_type_id = 1 AND score > 10,6.12,5.01,3.31,6.12;1.87;7.69;11.35;5.01;3.72,0,fast,0,0,0,0,0,0,0,0
+325,SELECT COUNT(*) FROM votes WHERE vote_type_id = 2 AND post_id < 10000,45.65,27.12,8.42,45.65;27.12;10.10;23.85;34.83;30.51,0,fast,0,0,0,0,0,0,0,0
+326,"SELECT id, title, score FROM posts LIMIT 10",0.12,0.12,0.01,0.12;0.12;0.13;0.10;0.11;0.12,0,fast,0,0,0,0,0,0,0,0
+327,"SELECT id, title, score FROM posts LIMIT 20",0.12,0.12,0.05,0.12;0.10;0.24;0.11;0.12;0.14,0,fast,0,0,0,0,0,0,0,0
+328,"SELECT id, title, score FROM posts LIMIT 50",0.18,0.15,0.0,0.18;0.15;0.15;0.15;0.14;0.14,0,fast,0,0,0,0,0,0,0,0
+329,"SELECT id, display_name, reputation FROM users LIMIT 10",0.11,0.11,0.01,0.11;0.10;0.11;0.13;0.11;0.10,0,fast,0,0,0,0,0,0,0,0
+330,"SELECT id, display_name, reputation FROM users LIMIT 20",0.04,0.09,0.03,0.04;0.02;0.09;0.09;0.10;0.12,0,fast,0,0,0,0,0,0,0,0
+331,"SELECT id, display_name, location FROM users LIMIT 50",0.15,0.15,0.02,0.15;0.13;0.14;0.17;0.15;0.17,0,fast,0,0,0,0,0,0,0,0
+332,"SELECT id, post_id, vote_type_id FROM votes LIMIT 10",0.13,0.11,0.01,0.13;0.11;0.10;0.10;0.13;0.12,0,fast,0,0,0,0,0,0,0,0
+333,"SELECT id, post_id, vote_type_id FROM votes LIMIT 20",0.11,0.14,0.01,0.11;0.10;0.12;0.14;0.14;0.14,0,fast,0,0,0,0,0,0,0,0
+334,"SELECT id, title, score, view_count FROM posts LIMIT 100",0.21,0.25,0.02,0.21;0.19;0.22;0.25;0.25;0.25,0,fast,0,0,0,0,0,0,0,0
+335,"SELECT id, display_name, reputation FROM users LIMIT 100",0.24,0.19,0.02,0.24;0.23;0.24;0.19;0.19;0.19,0,fast,0,0,0,0,0,0,0,0
+336,"SELECT id, title FROM posts LIMIT 5",0.1,0.1,0.01,0.10;0.09;0.10;0.10;0.12;0.10,0,fast,0,0,0,0,0,0,0,0
+337,"SELECT id, display_name FROM users LIMIT 5",0.12,0.1,0.01,0.12;0.11;0.12;0.10;0.10;0.10,0,fast,0,0,0,0,0,0,0,0
+338,"SELECT id, post_id FROM votes LIMIT 5",0.09,0.09,0.04,0.09;0.09;0.10;0.10;0.02;0.02,0,fast,0,0,0,0,0,0,0,0
+339,"SELECT id, title, answer_count FROM posts LIMIT 10",0.03,0.12,0.13,0.03;0.03;0.05;0.39;0.12;0.15,0,fast,0,0,0,0,0,0,0,0
+340,"SELECT id, title, creation_date FROM posts LIMIT 10",0.13,0.12,0.01,0.13;0.12;0.10;0.13;0.10;0.13,0,fast,0,0,0,0,0,0,0,0
+341,"SELECT id, display_name, creation_date FROM users LIMIT 10",0.11,0.11,0.0,0.11;0.10;0.11;0.11;0.11;0.11,0,fast,0,0,0,0,0,0,0,0
+342,"SELECT id, score, view_count FROM posts LIMIT 20",0.15,0.14,0.01,0.15;0.13;0.12;0.14;0.14;0.14,0,fast,0,0,0,0,0,0,0,0
+343,"SELECT id, reputation, location FROM users LIMIT 20",0.1,0.14,0.07,0.10;0.28;0.11;0.14;0.14;0.11,0,fast,0,0,0,0,0,0,0,0
+344,"SELECT id, vote_type_id, creation_date FROM votes LIMIT 20",0.14,0.11,0.02,0.14;0.13;0.11;0.14;0.08;0.11,0,fast,0,0,0,0,0,0,0,0
+345,"SELECT id, title, post_type_id FROM posts LIMIT 50",0.14,0.14,0.0,0.14;0.14;0.14;0.14;0.15;0.14,0,fast,0,0,0,0,0,0,0,0
+346,"SELECT id, title, score FROM posts WHERE score > 50 LIMIT 10",0.23,0.35,0.06,0.23;0.34;0.50;0.35;0.35;0.38,0,fast,0,0,0,0,0,0,0,0
+347,"SELECT id, title, score FROM posts WHERE score > 100 LIMIT 20",6.2,6.62,3.4,6.20;2.22;3.79;6.62;9.67;11.23,0,fast,0,0,0,0,0,0,0,0
+348,"SELECT id, title, score FROM posts WHERE score > 200 LIMIT 10",8.8,5.43,3.58,8.80;11.73;7.65;1.64;2.95;5.43,0,fast,0,0,0,0,0,0,0,0
+349,"SELECT id, display_name FROM users WHERE reputation > 1000 LIMIT 10",0.1,0.16,0.04,0.10;0.08;0.10;0.20;0.16;0.16,0,fast,0,0,0,0,0,0,0,0
+350,"SELECT id, display_name FROM users WHERE reputation > 5000 LIMIT 20",13.02,15.37,8.41,13.02;15.37;4.74;25.83;25.03;9.04,0,fast,0,0,0,0,0,0,0,0
+351,"SELECT id, title FROM posts WHERE answer_count > 5 LIMIT 10",0.35,0.28,0.09,0.35;0.32;0.09;0.33;0.28;0.27,0,fast,0,0,0,0,0,0,0,0
+352,"SELECT id, title FROM posts WHERE view_count > 1000 LIMIT 10",0.14,0.12,0.01,0.14;0.14;0.13;0.12;0.12;0.12,0,fast,0,0,0,0,0,0,0,0
+353,"SELECT id, title FROM posts WHERE post_type_id = 1 LIMIT 20",0.13,0.13,0.02,0.13;0.12;0.13;0.13;0.16;0.15,0,fast,0,0,0,0,0,0,0,0
+354,"SELECT id, post_id FROM votes WHERE vote_type_id = 2 LIMIT 10",0.14,0.11,0.01,0.14;0.12;0.11;0.11;0.11;0.12,0,fast,0,0,0,0,0,0,0,0
+355,"SELECT id, post_id FROM votes WHERE vote_type_id = 1 LIMIT 20",0.55,0.52,0.1,0.55;0.54;0.35;0.50;0.67;0.52,0,fast,0,0,0,0,0,0,0,0
+356,"SELECT id, title FROM posts WHERE score > 500 LIMIT 5",3.03,9.47,2.98,3.03;2.52;9.18;9.66;9.47;10.95,0,fast,0,0,0,0,0,0,0,0
+357,"SELECT id, display_name FROM users WHERE reputation > 20000 LIMIT 5",24.84,28.82,5.36,24.84;38.38;28.82;26.32;22.36;31.26,0,fast,0,0,0,0,0,0,0,0
+358,"SELECT id, title FROM posts WHERE answer_count > 20 LIMIT 5",10.41,11.87,2.12,10.41;11.87;11.59;7.60;13.48;13.29,0,fast,0,0,0,0,0,0,0,0
+359,"SELECT id, title FROM posts WHERE score > 50 AND answer_count > 2 LIMIT 10",1.13,1.22,0.12,1.13;1.06;1.22;1.07;1.39;1.26,0,fast,0,0,0,0,0,0,0,0
+360,"SELECT id, display_name FROM users WHERE reputation > 1000 AND reputation < 5000 LIMIT 10",0.17,0.13,0.01,0.17;0.15;0.13;0.14;0.13;0.13,0,fast,0,0,0,0,0,0,0,0
+361,"SELECT id, title FROM posts WHERE post_type_id = 2 AND score > 10 LIMIT 10",0.13,0.13,0.0,0.13;0.12;0.13;0.14;0.13;0.13,0,fast,0,0,0,0,0,0,0,0
+362,"SELECT id, post_id FROM votes WHERE vote_type_id = 3 LIMIT 10",0.13,0.15,0.02,0.13;0.12;0.14;0.16;0.16;0.15,0,fast,0,0,0,0,0,0,0,0
+363,"SELECT id, title FROM posts WHERE view_count > 5000 LIMIT 10",0.21,0.16,0.04,0.21;0.22;0.11;0.14;0.16;0.20,0,fast,0,0,0,0,0,0,0,0
+364,"SELECT id, display_name FROM users WHERE reputation BETWEEN 1000 AND 2000 LIMIT 10",0.09,0.15,0.04,0.09;0.07;0.12;0.15;0.17;0.17,0,fast,0,0,0,0,0,0,0,0
+365,"SELECT id, title FROM posts WHERE creation_date > '2021-01-01' LIMIT 10",7.26,7.66,0.96,7.26;6.51;7.66;6.08;8.48;8.34,0,fast,0,0,0,0,0,0,0,0
+366,"SELECT p.title, p.score, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE p.score > 50 LIMIT 10",0.68,0.51,0.08,0.68;0.64;0.47;0.67;0.47;0.51,0,fast,0,0,1,0,0,0,0,0
+367,"SELECT p.title, p.score, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE p.score > 100 LIMIT 20",11.87,10.49,2.86,11.87;10.48;13.08;10.49;4.51;10.88,0,fast,0,0,1,0,0,0,0,0
+368,"SELECT p.title, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE u.reputation > 1000 LIMIT 10",30.73,35.86,7.82,30.73;47.86;38.21;26.28;27.71;35.86,0,fast,0,0,1,0,0,0,0,0
+369,"SELECT p.title, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id LIMIT 10",0.91,0.39,0.03,0.91;0.39;0.34;0.34;0.40;0.41,0,fast,0,0,1,0,0,0,0,0
+370,"SELECT p.id, p.score, v.vote_type_id FROM posts p JOIN votes v ON v.post_id = p.id WHERE p.score > 100 LIMIT 10",9.82,9.74,2.24,9.82;9.74;7.46;11.97;12.19;6.74,0,fast,0,0,1,0,0,0,0,0
+371,"SELECT p.title, COUNT(v.id) as vote_count FROM posts p JOIN votes v ON v.post_id = p.id WHERE p.score > 50 GROUP BY p.title LIMIT 10",11.65,65.49,27.76,11.65;11.57;40.26;65.49;80.67;86.59,0,fast,0,0,1,0,1,0,0,0
+372,"SELECT u.display_name, COUNT(p.id) FROM users u JOIN posts p ON p.owner_user_id = u.id GROUP BY u.display_name LIMIT 10",108.7,152.21,34.68,108.70;133.71;170.04;229.85;152.21;139.72,0,slow,0,0,1,0,1,0,0,0
+373,"SELECT p.title, p.score FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE p.score > 200 ORDER BY p.score DESC LIMIT 10",6.58,11.04,0.78,6.58;10.75;9.64;11.19;12.06;11.04,0,fast,0,0,1,0,0,0,0,0
+374,"SELECT p.title, p.score FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE p.answer_count > 3 LIMIT 20",0.32,0.33,0.1,0.32;0.34;0.32;0.33;0.59;0.31,0,fast,0,0,1,0,0,0,0,0
+375,"SELECT p.title, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE p.post_type_id = 1 LIMIT 10",0.37,0.33,0.08,0.37;0.33;0.42;0.42;0.22;0.30,0,fast,0,0,1,0,0,0,0,0
+376,"SELECT p.title, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE p.score > 500 LIMIT 5",11.62,10.26,0.94,11.62;10.26;9.29;9.62;11.46;11.60,0,fast,0,0,1,0,0,0,0,0
+377,"SELECT p.title, u.reputation FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE u.reputation > 5000 LIMIT 10",27.84,28.76,5.1,27.84;39.49;28.11;24.16;31.08;28.76,0,fast,0,0,1,0,0,0,0,0
+378,"SELECT p.id, p.score FROM posts p JOIN votes v ON v.post_id = p.id WHERE v.vote_type_id = 2 LIMIT 10",0.48,0.41,0.14,0.48;0.47;0.57;0.16;0.41;0.41,0,fast,0,0,1,0,0,0,0,0
+379,"SELECT p.title, p.answer_count FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE p.answer_count > 5 LIMIT 10",0.38,0.37,0.1,0.38;0.37;0.39;0.29;0.28;0.55,0,fast,0,0,1,0,0,0,0,0
+380,"SELECT u.display_name, p.score FROM users u JOIN posts p ON p.owner_user_id = u.id WHERE u.reputation > 2000 LIMIT 10",27.84,27.36,5.47,27.84;39.33;27.36;23.96;30.08;25.32,0,fast,0,0,1,0,0,0,0,0
+381,"SELECT p.title, p.score FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE p.score > 100 AND u.reputation > 500 LIMIT 10",10.93,11.97,1.1,10.93;13.14;11.97;12.10;11.63;9.77,0,fast,0,0,1,0,0,0,0,0
+382,"SELECT p.title, p.view_count FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE p.view_count > 500 LIMIT 10",0.26,0.25,0.05,0.26;0.25;0.16;0.26;0.32;0.20,0,fast,0,0,1,0,0,0,0,0
+383,"SELECT u.display_name, COUNT(p.id) FROM users u JOIN posts p ON p.owner_user_id = u.id WHERE u.reputation > 1000 GROUP BY u.display_name LIMIT 10",14.16,100.28,36.21,14.16;13.87;91.29;111.67;100.28;107.61,0,slow,0,0,1,0,1,0,0,0
+384,"SELECT p.title, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE p.creation_date > '2021-01-01' LIMIT 10",3.91,6.6,2.08,3.91;2.98;6.23;6.60;8.82;8.49,0,fast,0,0,1,0,0,0,0,0
+385,"SELECT p.id, v.vote_type_id FROM posts p JOIN votes v ON v.post_id = p.id WHERE p.score > 50 LIMIT 20",11.91,11.13,0.51,11.91;11.33;10.48;11.93;11.13;10.70,0,fast,0,0,1,0,0,0,0,0
+386,"SELECT id, title, score FROM posts ORDER BY score DESC LIMIT 10",32.66,30.57,7.13,32.66;48.48;30.36;33.56;30.57;29.48,0,fast,0,0,0,0,0,0,0,0
+387,"SELECT id, title, score FROM posts ORDER BY score DESC LIMIT 20",31.43,27.53,3.74,31.43;26.08;30.51;33.88;27.53;22.95,0,fast,0,0,0,0,0,0,0,0
+388,"SELECT id, display_name, reputation FROM users ORDER BY reputation DESC LIMIT 10",93.01,104.31,18.05,93.01;91.94;105.66;114.47;62.69;104.31,0,slow,0,0,0,0,0,0,0,0
+389,"SELECT id, display_name, reputation FROM users ORDER BY reputation DESC LIMIT 20",85.34,43.84,34.4,85.34;43.84;105.69;101.80;28.05;31.31,0,fast,0,0,0,0,0,0,0,0
+390,"SELECT id, title, view_count FROM posts ORDER BY view_count DESC LIMIT 10",26.31,31.71,3.93,26.31;28.10;32.48;22.77;31.71;33.57,0,fast,0,0,0,0,0,0,0,0
+391,"SELECT id, title, answer_count FROM posts ORDER BY answer_count DESC LIMIT 10",33.87,29.53,7.65,33.87;13.33;30.75;26.16;29.53;36.20,0,fast,0,0,0,0,0,0,0,0
+392,"SELECT id, display_name FROM users ORDER BY reputation DESC LIMIT 5",73.05,105.02,34.21,73.05;130.39;28.75;106.34;105.02;90.24,0,slow,0,0,0,0,0,0,0,0
+393,"SELECT id, title FROM posts ORDER BY creation_date DESC LIMIT 10",46.27,40.61,5.18,46.27;40.62;40.26;40.61;30.89;47.08,0,fast,0,0,0,0,0,0,0,0
+394,"SELECT id, display_name FROM users ORDER BY creation_date DESC LIMIT 10",89.67,85.28,40.17,89.67;56.54;116.60;85.28;127.52;17.59,0,fast,0,0,0,0,0,0,0,0
+395,"SELECT id, post_id FROM votes ORDER BY creation_date DESC LIMIT 10",43.37,41.24,33.64,43.37;109.53;69.92;41.24;27.93;15.43,0,fast,0,0,0,0,0,0,0,0
+396,"SELECT id, title, score FROM posts ORDER BY score ASC LIMIT 10",32.68,26.29,8.92,32.68;26.29;6.85;18.87;29.50;31.21,0,fast,0,0,0,0,0,0,0,0
+397,"SELECT id, title FROM posts ORDER BY view_count DESC LIMIT 5",14.68,6.86,4.29,14.68;16.43;8.31;4.83;4.85;6.86,0,fast,0,0,0,0,0,0,0,0
+398,"SELECT id, display_name FROM users ORDER BY reputation ASC LIMIT 10",55.99,13.47,21.18,55.99;67.36;13.08;13.47;13.21;19.12,0,fast,0,0,0,0,0,0,0,0
+399,"SELECT id, title FROM posts ORDER BY answer_count DESC LIMIT 5",4.88,5.04,0.19,4.88;5.21;4.90;5.04;4.97;5.42,0,fast,0,0,0,0,0,0,0,0
+400,"SELECT id, title FROM posts ORDER BY score DESC LIMIT 100",5.06,5.19,4.15,5.06;4.74;15.60;4.79;7.07;5.19,0,fast,0,0,0,0,0,0,0,0
+401,"SELECT id, display_name FROM users ORDER BY reputation DESC LIMIT 100",12.94,18.48,20.07,12.94;15.66;12.85;18.48;55.87;57.07,0,fast,0,0,0,0,0,0,0,0
+402,"SELECT id, title, score FROM posts WHERE score > 10 ORDER BY score DESC LIMIT 10",2.71,10.17,3.56,2.71;1.79;10.71;11.46;10.07;10.17,0,fast,0,0,0,0,0,0,0,0
+403,"SELECT id, display_name FROM users WHERE reputation > 100 ORDER BY reputation DESC LIMIT 10",63.64,38.55,16.41,63.64;57.93;38.55;16.63;15.77;45.03,0,fast,0,0,0,0,0,0,0,0
+404,"SELECT id, title FROM posts WHERE answer_count > 0 ORDER BY answer_count DESC LIMIT 10",18.6,7.82,10.29,18.60;30.96;3.29;7.82;11.65;3.15,0,fast,0,0,0,0,0,0,0,0
+405,"SELECT id, post_id FROM votes WHERE vote_type_id = 2 ORDER BY creation_date DESC LIMIT 10",13.45,12.46,0.8,13.45;13.82;11.73;11.67;12.46;12.95,0,fast,0,0,0,0,0,0,0,0
+406,SELECT AVG(score) FROM posts WHERE post_type_id = 1,3.04,2.7,7.46,3.04;2.41;2.43;2.70;16.65;18.70,0,fast,0,0,0,0,0,0,0,0
+407,SELECT MAX(score) FROM posts WHERE post_type_id = 1,17.47,17.67,2.8,17.47;23.53;15.61;18.55;16.29;17.67,0,fast,0,0,0,0,0,0,0,0
+408,SELECT MIN(score) FROM posts WHERE score > 0,7.73,9.47,7.03,7.73;4.49;7.89;9.47;22.41;19.92,0,fast,0,0,0,0,0,0,0,0
+409,SELECT AVG(reputation) FROM users WHERE reputation > 0,78.11,72.76,20.03,78.11;47.48;80.06;72.76;72.94;26.57,0,fast,0,0,0,0,0,0,0,0
+410,SELECT MAX(reputation) FROM users,47.49,49.32,7.83,47.49;49.32;48.02;39.15;53.39;63.23,0,fast,0,0,0,0,0,0,0,0
+411,SELECT MIN(creation_date) FROM posts,21.55,22.1,1.66,21.55;22.10;19.53;24.32;22.98;20.83,0,fast,0,0,0,0,0,0,0,0
+412,SELECT MAX(creation_date) FROM posts,23.37,21.12,2.78,23.37;25.91;21.03;21.40;21.12;17.14,0,fast,0,0,0,0,0,0,0,0
+413,"SELECT COUNT(*), AVG(score) FROM posts WHERE answer_count > 0",15.05,10.12,5.05,15.05;16.05;7.63;10.12;2.40;15.29,0,fast,0,0,0,0,0,0,0,0
+414,SELECT COUNT(*) FROM posts WHERE creation_date > '2021-01-01',16.69,18.46,0.88,16.69;17.66;16.78;18.50;19.38;18.46,0,fast,0,0,0,0,0,0,0,0
+415,SELECT COUNT(*) FROM users WHERE creation_date > '2020-01-01',61.05,58.39,6.67,61.05;70.05;58.39;59.97;49.69;55.46,0,fast,0,0,0,0,0,0,0,0
+416,SELECT AVG(score) FROM posts WHERE score > 0,13.76,18.86,6.06,13.76;11.15;21.70;22.24;7.04;18.86,0,fast,0,0,0,0,0,0,0,0
+417,SELECT MAX(view_count) FROM posts WHERE post_type_id = 1,15.23,17.85,2.22,15.23;21.22;14.94;17.85;19.20;16.12,0,fast,0,0,0,0,0,0,0,0
+418,SELECT MIN(reputation) FROM users WHERE reputation > 0,70.01,61.09,17.86,70.01;87.01;64.30;61.09;30.92;58.81,0,fast,0,0,0,0,0,0,0,0
+419,SELECT AVG(answer_count) FROM posts WHERE post_type_id = 1,6.73,16.06,3.01,6.73;11.57;16.06;19.36;14.00;19.22,0,fast,0,0,0,0,0,0,0,0
+420,"SELECT COUNT(*), AVG(reputation) FROM users WHERE reputation > 100",42.79,31.97,6.5,42.79;43.56;31.97;30.43;45.03;30.93,0,fast,0,0,0,0,0,0,0,0
+421,"SELECT MAX(score), MIN(score) FROM posts WHERE post_type_id = 2",15.26,11.03,4.3,15.26;11.03;7.60;16.52;10.17;19.24,0,fast,0,0,0,0,0,0,0,0
+422,SELECT COUNT(*) FROM posts WHERE score > 0 AND answer_count > 0,18.08,18.59,3.82,18.08;22.02;10.45;17.06;18.77;18.59,0,fast,0,0,0,0,0,0,0,0
+423,SELECT AVG(view_count) FROM posts WHERE score > 10,11.9,9.76,0.65,11.90;11.12;9.76;9.69;10.99;9.76,0,fast,0,0,0,0,0,0,0,0
+424,SELECT COUNT(*) FROM votes WHERE creation_date > '2021-01-01',51.49,38.3,14.28,51.49;59.86;38.64;28.19;38.30;16.56,0,fast,0,0,0,0,0,0,0,0
+425,SELECT MAX(creation_date) FROM users,59.55,57.51,5.0,59.55;65.19;66.16;54.77;54.80;57.51,0,fast,0,0,0,0,0,0,0,0
+426,"SELECT id, title FROM posts WHERE score = 0 LIMIT 10",0.14,0.2,0.04,0.14;0.20;0.12;0.19;0.21;0.20,0,fast,0,0,0,0,0,0,0,0
+427,"SELECT id, display_name FROM users WHERE reputation = 1 LIMIT 10",0.17,0.16,0.01,0.17;0.15;0.17;0.16;0.16;0.19,0,fast,0,0,0,0,0,0,0,0
+428,"SELECT id, post_id FROM votes WHERE vote_type_id = 3 LIMIT 10",0.14,0.13,0.01,0.14;0.12;0.13;0.13;0.13;0.15,0,fast,0,0,0,0,0,0,0,0
+429,"SELECT id, title FROM posts WHERE answer_count = 1 LIMIT 20",0.22,0.21,0.02,0.22;0.21;0.18;0.18;0.22;0.22,0,fast,0,0,0,0,0,0,0,0
+430,"SELECT id, title FROM posts WHERE post_type_id = 2 LIMIT 10",0.03,0.11,0.03,0.03;0.03;0.12;0.11;0.11;0.11,0,fast,0,0,0,0,0,0,0,0
+431,"SELECT id, display_name FROM users WHERE reputation = 101 LIMIT 10",0.11,0.11,0.01,0.11;0.10;0.13;0.11;0.11;0.11,0,fast,0,0,0,0,0,0,0,0
+432,"SELECT id, title FROM posts WHERE view_count = 0 LIMIT 10",0.11,0.08,0.03,0.11;0.11;0.05;0.08;0.02;0.12,0,fast,0,0,0,0,0,0,0,0
+433,"SELECT id, post_id FROM votes WHERE vote_type_id = 5 LIMIT 10",23.48,27.55,8.4,23.48;43.16;16.96;29.00;27.55;26.59,0,fast,0,0,0,0,0,0,0,0
+434,"SELECT id, title FROM posts WHERE score = 1 LIMIT 10",0.18,0.17,0.02,0.18;0.16;0.21;0.17;0.17;0.18,0,fast,0,0,0,0,0,0,0,0
+435,"SELECT id, display_name FROM users WHERE reputation = 11 LIMIT 10",1.0,1.22,0.13,1.00;0.97;1.01;1.27;1.29;1.22,0,fast,0,0,0,0,0,0,0,0
+436,"SELECT id, title FROM posts WHERE answer_count = 0 LIMIT 10",0.14,0.12,0.03,0.14;0.10;0.05;0.12;0.14;0.14,0,fast,0,0,0,0,0,0,0,0
+437,"SELECT id, post_id FROM votes WHERE vote_type_id = 4 LIMIT 10",6.31,7.09,0.55,6.31;7.09;7.43;6.51;7.72;6.23,0,fast,0,0,0,0,0,0,0,0
+438,"SELECT id, title FROM posts WHERE score = 2 LIMIT 10",0.21,0.17,0.02,0.21;0.20;0.17;0.17;0.21;0.17,0,fast,0,0,0,0,0,0,0,0
+439,"SELECT id, display_name FROM users WHERE reputation = 21 LIMIT 10",2.38,2.18,0.22,2.38;2.38;1.94;2.18;2.44;1.89,0,fast,0,0,0,0,0,0,0,0
+440,"SELECT id, title FROM posts WHERE post_type_id = 1 AND score = 5 LIMIT 10",0.22,0.31,0.11,0.22;0.48;0.17;0.21;0.31;0.33,0,fast,0,0,0,0,0,0,0,0
+441,"SELECT id, display_name FROM users WHERE reputation = 51 LIMIT 10",0.58,3.09,1.02,0.58;0.56;3.24;2.59;3.22;3.09,0,fast,0,0,0,0,0,0,0,0
+442,"SELECT id, title FROM posts WHERE answer_count = 2 LIMIT 10",0.15,0.15,0.01,0.15;0.15;0.15;0.16;0.19;0.15,0,fast,0,0,0,0,0,0,0,0
+443,"SELECT id, post_id FROM votes WHERE vote_type_id = 1 AND post_id < 1000 LIMIT 10",0.5,0.41,0.04,0.50;0.49;0.46;0.40;0.41;0.40,0,fast,0,0,0,0,0,0,0,0
+444,"SELECT id, title FROM posts WHERE score = 10 LIMIT 10",0.16,0.15,0.01,0.16;0.14;0.15;0.15;0.18;0.15,0,fast,0,0,0,0,0,0,0,0
+445,"SELECT id, display_name FROM users WHERE reputation = 201 LIMIT 10",7.05,6.4,0.39,7.05;6.52;5.49;6.50;6.40;6.33,0,fast,0,0,0,0,0,0,0,0
+446,"SELECT id, title, score FROM posts WHERE score > 50 AND answer_count > 0 LIMIT 20",10.66,12.61,0.99,10.66;11.82;10.31;12.78;13.07;12.61,0,fast,0,0,0,0,0,0,0,0
+447,"SELECT id, display_name, reputation FROM users WHERE reputation > 500 AND reputation < 1000 LIMIT 20",0.7,0.71,0.05,0.70;0.72;0.71;0.58;0.71;0.70,0,fast,0,0,0,0,0,0,0,0
+448,"SELECT id, title FROM posts WHERE post_type_id = 1 AND answer_count > 3 LIMIT 10",0.15,0.14,0.02,0.15;0.18;0.12;0.12;0.14;0.14,0,fast,0,0,0,0,0,0,0,0
+449,"SELECT id, display_name FROM users WHERE reputation > 100 LIMIT 50",0.15,0.15,0.02,0.15;0.15;0.12;0.19;0.15;0.15,0,fast,0,0,0,0,0,0,0,0
+450,"SELECT id, title, view_count FROM posts WHERE view_count > 100 AND score > 5 LIMIT 10",0.06,0.11,0.03,0.06;0.06;0.11;0.12;0.11;0.14,0,fast,0,0,0,0,0,0,0,0
+451,"SELECT id, title FROM posts WHERE score > 20 AND score < 50 LIMIT 10",0.13,0.17,0.05,0.13;0.13;0.28;0.16;0.17;0.17,0,fast,0,0,0,0,0,0,0,0
+452,"SELECT id, display_name FROM users WHERE reputation > 200 AND reputation < 500 LIMIT 10",0.18,0.17,0.01,0.18;0.17;0.14;0.15;0.17;0.17,0,fast,0,0,0,0,0,0,0,0
+453,"SELECT id, post_id FROM votes WHERE vote_type_id = 2 AND post_id > 100 LIMIT 10",0.51,0.5,0.08,0.51;0.50;0.50;0.49;0.63;0.68,0,fast,0,0,0,0,0,0,0,0
+454,"SELECT id, title FROM posts WHERE answer_count BETWEEN 1 AND 5 LIMIT 10",0.12,0.14,0.2,0.12;0.64;0.12;0.12;0.14;0.17,0,fast,0,0,0,0,0,0,0,0
+455,"SELECT id, display_name FROM users WHERE reputation BETWEEN 100 AND 500 LIMIT 10",0.03,0.12,0.04,0.03;0.03;0.12;0.14;0.14;0.11,0,fast,0,0,0,0,0,0,0,0
+456,"SELECT id, title, score FROM posts WHERE score > 0 ORDER BY score DESC LIMIT 5",31.64,23.0,2.45,31.64;28.88;22.33;23.00;24.32;22.40,0,fast,0,0,0,0,0,0,0,0
+457,"SELECT id, display_name FROM users WHERE reputation > 1000 ORDER BY reputation DESC LIMIT 5",11.94,14.72,8.34,11.94;4.26;5.29;25.97;19.79;14.72,0,fast,0,0,0,0,0,0,0,0
+458,"SELECT id, title FROM posts WHERE creation_date > '2022-01-01' LIMIT 10",8.15,10.14,2.95,8.15;10.45;2.89;10.31;10.14;10.11,0,fast,0,0,0,0,0,0,0,0
+459,"SELECT id, display_name FROM users WHERE creation_date > '2021-01-01' LIMIT 10",12.86,12.94,4.34,12.86;14.43;12.94;3.94;7.84;15.34,0,fast,0,0,0,0,0,0,0,0
+460,"SELECT id, post_id FROM votes WHERE creation_date > '2022-01-01' LIMIT 10",0.23,0.18,0.05,0.23;0.17;0.23;0.09;0.23;0.18,0,fast,0,0,0,0,0,0,0,0
+461,"SELECT id, title FROM posts WHERE score > 100 AND view_count > 100 LIMIT 10",10.56,11.29,0.81,10.56;12.07;11.29;10.36;11.66;9.91,0,fast,0,0,0,0,0,0,0,0
+462,"SELECT id, display_name FROM users WHERE reputation > 500 LIMIT 30",0.35,0.27,0.08,0.35;0.26;0.12;0.27;0.34;0.32,0,fast,0,0,0,0,0,0,0,0
+463,"SELECT id, title FROM posts WHERE post_type_id = 2 AND answer_count = 0 LIMIT 10",0.12,0.14,0.04,0.12;0.15;0.11;0.12;0.22;0.14,0,fast,0,0,0,0,0,0,0,0
+464,"SELECT id, post_id FROM votes WHERE vote_type_id IN (1, 2) LIMIT 10",0.12,0.13,0.01,0.12;0.13;0.14;0.14;0.13;0.11,0,fast,0,0,0,0,0,0,0,0
+465,"SELECT id, title FROM posts WHERE score BETWEEN 50 AND 200 LIMIT 10",0.05,0.11,0.1,0.05;0.04;0.11;0.11;0.33;0.10,0,fast,0,0,0,0,0,0,0,0
