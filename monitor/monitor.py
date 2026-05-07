@@ -4,12 +4,17 @@ Live SQL slow-query monitor with model-in-the-loop optimization.
 Pipeline:
   1. Poll pg_stat_statements for recent slow queries.
   2. For each: QueryAnalyzer predicts p_slow + predicted_ms + plan features.
-  3. If predicted slow, ask GPT for K candidate rewrites (not just 1).
-  4. Rank candidates by predicted speedup using the same model.
+  3. If predicted slow, use the fine-tuned CodeT5 LLM for K candidate rewrites.
+  4. Rank candidates by predicted speedup using the same neural model.
   5. Verify the top candidate's actual time with a cold + warm measurement.
   6. Log a structured response (original, predicted, ranked alternatives,
      measured speedup) for the dashboard.
   7. Store genuine wins in the embeddings history.
+
+Change from previous version:
+  ask_gpt_for_candidates() replaced by LLMOptimizer.suggest_candidates()
+  which uses the fine-tuned CodeT5 model. Falls back to GPT automatically
+  if the fine-tuned model is not yet available.
 """
 
 import time
@@ -22,17 +27,16 @@ import statistics
 
 import psycopg2
 from dotenv import load_dotenv
-from openai import OpenAI
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from classifier.inference import QueryAnalyzer, replace_placeholders
 from embeddings.embeddings import find_similar, store_fix
+from finetune.llm_optimizer import LLMOptimizer
 
 
 # ─────────────────────────── Config ───────────────────────────
 
 load_dotenv()
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 DB_CONFIG = {
     "dbname": "stackexchange_db",
@@ -42,9 +46,9 @@ DB_CONFIG = {
     "port": "5432",
 }
 
-P_SLOW_THRESHOLD = 0.5      # only optimize queries the model thinks are slow
+P_SLOW_THRESHOLD = 0.5
 POLL_INTERVAL_SECONDS = 5
-N_CANDIDATES = 3            # how many alternatives we ask GPT for
+N_CANDIDATES = 3
 LOG_FILE = "dashboard/query_log.json"
 
 
@@ -70,69 +74,63 @@ def get_table_schema(conn):
 
 # ─────────────────────────── Candidate generation ───────────────────────────
 
-def ask_gpt_for_candidates(slow_query, schema, similar_fix=None, n=N_CANDIDATES):
+def get_candidates(optimizer, slow_query, schema, similar_fix=None, n=N_CANDIDATES):
     """
-    Ask GPT for multiple candidate rewrites. We ask for several because
-    the model-in-the-loop ranker can pick the best one — relying on a
-    single GPT suggestion means we have nothing to rank against.
+    Generate candidate rewrites using the fine-tuned CodeT5 LLM.
+    Falls back to GPT automatically via LLMOptimizer if model not found.
+
+    Returns a dict matching the old GPT structure so the rest of the
+    pipeline doesn't need to change:
+      {
+        "reason": str,
+        "candidates": [{"sql": str, "strategy": str}, ...],
+        "index_suggestion": str,
+        "llm_source": str,
+      }
     """
-    past_example = ""
+    # If a similar past fix exists, add it as context hint
+    context = schema
     if similar_fix:
-        past_example = (
-            f"\nA semantically similar query was optimized before:\n"
+        context += (
+            f"\n\nA similar slow query was previously fixed:\n"
             f"Slow: {similar_fix['slow_query']}\n"
             f"Fix: {similar_fix['fix']}\n"
             f"Speedup: {similar_fix['speedup_ms']}ms\n"
         )
 
-    prompt = f"""You are a PostgreSQL performance expert.
-A slow SQL query was detected. Propose {n} different optimized versions.
+    raw_candidates = optimizer.suggest_candidates(slow_query, schema=context, n=n)
 
-Database schema:{schema}
+    # Filter to only valid SQL outputs
+    valid = [c for c in raw_candidates if c.get("valid", False)]
+    if not valid:
+        # Fall back to single suggestion if diverse beam search gave nothing valid
+        single = optimizer.suggest(slow_query, schema=context)
+        valid = [single] if single.get("valid") else []
 
-Slow query:
-{slow_query}
-{past_example}
-Respond ONLY with a JSON object of this exact shape:
-{{
-  "reason": "one sentence on why the query is slow",
-  "candidates": [
-    {{"sql": "...", "strategy": "short label (e.g. 'add LIMIT', 'rewrite IN as JOIN')"}},
-    {{"sql": "...", "strategy": "..."}},
-    ...
-  ],
-  "index_suggestion": "CREATE INDEX ... or NONE"
-}}
+    # Build reason string from strategy labels
+    strategies = [c.get("strategy", "") for c in valid]
+    reason = f"Query optimization strategies: {', '.join(s for s in strategies if s)}"
 
-Each candidate must be a complete, runnable SELECT. Do not include explanations
-outside the JSON. Do not wrap the JSON in markdown fences."""
+    candidates = [
+        {"sql": c["optimized_sql"], "strategy": c.get("strategy", "")}
+        for c in valid
+    ]
 
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0,
-        response_format={"type": "json_object"},
-    )
-    raw = response.choices[0].message.content
-    try:
-        return json.loads(raw)
-    except json.JSONDecodeError:
-        # Best-effort recovery if GPT slips and adds prose.
-        m = re.search(r"\{.*\}", raw, re.DOTALL)
-        return json.loads(m.group(0)) if m else {
-            "reason": "(parse error)",
-            "candidates": [],
-            "index_suggestion": "NONE",
-        }
+    llm_source = raw_candidates[0].get("source", "unknown") if raw_candidates else "unknown"
+
+    return {
+        "reason": reason,
+        "candidates": candidates,
+        "index_suggestion": "NONE",
+        "llm_source": llm_source,
+    }
 
 
 # ─────────────────────────── Verification (cold + warm) ───────────────────────────
 
 def measure_query(conn, query, runs=3, timeout_ms=10000):
     """
-    Cold + warm measurement for verifying a candidate. Lighter than the
-    training-time methodology (3 runs total, not 6) because we're verifying
-    one candidate, not building a labelled dataset.
+    Cold + warm measurement for verifying a candidate.
     """
     safe = replace_placeholders(query)
     cur = conn.cursor()
@@ -207,14 +205,14 @@ def log_event(event):
         json.dump(log, f, indent=2)
 
 
-# ─────────────────────────── Main loop ───────────────────────────
+# ─────────────────────────── Main pipeline ───────────────────────────
 
-def process_one_query(query, mean_time_ms, calls, analyzer, conn, schema):
+def process_one_query(query, mean_time_ms, calls, analyzer, optimizer, conn, schema):
     """Run the full pipeline on a single detected slow query."""
     print(f"\n[CANDIDATE] {query[:100]}{'...' if len(query) > 100 else ''}")
     print(f"  pg_stat mean time: {mean_time_ms:.1f}ms ({calls} calls)")
 
-    # 1. Model analyzes the original query
+    # 1. Neural model analyzes the original query
     baseline = analyzer.analyze(query, conn=conn)
     print(f"  model: p_slow={baseline['p_slow']*100:.1f}%  "
           f"predicted={baseline['predicted_ms']:.1f}ms  "
@@ -227,23 +225,25 @@ def process_one_query(query, mean_time_ms, calls, analyzer, conn, schema):
     # 2. Look for a semantically similar past fix
     similar = find_similar(query)
 
-    # 3. Generate candidate rewrites
-    print(f"  asking GPT for {N_CANDIDATES} candidates...")
-    gpt = ask_gpt_for_candidates(query, schema, similar)
-    candidates = [c["sql"] for c in gpt.get("candidates", []) if c.get("sql")]
+    # 3. Generate candidate rewrites with fine-tuned LLM
+    print(f"  generating {N_CANDIDATES} candidates with LLM ({optimizer._device if not optimizer._use_fallback else 'GPT fallback'})...")
+    llm_result = get_candidates(optimizer, query, schema, similar, n=N_CANDIDATES)
+    candidates = [c["sql"] for c in llm_result.get("candidates", []) if c.get("sql")]
+
     if not candidates:
-        print("  -> no candidates returned; logging and skipping")
+        print("  -> no valid candidates generated; logging and skipping")
         log_event({
             "type": "no_candidates",
             "query": query[:300],
             "p_slow": baseline["p_slow"],
             "predicted_ms": baseline["predicted_ms"],
-            "reason": gpt.get("reason", ""),
+            "reason": llm_result.get("reason", ""),
+            "llm_source": llm_result.get("llm_source", "unknown"),
             "timestamp": datetime.datetime.now().isoformat(),
         })
         return None
 
-    # 4. Model-in-the-loop ranking
+    # 4. Model-in-the-loop ranking — neural net ranks the LLM's candidates
     _, ranked = analyzer.rank_candidates(query, candidates, conn=conn)
     print(f"  ranked {len(ranked)} candidates by predicted speedup:")
     for i, r in enumerate(ranked, 1):
@@ -264,7 +264,7 @@ def process_one_query(query, mean_time_ms, calls, analyzer, conn, schema):
 
     # Map candidate sql -> strategy label for the log
     strat_by_sql = {c["sql"]: c.get("strategy", "")
-                    for c in gpt.get("candidates", [])}
+                    for c in llm_result.get("candidates", [])}
 
     # 6. Structured log entry
     measured_speedup_ms = None
@@ -284,8 +284,9 @@ def process_one_query(query, mean_time_ms, calls, analyzer, conn, schema):
             "has_seq_scan": baseline["features"]["has_seq_scan"],
             "has_index_scan": baseline["features"]["has_index_scan"],
         },
-        "reason": gpt.get("reason", ""),
-        "index_suggestion": gpt.get("index_suggestion", "NONE"),
+        "reason": llm_result.get("reason", ""),
+        "index_suggestion": llm_result.get("index_suggestion", "NONE"),
+        "llm_source": llm_result.get("llm_source", "unknown"),
         "similar_fix_used": bool(similar),
         "candidates_ranked": [
             {
@@ -314,12 +315,15 @@ def process_one_query(query, mean_time_ms, calls, analyzer, conn, schema):
 
 def main():
     print("=" * 60)
-    print("  SQL Query Monitor — model-in-the-loop pipeline")
+    print("  SQL Query Monitor — fine-tuned LLM + neural ranker")
     print("=" * 60)
 
-    print("Loading model...")
+    print("Loading neural classifier...")
     analyzer = QueryAnalyzer()
     print(f"  loaded ({analyzer.meta['n_features']}-feature multi-task model)")
+
+    print("Loading fine-tuned LLM optimizer...")
+    optimizer = LLMOptimizer()
 
     print("Connecting to database...")
     conn = psycopg2.connect(**DB_CONFIG)
@@ -343,7 +347,7 @@ def main():
                 seen.add(key)
                 try:
                     process_one_query(query, mean_time, calls,
-                                       analyzer, conn, schema)
+                                      analyzer, optimizer, conn, schema)
                 except Exception as e:
                     print(f"  [pipeline error on this query: {e}]")
             time.sleep(POLL_INTERVAL_SECONDS)
