@@ -203,7 +203,7 @@ class QueryAnalyzer:
             p_slow = torch.sigmoid(logit).item()
             # log1p(10000) ≈ 9.21; we clamp at 12 (~163s) to be safe against
             # extrapolation while leaving room for genuine very-slow queries.
-            log_ms_clamped = float(np.clip(log_ms.item(), -1.0, 12.0))
+            log_ms_clamped = float(np.clip(log_ms.item(), -1.0, 9.21))
             predicted_ms = float(np.expm1(log_ms_clamped))
         return {
             "p_slow": p_slow,

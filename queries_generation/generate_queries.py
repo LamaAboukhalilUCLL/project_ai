@@ -105,6 +105,101 @@ def gen_slow_queries():
         "WHERE u1.location = u2.location AND u1.id < u2.id LIMIT 1000"
     )
 
+    # 9. DISTINCT with JOIN — forces deduplication over large join result
+    queries.append(
+        "SELECT DISTINCT u.display_name FROM users u "
+        "JOIN posts p ON p.owner_user_id = u.id"
+    )
+    queries.append(
+        "SELECT DISTINCT u.display_name, u.location FROM users u "
+        "JOIN posts p ON p.owner_user_id = u.id "
+        "JOIN votes v ON v.post_id = p.id"
+    )
+    queries.append(
+        "SELECT DISTINCT p.post_type_id, u.location FROM posts p "
+        "JOIN users u ON p.owner_user_id = u.id"
+    )
+
+    # 10. Nested subqueries in SELECT
+    queries.append(
+        "SELECT title, score, "
+        "(SELECT MAX(score) FROM posts) as max_score, "
+        "(SELECT AVG(score) FROM posts) as avg_score "
+        "FROM posts ORDER BY score DESC"
+    )
+    queries.append(
+        "SELECT display_name, reputation, "
+        "(SELECT MAX(reputation) FROM users) as max_rep "
+        "FROM users ORDER BY reputation DESC"
+    )
+    queries.append(
+        "SELECT p.title, p.score, "
+        "(SELECT COUNT(*) FROM votes WHERE post_id = p.id) as vote_count "
+        "FROM posts p ORDER BY vote_count DESC"
+    )
+
+    # 11. Multiple correlated subqueries together
+    queries.append(
+        "SELECT u.display_name, "
+        "(SELECT COUNT(*) FROM posts WHERE owner_user_id = u.id) as post_count, "
+        "(SELECT COUNT(*) FROM votes v JOIN posts p ON v.post_id = p.id "
+        "WHERE p.owner_user_id = u.id) as vote_count "
+        "FROM users u"
+    )
+    queries.append(
+        "SELECT u.display_name, "
+        "(SELECT MAX(score) FROM posts WHERE owner_user_id = u.id) as max_score, "
+        "(SELECT MIN(score) FROM posts WHERE owner_user_id = u.id) as min_score, "
+        "(SELECT AVG(score) FROM posts WHERE owner_user_id = u.id) as avg_score "
+        "FROM users u WHERE u.reputation > 500"
+    )
+    queries.append(
+        "SELECT u.display_name, "
+        "(SELECT COUNT(*) FROM posts WHERE owner_user_id = u.id AND score > 10) as good_posts, "
+        "(SELECT COUNT(*) FROM posts WHERE owner_user_id = u.id AND score <= 0) as bad_posts "
+        "FROM users u"
+    )
+
+    # 12. UNION queries — forces two full scans
+    queries.append(
+        "SELECT id, display_name, reputation FROM users WHERE reputation > 1000 "
+        "UNION "
+        "SELECT id, display_name, reputation FROM users WHERE views > 500"
+    )
+    queries.append(
+        "SELECT id, title, score FROM posts WHERE score > 50 "
+        "UNION "
+        "SELECT id, title, score FROM posts WHERE view_count > 10000"
+    )
+    queries.append(
+        "SELECT u.id, u.display_name FROM users u JOIN posts p ON p.owner_user_id = u.id WHERE p.score > 100 "
+        "UNION "
+        "SELECT u.id, u.display_name FROM users u JOIN posts p ON p.owner_user_id = u.id WHERE p.view_count > 5000"
+    )
+
+    # 13. Window functions without LIMIT — expensive on large tables
+    queries.append(
+        "SELECT display_name, reputation, "
+        "RANK() OVER (ORDER BY reputation DESC) as rank "
+        "FROM users"
+    )
+    queries.append(
+        "SELECT display_name, reputation, "
+        "DENSE_RANK() OVER (ORDER BY reputation DESC) as rank, "
+        "ROW_NUMBER() OVER (ORDER BY reputation DESC) as row_num "
+        "FROM users"
+    )
+    queries.append(
+        "SELECT p.title, p.score, "
+        "RANK() OVER (PARTITION BY p.post_type_id ORDER BY p.score DESC) as type_rank "
+        "FROM posts p JOIN users u ON p.owner_user_id = u.id"
+    )
+    queries.append(
+        "SELECT u.display_name, p.score, "
+        "AVG(p.score) OVER (PARTITION BY u.id) as user_avg_score "
+        "FROM users u JOIN posts p ON p.owner_user_id = u.id"
+    )
+
     return queries
 
 

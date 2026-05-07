@@ -33,7 +33,7 @@ OUTPUT_DIR = "finetune/codet5-finetuned"
 RESULTS_PATH = "finetune/finetune_results.json"
 
 # Training hyperparameters — tuned for ~150 pairs on a gaming laptop GPU
-EPOCHS = 10           # enough to learn the pattern without overfitting
+EPOCHS = 20           # MORE LEARNINGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
 BATCH_SIZE = 8        # fits comfortably in 4GB+ VRAM; reduce to 4 if you get OOM
 LEARNING_RATE = 5e-4  # standard for seq2seq fine-tuning on small datasets
 MAX_INPUT_LEN = 128   # SQL queries are short; 128 tokens is plenty
