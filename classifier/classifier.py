@@ -5,7 +5,10 @@ Two output heads sharing a feature backbone:
   - Classification: P(slow), trained with BCE
   - Regression: predicted log-execution-time in ms, trained with MSE
 
-Joint loss = alpha * BCE + (1 - alpha) * MSE.
+Joint loss = alpha * BCE + (1 - alpha) * QuantileLoss(tau=0.7).
+(Originally MSE; switched to quantile loss to reduce systematic
+under-prediction of slow queries — see notebook section 7 for
+the full rationale.)
 
 Inputs: 8 text-derived features + 12 plan-derived features = 20 total.
 Target labels are derived from training_data.csv:
@@ -135,7 +138,19 @@ pos_weight = torch.tensor([fast_count / max(slow_count, 1)], dtype=torch.float32
 print(f"  pos_weight (fast/slow): {pos_weight.item():.2f}")
 
 bce = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
-mse = nn.MSELoss()
+# mse = nn.MSELoss()
+def quantile_loss(pred, target, tau=0.7):
+    """
+    Quantile (pinball) loss. tau > 0.5 means we penalize under-prediction
+    more than over-prediction, biasing the model to predict on the high
+    side of the true value. tau = 0.5 is equivalent to MAE / median
+    regression.
+    """
+    diff = target - pred
+    return torch.mean(torch.maximum(tau * diff, (tau - 1) * diff))
+
+REG_TAU = 0.7  # quantile to target; >0.5 biases predictions upward
+
 optimizer = torch.optim.Adam(model.parameters(), lr=LR)
 
 # ───────────────────────── Train ─────────────────────────
@@ -145,18 +160,19 @@ print(f"\nTraining for {EPOCHS} epochs (alpha={ALPHA})...\n")
 history = []
 for epoch in range(1, EPOCHS + 1):
     model.train()
-    running = {"total": 0.0, "bce": 0.0, "mse": 0.0}
+    running = {"total": 0.0, "bce": 0.0, "qloss": 0.0}
     for xb, yb_clf, yb_reg in train_loader:
         optimizer.zero_grad()
         logit, pred_reg = model(xb)
         loss_clf = bce(logit, yb_clf)
-        loss_reg = mse(pred_reg, yb_reg)
+        # loss_reg = mse(pred_reg, yb_reg)
+        loss_reg = quantile_loss(pred_reg, yb_reg, tau=REG_TAU)
         loss = ALPHA * loss_clf + (1 - ALPHA) * loss_reg
         loss.backward()
         optimizer.step()
         running["total"] += loss.item()
         running["bce"] += loss_clf.item()
-        running["mse"] += loss_reg.item()
+        running["qloss"] += loss_reg.item()
 
     if epoch % 10 == 0 or epoch == 1:
         model.eval()
@@ -173,13 +189,13 @@ for epoch in range(1, EPOCHS + 1):
         n = len(train_loader)
         print(f"Epoch {epoch:3d} | "
               f"loss={running['total']/n:.3f} "
-              f"(bce={running['bce']/n:.3f}, mse={running['mse']/n:.3f}) | "
+              f"(bce={running['bce']/n:.3f}, qloss={running['qloss']/n:.3f}) | "
               f"test_acc={acc*100:.1f}%  log_mae={mae_log:.3f}")
         history.append({
             "epoch": epoch,
             "loss": running["total"] / n,
             "bce": running["bce"] / n,
-            "mse": running["mse"] / n,
+            "qloss": running["qloss"] / n,
             "test_acc": acc,
             "log_mae": mae_log,
         })
