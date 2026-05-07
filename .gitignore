@@ -1,9 +1,20 @@
-venv/
+# PostgreSQL data dumps (too large for git, derived data)
+*.xml
+ai.stackexchange.com/
+
+# Python
 __pycache__/
 *.pyc
-*.pyo
-.ipynb_checkpoints/
-*.xml
-*.7z
-embeddings/history.json
+.venv/
+venv/
+
+# Environment
 .env
+
+# IDE
+.vscode/
+.idea/
+
+# Generated logs
+dashboard/query_log.json
+embeddings/history.json

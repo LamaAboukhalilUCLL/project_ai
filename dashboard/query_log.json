@@ -18,5 +18,99 @@
     "speedup_ms": 0,
     "flagged": true,
     "timestamp": "2026-04-23 14:23:48"
+  },
+  {
+    "type": "slow_query_handled",
+    "timestamp": "2026-05-06T20:17:48.894817",
+    "query": "SELECT u.location, AVG(p.score) FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY u.location ORDER BY AVG(p.score) DESC",
+    "pg_stat_mean_ms": 350.0,
+    "calls": 1,
+    "model": {
+      "p_slow": 1.0,
+      "predicted_ms": Infinity,
+      "plan_total_cost": 5923.12,
+      "has_seq_scan": 1,
+      "has_index_scan": 0
+    },
+    "reason": "The query is slow due to the lack of proper indexing and the potentially large dataset being processed without filtering.",
+    "index_suggestion": "CREATE INDEX idx_posts_owner_user_id ON posts(owner_user_id); CREATE INDEX idx_votes_post_id ON votes(post_id);",
+    "similar_fix_used": false,
+    "candidates_ranked": [
+      {
+        "sql": "SELECT u.location, AVG(p.score) FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id WHERE p.creation_date > NOW() - INTERVAL '1 year' GROUP BY u.location ORDER BY AVG(p.score) DESC",
+        "strategy": "filter by recent posts",
+        "predicted_ms": 35.62,
+        "predicted_speedup_ms": 71.41
+      },
+      {
+        "sql": "SELECT u.location, AVG(p.score) FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY u.location HAVING COUNT(v.id) > 0 ORDER BY AVG(p.score) DESC",
+        "strategy": "add HAVING clause",
+        "predicted_ms": 106.35,
+        "predicted_speedup_ms": 0.68
+      },
+      {
+        "sql": "SELECT u.location, AVG(p.score) FROM users u JOIN (SELECT owner_user_id, AVG(score) AS avg_score FROM posts GROUP BY owner_user_id) p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY u.location ORDER BY avg_score DESC",
+        "strategy": "subquery for aggregation",
+        "predicted_ms": 5231.06,
+        "predicted_speedup_ms": -5124.03
+      }
+    ],
+    "top_candidate_verified": {
+      "cold_ms": 42.694,
+      "warm_median_ms": 34.865,
+      "all_runs_ms": [
+        42.694,
+        32.265,
+        37.465
+      ]
+    },
+    "measured_speedup_ms": 315.13
+  },
+  {
+    "type": "slow_query_handled",
+    "timestamp": "2026-05-06T20:33:39.499176",
+    "query": "SELECT u.location, AVG(p.score) FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY u.location ORDER BY AVG(p.score) DESC",
+    "pg_stat_mean_ms": 350.0,
+    "calls": 1,
+    "model": {
+      "p_slow": 0.9967,
+      "predicted_ms": 107.03,
+      "plan_total_cost": 5923.12,
+      "has_seq_scan": 1,
+      "has_index_scan": 0
+    },
+    "reason": "The query is slow due to the large number of rows being processed from the joins without filtering.",
+    "index_suggestion": "CREATE INDEX idx_posts_creation_date ON posts(creation_date)",
+    "similar_fix_used": true,
+    "candidates_ranked": [
+      {
+        "sql": "SELECT u.location, AVG(p.score) FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id WHERE p.creation_date > NOW() - INTERVAL '1 year' GROUP BY u.location ORDER BY AVG(p.score) DESC",
+        "strategy": "filter recent posts",
+        "predicted_ms": 35.62,
+        "predicted_speedup_ms": 71.41
+      },
+      {
+        "sql": "SELECT u.location, AVG(p.score) FROM users u JOIN (SELECT post_id, score FROM posts WHERE creation_date > NOW() - INTERVAL '1 year') p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY u.location ORDER BY AVG(p.score) DESC",
+        "strategy": "subquery for filtering",
+        "predicted_ms": 5231.06,
+        "predicted_speedup_ms": -5124.03
+      },
+      {
+        "sql": "SELECT u.location, AVG(p.score) FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id WHERE v.vote_type_id = 1 GROUP BY u.location ORDER BY AVG(p.score) DESC",
+        "strategy": "filter by vote type",
+        "predicted_ms": 162753.79,
+        "predicted_speedup_ms": -162646.76
+      }
+    ],
+    "top_candidate_verified": {
+      "cold_ms": 70.3,
+      "warm_median_ms": 21.618,
+      "all_runs_ms": [
+        70.3,
+        21.769,
+        21.467
+      ]
+    },
+    "measured_speedup_ms": 328.38
   }
 ]
