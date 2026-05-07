@@ -2,6 +2,8 @@
 *.xml
 ai.stackexchange.com/
 
+echo finetune/codet5-finetuned/ >> .gitignore
+
 # Python
 __pycache__/
 *.pyc
