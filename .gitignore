@@ -20,3 +20,16 @@ venv/
 # Generated logs
 dashboard/query_log.json
 embeddings/history.json
+
+# Fine-tuned model files (too large for git, regeneratable from finetune.py)
+finetune/codet5-finetuned/
+finetune/codet5-finetuned.zip
+finetune/*.safetensors
+finetune/*.bin
+finetune/model.safetensors
+finetune/model.bin
+finetune/codet5-finetuned/vocab.json   
+finetune/codet5-finetuned/merges.txt 
+training_data.csv      
+classifier/classifier.ipynb
+finetune/finetune_evalutation.ipynb  
