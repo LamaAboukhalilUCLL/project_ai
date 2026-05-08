@@ -1,0 +1,11 @@
+query,baseline_ms,gpt_only_speedup_pct,gpt_only_broken,gpt_verify_speedup_pct,gpt_verify_broken,full_speedup_pct,full_broken,full_n_candidates
+"SELECT u.display_name, AVG(p.score) FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY u.display_name ORDER BY AVG(p.score) DESC",98.63,-132.77234247478077,False,-132.77234247478077,False,,True,0
+"SELECT u.display_name, u.reputation, u.location, COUNT(p.id), AVG(p.score) FROM users u JOIN posts p ON p.owner_user_id = u.id GROUP BY u.display_name, u.reputation, u.location ORDER BY u.reputation D",218.48,-2.437037291316238,False,-2.437037291316238,False,,True,0
+"SELECT DISTINCT u.location, p.post_type_id FROM users u JOIN posts p ON p.owner_user_id = u.id",86.33,16.863004019413648,False,16.863004019413648,False,,True,0
+"SELECT u.display_name, MAX(p.view_count) FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY u.display_name ORDER BY MAX(p.view_count) DESC",165.29,,True,,True,,True,0
+"SELECT u.display_name, MIN(p.score) FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY u.display_name ORDER BY MIN(p.score) DESC",216.99,-6.33888494612754,False,-6.33888494612754,False,,True,0
+SELECT * FROM users ORDER BY creation_date ASC,142.16,61.621817440024195,False,61.621817440024195,False,,True,0
+SELECT DISTINCT u.display_name FROM users u JOIN posts p ON p.owner_user_id = u.id,90.94,-17.340407983724624,False,-17.340407983724624,False,,True,0
+"SELECT display_name, (SELECT MAX(view_count) FROM posts WHERE owner_user_id = users.id) as max_views FROM users WHERE reputation > 200",4640.48,99.0025921892977,False,99.0025921892977,False,,True,0
+SELECT DISTINCT location FROM users,44.78,-108.16741298254628,False,-108.16741298254628,False,,True,0
+"SELECT u.display_name, AVG(p.answer_count) FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY u.display_name ORDER BY AVG(p.answer_count) DESC",220.59,-3.301381072081866,False,-3.301381072081866,False,,True,0
