@@ -1132,5 +1132,39 @@
       ]
     },
     "measured_speedup_ms": 362.02
+  },
+  {
+    "type": "slow_query_handled",
+    "timestamp": "2026-05-08T15:49:03.296466",
+    "query": "SELECT u.location, AVG(p.score) FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY u.location ORDER BY AVG(p.score) DESC",
+    "pg_stat_mean_ms": 350.0,
+    "calls": 1,
+    "model": {
+      "p_slow": 0.9965,
+      "predicted_ms": 230.96,
+      "plan_total_cost": 5923.12,
+      "has_seq_scan": 1,
+      "has_index_scan": 0
+    },
+    "reason": "Query optimization strategies: rewrite query, rewrite query",
+    "index_suggestion": "NONE",
+    "llm_source": "finetuned_model",
+    "similar_fix_used": true,
+    "candidates_ranked": [
+      {
+        "sql": "SELECT u.location, AVG(p.score) AS avg_score \nFROM users u \nJOIN posts p ON p.owner_user_id = u.id \nLEFT JOIN votes v ON v.post_id= p.id",
+        "strategy": "rewrite query",
+        "predicted_ms": 278.5,
+        "predicted_speedup_ms": -47.54
+      },
+      {
+        "sql": "SELECT u.location, AVG(p.score) AS avg_score \nFROM users u \nJOIN posts p ON p.owner_user_id = u.id \nLEFT JOIN votes v ON v.post_id_id= p.id",
+        "strategy": "rewrite query",
+        "predicted_ms": 278.5,
+        "predicted_speedup_ms": -47.54
+      }
+    ],
+    "top_candidate_verified": null,
+    "measured_speedup_ms": null
   }
 ]
