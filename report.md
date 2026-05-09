@@ -247,7 +247,7 @@ plan features. 7/7 attempted queries verified faster.
 **GenAI usage:**
 - GPT-4o-mini: generated the 250 fine-tuning pairs (slow → optimized SQL)
 - GPT-4o-mini: used as the baseline in the pipeline comparison evaluation
-- Claude: debugging assistance, code review and assistance during development, explanation of new concepts, and enhancing the writing of this report
+- Claude: debugging assistance, code review and assistance during development, explanation of new concepts, and enhancing the AI components part of this report
 
 ---
 
