@@ -1166,5 +1166,709 @@
     ],
     "top_candidate_verified": null,
     "measured_speedup_ms": null
+  },
+  {
+    "type": "slow_query_handled",
+    "timestamp": "2026-05-09T04:19:00.352474",
+    "query": "SELECT * FROM posts ORDER BY score DESC",
+    "pg_stat_mean_ms": 492.31,
+    "calls": 1,
+    "model": {
+      "p_slow": 1.0,
+      "predicted_ms": 831.88,
+      "plan_total_cost": 27109.54,
+      "has_seq_scan": 0,
+      "has_index_scan": 1
+    },
+    "reason": "Query optimization strategies: add LIMIT",
+    "index_suggestion": "NONE",
+    "llm_source": "finetuned_model",
+    "similar_fix_used": true,
+    "candidates_ranked": [
+      {
+        "sql": "SELECT * FROM posts ORDER BY score DESC LIMIT 100",
+        "strategy": "add LIMIT",
+        "predicted_ms": 0.47,
+        "predicted_speedup_ms": 831.41
+      }
+    ],
+    "top_candidate_verified": {
+      "cold_ms": 0.085,
+      "warm_median_ms": 0.032,
+      "all_runs_ms": [
+        0.085,
+        0.036,
+        0.028
+      ]
+    },
+    "measured_speedup_ms": 492.28
+  },
+  {
+    "type": "slow_query_handled",
+    "timestamp": "2026-05-09T04:19:16.023731",
+    "query": "SELECT u.display_name, (SELECT COUNT(*) FROM posts WHERE owner_user_id = u.id) as post_count FROM users u",
+    "pg_stat_mean_ms": 651.22,
+    "calls": 1,
+    "model": {
+      "p_slow": 1.0,
+      "predicted_ms": 9995.6,
+      "plan_total_cost": 1649299.43,
+      "has_seq_scan": 1,
+      "has_index_scan": 1
+    },
+    "reason": "Query optimization strategies: rewrite subquery as JOIN, rewrite subquery as JOIN, rewrite subquery as JOIN",
+    "index_suggestion": "NONE",
+    "llm_source": "finetuned_model",
+    "similar_fix_used": true,
+    "candidates_ranked": [
+      {
+        "sql": "SELECT u.display_name, COUNT(p.id) as post_count FROM users u LEFT JOIN posts p ON p.owner_user_id = u.id GROUP BY u.id, u.display_name",
+        "strategy": "rewrite subquery as JOIN",
+        "predicted_ms": 212.86,
+        "predicted_speedup_ms": 9782.74
+      },
+      {
+        "sql": "SELECT u.display_name, COUNT(p.id) as post_count FROM users u LEFT JOIN posts p ON p.owner_user_id = u.id GROUP BY u uc, u ON ut.ide = pre_count GROUND BY owner_users u ORDER BY 100",
+        "strategy": "rewrite subquery as JOIN",
+        "predicted_ms": 451.12,
+        "predicted_speedup_ms": 9544.48
+      },
+      {
+        "sql": "SELECT u.display_name, COUNT(p.id) as post_count FROM users u LEFT JOIN posts p ON p.owner_user_id = u.id GROUP BY u.id, u.display_name u ON u (SELECT owner_user_id), u p",
+        "strategy": "rewrite subquery as JOIN",
+        "predicted_ms": 9995.6,
+        "predicted_speedup_ms": 0.0
+      }
+    ],
+    "top_candidate_verified": {
+      "cold_ms": 455.724,
+      "warm_median_ms": 450.969,
+      "all_runs_ms": [
+        455.724,
+        449.426,
+        452.512
+      ]
+    },
+    "measured_speedup_ms": 200.25
+  },
+  {
+    "type": "slow_query_handled",
+    "timestamp": "2026-05-09T04:19:32.318175",
+    "query": "SELECT * FROM posts p JOIN users u ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id",
+    "pg_stat_mean_ms": 4053.2,
+    "calls": 1,
+    "model": {
+      "p_slow": 1.0,
+      "predicted_ms": 9995.6,
+      "plan_total_cost": 127352.73,
+      "has_seq_scan": 1,
+      "has_index_scan": 1
+    },
+    "reason": "Query optimization strategies: add LIMIT, remove SELECT *",
+    "index_suggestion": "NONE",
+    "llm_source": "finetuned_model",
+    "similar_fix_used": false,
+    "candidates_ranked": [
+      {
+        "sql": "SELECT p.id, u.display_name, vote_type_id AS vote_creation_date FROM posts p LEFT JOIN users u ON p.owner_user_id = u.id  LIMIT 100",
+        "strategy": "add LIMIT",
+        "predicted_ms": 163.77,
+        "predicted_speedup_ms": 9831.82
+      },
+      {
+        "sql": "SELECT p.id, p_title, post_id FROM posts p JOIN users u ON p'owner_user_ide = u.idu JOINE votes v ON v-post_Id = p.id GROUP BY p",
+        "strategy": "remove SELECT *",
+        "predicted_ms": 913.25,
+        "predicted_speedup_ms": 9082.35
+      }
+    ],
+    "top_candidate_verified": null,
+    "measured_speedup_ms": null
+  },
+  {
+    "type": "slow_query_handled",
+    "timestamp": "2026-05-09T04:23:55.150166",
+    "query": "SELECT * FROM posts p JOIN users u ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id",
+    "pg_stat_mean_ms": 3961.02,
+    "calls": 1,
+    "model": {
+      "p_slow": 1.0,
+      "predicted_ms": 9995.6,
+      "plan_total_cost": 127352.73,
+      "has_seq_scan": 1,
+      "has_index_scan": 1
+    },
+    "reason": "Query optimization strategies: add LIMIT, add LIMIT",
+    "index_suggestion": "NONE",
+    "llm_source": "finetuned_model",
+    "similar_fix_used": false,
+    "candidates_ranked": [
+      {
+        "sql": "SELECT p.id, u.display_name  FROM posts p LEFT JOIN users u ON p.owner_user_id = u.id  LIMIT 100",
+        "strategy": "add LIMIT",
+        "predicted_ms": 14.22,
+        "predicted_speedup_ms": 9981.38
+      },
+      {
+        "sql": "SELECT p.id, p.owner_user_id  FROM posts p JOIN votes v ON v.post_iD = p.id JOIN users u ON p-owner_use_ia = u.id JOINT posts u On p) JOINE users avg_ownership_user-id = v, v ORDER_i DESC LIMIT 100",
+        "strategy": "add LIMIT",
+        "predicted_ms": 874.57,
+        "predicted_speedup_ms": 9121.03
+      }
+    ],
+    "top_candidate_verified": {
+      "cold_ms": 0.259,
+      "warm_median_ms": 0.2525,
+      "all_runs_ms": [
+        0.259,
+        0.25,
+        0.255
+      ]
+    },
+    "measured_speedup_ms": 3960.77
+  },
+  {
+    "type": "slow_query_handled",
+    "timestamp": "2026-05-09T04:24:06.026949",
+    "query": "SELECT * FROM posts ORDER BY score DESC",
+    "pg_stat_mean_ms": 395.63,
+    "calls": 1,
+    "model": {
+      "p_slow": 1.0,
+      "predicted_ms": 831.88,
+      "plan_total_cost": 27109.54,
+      "has_seq_scan": 0,
+      "has_index_scan": 1
+    },
+    "reason": "Query optimization strategies: add LIMIT",
+    "index_suggestion": "NONE",
+    "llm_source": "finetuned_model",
+    "similar_fix_used": true,
+    "candidates_ranked": [
+      {
+        "sql": "SELECT *  FROM posts ORDER BY score DESC LIMIT 100",
+        "strategy": "add LIMIT",
+        "predicted_ms": 0.47,
+        "predicted_speedup_ms": 831.41
+      }
+    ],
+    "top_candidate_verified": {
+      "cold_ms": 0.061,
+      "warm_median_ms": 0.053000000000000005,
+      "all_runs_ms": [
+        0.061,
+        0.056,
+        0.05
+      ]
+    },
+    "measured_speedup_ms": 395.58
+  },
+  {
+    "type": "slow_query_handled",
+    "timestamp": "2026-05-09T04:24:27.312059",
+    "query": "SELECT u.display_name, (SELECT COUNT(*) FROM posts WHERE owner_user_id = u.id) as post_count FROM users u",
+    "pg_stat_mean_ms": 656.44,
+    "calls": 1,
+    "model": {
+      "p_slow": 1.0,
+      "predicted_ms": 9995.6,
+      "plan_total_cost": 1649299.43,
+      "has_seq_scan": 1,
+      "has_index_scan": 1
+    },
+    "reason": "Query optimization strategies: rewrite subquery as JOIN, rewrite subquery as JOIN, rewrite subquery as JOIN",
+    "index_suggestion": "NONE",
+    "llm_source": "finetuned_model",
+    "similar_fix_used": true,
+    "candidates_ranked": [
+      {
+        "sql": "SELECT u.display_name, COUNT(p.id) as post_count  FROM users u LEFT JOIN posts p ON p.owner_user_id = u.id GROUP BY u.id, u.display_name",
+        "strategy": "rewrite subquery as JOIN",
+        "predicted_ms": 225.26,
+        "predicted_speedup_ms": 9770.33
+      },
+      {
+        "sql": "SELECT u.display_name, COUNT(p.id) as post_count  FROM users u LEFT JOIN posts p ON p.owner_user_id = u.id GROUP BY u, u (SELECT owner_user-id, COALESCE(*) as presiding_count OF posts GROAP BY owner_use_iD) v ON u_iv.iv = v.post_",
+        "strategy": "rewrite subquery as JOIN",
+        "predicted_ms": 9995.6,
+        "predicted_speedup_ms": 0.0
+      },
+      {
+        "sql": "SELECT u.display_name, COUNT(p.id) as post_count  FROM users u LEFT JOIN posts p ON p.owner_user_id = u.id GROUP BY u...id, u JOINT pOFF (SELECT owner_user.ia, COALESCE(COUNT(CASE) as a post_creation FROM posts GROPUNN BY owner_use_ia) u",
+        "strategy": "rewrite subquery as JOIN",
+        "predicted_ms": 9995.6,
+        "predicted_speedup_ms": 0.0
+      }
+    ],
+    "top_candidate_verified": {
+      "cold_ms": 424.81,
+      "warm_median_ms": 440.51750000000004,
+      "all_runs_ms": [
+        424.81,
+        443.702,
+        437.333
+      ]
+    },
+    "measured_speedup_ms": 215.92
+  },
+  {
+    "type": "slow_query_handled",
+    "timestamp": "2026-05-09T04:51:28.040866",
+    "query": "SELECT u.display_name, (SELECT COUNT(*) FROM posts WHERE owner_user_id = u.id) as post_count FROM users u",
+    "pg_stat_mean_ms": 638.9,
+    "calls": 1,
+    "model": {
+      "p_slow": 1.0,
+      "predicted_ms": 9995.6,
+      "plan_total_cost": 1649299.43,
+      "has_seq_scan": 1,
+      "has_index_scan": 1
+    },
+    "reason": "Query optimization strategies: add LIMIT, add LIMIT, rewrite subquery as JOIN",
+    "index_suggestion": "NONE",
+    "llm_source": "finetuned_model",
+    "similar_fix_used": true,
+    "candidates_ranked": [
+      {
+        "sql": "SELECT u.display_name, COUNT(p.id) AS post_count  FROM users u LEFT JOIN posts p ON p.owner_user_id = u.id LIMIT 1000",
+        "strategy": "add LIMIT",
+        "predicted_ms": 163.77,
+        "predicted_speedup_ms": 9831.82
+      },
+      {
+        "sql": "SELECT u.display_name, COUNT(p.id) as post_count  FROM users u LEFT JOIN posts p ON p.owner_user_id = u.id LIMIT 1000",
+        "strategy": "add LIMIT",
+        "predicted_ms": 163.77,
+        "predicted_speedup_ms": 9831.82
+      },
+      {
+        "sql": "SELECT u.display_name, COUNT(p.id) as post_count  \nFROM users u \nLEFT JOIN posts p ON p.owner_user_id = u.id \nGROUP BY u.name",
+        "strategy": "rewrite subquery as JOIN",
+        "predicted_ms": 396.54,
+        "predicted_speedup_ms": 9599.06
+      }
+    ],
+    "top_candidate_verified": null,
+    "measured_speedup_ms": null
+  },
+  {
+    "type": "slow_query_handled",
+    "timestamp": "2026-05-09T04:51:43.857186",
+    "query": "SELECT * FROM posts ORDER BY score DESC",
+    "pg_stat_mean_ms": 397.64,
+    "calls": 1,
+    "model": {
+      "p_slow": 1.0,
+      "predicted_ms": 831.88,
+      "plan_total_cost": 27109.54,
+      "has_seq_scan": 0,
+      "has_index_scan": 1
+    },
+    "reason": "Query optimization strategies: add LIMIT, add LIMIT, add LIMIT",
+    "index_suggestion": "NONE",
+    "llm_source": "finetuned_model",
+    "similar_fix_used": true,
+    "candidates_ranked": [
+      {
+        "sql": "SELECT id, display_name, score  FROM posts ORDER BY score DESC LIMIT 100",
+        "strategy": "add LIMIT",
+        "predicted_ms": 80.34,
+        "predicted_speedup_ms": 751.54
+      },
+      {
+        "sql": "SELECT post_id, score, display_name  FROM posts ORDER BY score DESC LIMIT 100",
+        "strategy": "add LIMIT",
+        "predicted_ms": 80.34,
+        "predicted_speedup_ms": 751.54
+      },
+      {
+        "sql": "SELECT postid, score, reputation  FROM posts ORDER BY score DESC LIMIT 100",
+        "strategy": "add LIMIT",
+        "predicted_ms": 80.34,
+        "predicted_speedup_ms": 751.54
+      }
+    ],
+    "top_candidate_verified": null,
+    "measured_speedup_ms": null
+  },
+  {
+    "type": "slow_query_handled",
+    "timestamp": "2026-05-09T04:52:05.434393",
+    "query": "SELECT * FROM posts p JOIN users u ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id",
+    "pg_stat_mean_ms": 4119.28,
+    "calls": 1,
+    "model": {
+      "p_slow": 1.0,
+      "predicted_ms": 9995.6,
+      "plan_total_cost": 127352.73,
+      "has_seq_scan": 1,
+      "has_index_scan": 1
+    },
+    "reason": "Query optimization strategies: add LIMIT, add LIMIT, add LIMIT",
+    "index_suggestion": "NONE",
+    "llm_source": "finetuned_model",
+    "similar_fix_used": true,
+    "candidates_ranked": [
+      {
+        "sql": "SELECT v.id, v.post_id  FROM posts p JOIN users u ON p.owner_user_id = u.id JOIN votes v ON v.creation_date = p.id LIMIT 100",
+        "strategy": "add LIMIT",
+        "predicted_ms": 278.5,
+        "predicted_speedup_ms": 9717.1
+      },
+      {
+        "sql": "SELECT p.id, p.title, p, p._creation_date, p_score, p.score, v.vote_type_id, v._creationdate AS vote_creation_time, p.*  \nFROM posts p \nJOIN users u ON p.owner_user_id = u.id \nLEFT JOIN votes v ON v.post_id= p.date \nLIMIT 100",
+        "strategy": "add LIMIT",
+        "predicted_ms": 278.5,
+        "predicted_speedup_ms": 9717.1
+      },
+      {
+        "sql": "SELECT p.id, p.title, p._creation_date, p->score, p., v.vote_type_id, v.creation_time AS vote_creation_day  \nFROM posts p \nJOIN users u ON p.owner_user_id = u.id \nLEFT JOIN votes v ON v.post_id += p.score \nLIMIT 100",
+        "strategy": "add LIMIT",
+        "predicted_ms": 278.5,
+        "predicted_speedup_ms": 9717.1
+      }
+    ],
+    "top_candidate_verified": null,
+    "measured_speedup_ms": null
+  },
+  {
+    "type": "slow_query_handled",
+    "timestamp": "2026-05-09T05:02:48.566449",
+    "query": "SELECT * FROM posts p JOIN users u ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id",
+    "pg_stat_mean_ms": 4028.66,
+    "calls": 1,
+    "model": {
+      "p_slow": 1.0,
+      "predicted_ms": 9995.6,
+      "plan_total_cost": 127352.73,
+      "has_seq_scan": 1,
+      "has_index_scan": 1
+    },
+    "reason": "Query optimization strategies: remove SELECT *, remove SELECT *, remove SELECT *",
+    "index_suggestion": "NONE",
+    "llm_source": "finetuned_model",
+    "similar_fix_used": true,
+    "candidates_ranked": [
+      {
+        "sql": "SELECT p.id, p.title, p.creation_date, p._score, p  \nFROM posts p \ufffdJOIN users u ON p.owner_user_id = u.id \nJOIN votes v ON v.post_id= p.view_id \ufffdGROUP BY p.name, p, p_user, u.display_user _id",
+        "strategy": "remove SELECT *",
+        "predicted_ms": 913.25,
+        "predicted_speedup_ms": 9082.35
+      },
+      {
+        "sql": "SELECT p.id, p.title, p, p.*  \nFROM posts p \nJOIN users u ON p.owner_user_id = u.id \nLEFT JOIN votes v ON v.post_id= p.id \nGROUP BY p.name, p._post_url, p.score, v.vote_id, v ON p.id = v.owner _user_type_id",
+        "strategy": "remove SELECT *",
+        "predicted_ms": 913.25,
+        "predicted_speedup_ms": 9082.35
+      },
+      {
+        "sql": "SELECT p.id, p.post_id  \nFROM posts p \nJOIN users u ON p.owner_user_id IN (SELECT id FROM posts)",
+        "strategy": "remove SELECT *",
+        "predicted_ms": 9995.6,
+        "predicted_speedup_ms": 0.0
+      }
+    ],
+    "top_candidate_verified": null,
+    "measured_speedup_ms": null
+  },
+  {
+    "type": "slow_query_handled",
+    "timestamp": "2026-05-09T05:03:01.860707",
+    "query": "SELECT u.display_name, (SELECT COUNT(*) FROM posts WHERE owner_user_id = u.id) as post_count FROM users u",
+    "pg_stat_mean_ms": 667.89,
+    "calls": 1,
+    "model": {
+      "p_slow": 1.0,
+      "predicted_ms": 9995.6,
+      "plan_total_cost": 1649299.43,
+      "has_seq_scan": 1,
+      "has_index_scan": 1
+    },
+    "reason": "Query optimization strategies: rewrite subquery as JOIN, rewrite subquery as JOIN, rewrite subquery as JOIN",
+    "index_suggestion": "NONE",
+    "llm_source": "finetuned_model",
+    "similar_fix_used": true,
+    "candidates_ranked": [
+      {
+        "sql": "SELECT u.display_name, COUNT(p.id) as post_count  \nFROM users u \nLEFT JOIN posts p ON p.owner_user_id = u.id \nWHERE p.post_count IS NOT NULL \nGROUP BY u.name",
+        "strategy": "rewrite subquery as JOIN",
+        "predicted_ms": 396.54,
+        "predicted_speedup_ms": 9599.06
+      },
+      {
+        "sql": "SELECT u.display_name, COUNT(p.id) as post_count  \nFROM users u \nLEFT JOIN posts p ON p.owner_user_id = u.id \nGROUP BY u.name, u.post_count",
+        "strategy": "rewrite subquery as JOIN",
+        "predicted_ms": 396.54,
+        "predicted_speedup_ms": 9599.06
+      },
+      {
+        "sql": "SELECT u.display_name, COUNT(p.id) as post_count  \nFROM users u \nLEFT JOIN posts p ON p.owner_user_id = u.id \nGROUP BY u.name, u.referencing_count",
+        "strategy": "rewrite subquery as JOIN",
+        "predicted_ms": 396.54,
+        "predicted_speedup_ms": 9599.06
+      }
+    ],
+    "top_candidate_verified": null,
+    "measured_speedup_ms": null
+  },
+  {
+    "type": "slow_query_handled",
+    "timestamp": "2026-05-09T05:03:18.107463",
+    "query": "SELECT * FROM posts ORDER BY score DESC",
+    "pg_stat_mean_ms": 397.75,
+    "calls": 1,
+    "model": {
+      "p_slow": 1.0,
+      "predicted_ms": 831.88,
+      "plan_total_cost": 27109.54,
+      "has_seq_scan": 0,
+      "has_index_scan": 1
+    },
+    "reason": "Query optimization strategies: add LIMIT, add LIMIT, add LIMIT",
+    "index_suggestion": "NONE",
+    "llm_source": "finetuned_model",
+    "similar_fix_used": true,
+    "candidates_ranked": [
+      {
+        "sql": "SELECT post, post, creation_date, display_name, last_access_date AS post_creation_date  \nFROM posts \nORDER BY score DESC \nLIMIT 100",
+        "strategy": "add LIMIT",
+        "predicted_ms": 80.34,
+        "predicted_speedup_ms": 751.54
+      },
+      {
+        "sql": "SELECT post, reql  FROM posts ORDER BY score DESC LIMIT 100",
+        "strategy": "add LIMIT",
+        "predicted_ms": 80.34,
+        "predicted_speedup_ms": 751.54
+      },
+      {
+        "sql": "SELECT post, posts, posts  \nFROM posts \ufffdJOIN posts p ON post.id = p.id \nORDER BY score DESC \nLIMIT 100",
+        "strategy": "add LIMIT",
+        "predicted_ms": 163.77,
+        "predicted_speedup_ms": 668.11
+      }
+    ],
+    "top_candidate_verified": null,
+    "measured_speedup_ms": null
+  },
+  {
+    "type": "slow_query_handled",
+    "timestamp": "2026-05-09T05:03:46.771609",
+    "query": "SELECT u.display_name, (SELECT AVG(score) FROM posts WHERE owner_user_id = u.id) as avg_score FROM users u",
+    "pg_stat_mean_ms": 928.32,
+    "calls": 1,
+    "model": {
+      "p_slow": 1.0,
+      "predicted_ms": 9995.6,
+      "plan_total_cost": 14670411.65,
+      "has_seq_scan": 1,
+      "has_index_scan": 1
+    },
+    "reason": "Query optimization strategies: rewrite subquery as JOIN, rewrite subquery as JOIN, rewrite subquery as JOIN",
+    "index_suggestion": "NONE",
+    "llm_source": "finetuned_model",
+    "similar_fix_used": false,
+    "candidates_ranked": [
+      {
+        "sql": "SELECT u.display_name, AVG(p.score) as avg_score  \nFROM users u \nLEFT JOIN posts p ON u.id = p.owner_user_id \nWHERE u.score IS NOT NULL",
+        "strategy": "rewrite subquery as JOIN",
+        "predicted_ms": 163.77,
+        "predicted_speedup_ms": 9831.82
+      },
+      {
+        "sql": "SELECT u.display_name, AVG(p.score) as avg_score  \nFROM users u \nLEFT JOIN posts p ON u.id = p.owner_user_id \nGROUP BY u.name, u.replay_name",
+        "strategy": "rewrite subquery as JOIN",
+        "predicted_ms": 396.54,
+        "predicted_speedup_ms": 9599.06
+      },
+      {
+        "sql": "SELECT u.display_name, AVG(p.score) as avg_score  \nFROM users u \nLEFT JOIN posts p ON u.id = p.owner_user_id \nGROUP BY u.name, u. display_name",
+        "strategy": "rewrite subquery as JOIN",
+        "predicted_ms": 396.54,
+        "predicted_speedup_ms": 9599.06
+      }
+    ],
+    "top_candidate_verified": null,
+    "measured_speedup_ms": null
+  },
+  {
+    "type": "slow_query_handled",
+    "timestamp": "2026-05-09T06:49:23.462441",
+    "query": "SELECT * FROM posts p JOIN users u ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id",
+    "pg_stat_mean_ms": 4423.84,
+    "calls": 1,
+    "model": {
+      "p_slow": 1.0,
+      "predicted_ms": 9995.6,
+      "plan_total_cost": 127352.73,
+      "has_seq_scan": 1,
+      "has_index_scan": 1
+    },
+    "reason": "Query optimization strategies: add LIMIT, add LIMIT",
+    "index_suggestion": "NONE",
+    "llm_source": "sqlcoder_finetuned",
+    "similar_fix_used": true,
+    "candidates_ranked": [
+      {
+        "sql": "SELECT p.id, p.title, p.creation_date, p.score, u.display_name, u.reputation, v.vote_type_id \nFROM posts p \nJOIN users u ON p.owner_user_id = u.id \nJOIN votes v ON v.post_id = p.id \nLIMIT 1000",
+        "strategy": "add LIMIT",
+        "predicted_ms": 17.52,
+        "predicted_speedup_ms": 9978.08
+      },
+      {
+        "sql": "SELECT p.id, p.title, p.creation_date, p.score, p.view_count, u.display_name, u.reputation, v.vote_type_id \nFROM posts p \nJOIN users u ON p.owner_user_id = u.id \nJOIN votes v ON v.post_id = p.id \nLIMIT 100000",
+        "strategy": "add LIMIT",
+        "predicted_ms": 137.35,
+        "predicted_speedup_ms": 9858.25
+      }
+    ],
+    "top_candidate_verified": {
+      "cold_ms": 1.692,
+      "warm_median_ms": 1.483,
+      "all_runs_ms": [
+        1.692,
+        1.487,
+        1.479
+      ]
+    },
+    "measured_speedup_ms": 4422.36
+  },
+  {
+    "type": "slow_query_handled",
+    "timestamp": "2026-05-09T06:50:25.713964",
+    "query": "SELECT u.display_name, (SELECT COUNT(*) FROM posts WHERE owner_user_id = u.id) as post_count FROM users u",
+    "pg_stat_mean_ms": 737.05,
+    "calls": 1,
+    "model": {
+      "p_slow": 1.0,
+      "predicted_ms": 9995.6,
+      "plan_total_cost": 1649299.43,
+      "has_seq_scan": 1,
+      "has_index_scan": 1
+    },
+    "reason": "Query optimization strategies: add LIMIT, add LIMIT",
+    "index_suggestion": "NONE",
+    "llm_source": "sqlcoder_finetuned",
+    "similar_fix_used": true,
+    "candidates_ranked": [
+      {
+        "sql": "SELECT u.display_name, COUNT(p.id) as post_count \nFROM users u \nLEFT JOIN posts p ON p.owner_user_id = u.id \nGROUP BY u.id, u.display_name \nORDER BY post_count DESC \nLIMIT 1000",
+        "strategy": "add LIMIT",
+        "predicted_ms": 200.01,
+        "predicted_speedup_ms": 9795.59
+      },
+      {
+        "sql": "SELECT u.display_name, COUNT(p.id) as post_count \nFROM users u \nLEFT JOIN posts p ON u.id = p.owner_user_id \nGROUP BY u.id, u.display_name \nORDER BY post_count DESC \nLIMIT 100000",
+        "strategy": "add LIMIT",
+        "predicted_ms": 235.6,
+        "predicted_speedup_ms": 9760.0
+      }
+    ],
+    "top_candidate_verified": {
+      "cold_ms": 485.56,
+      "warm_median_ms": 473.4205,
+      "all_runs_ms": [
+        485.56,
+        478.163,
+        468.678
+      ]
+    },
+    "measured_speedup_ms": 263.63
+  },
+  {
+    "type": "slow_query_handled",
+    "timestamp": "2026-05-09T06:50:51.102850",
+    "query": "SELECT * FROM posts ORDER BY score DESC",
+    "pg_stat_mean_ms": 420.95,
+    "calls": 1,
+    "model": {
+      "p_slow": 1.0,
+      "predicted_ms": 831.88,
+      "plan_total_cost": 27109.54,
+      "has_seq_scan": 0,
+      "has_index_scan": 1
+    },
+    "reason": "Query optimization strategies: add LIMIT, add LIMIT, add LIMIT",
+    "index_suggestion": "NONE",
+    "llm_source": "sqlcoder_finetuned",
+    "similar_fix_used": true,
+    "candidates_ranked": [
+      {
+        "sql": "SELECT id, title, score, creation_date FROM posts ORDER BY score DESC LIMIT 1000",
+        "strategy": "add LIMIT",
+        "predicted_ms": 0.52,
+        "predicted_speedup_ms": 831.35
+      },
+      {
+        "sql": "SELECT id, title, score, creation_date, view_count FROM posts ORDER BY score DESC LIMIT 1000",
+        "strategy": "add LIMIT",
+        "predicted_ms": 0.52,
+        "predicted_speedup_ms": 831.35
+      },
+      {
+        "sql": "SELECT id, title, score, creation_date, view_count, owner_user_id, creation_date FROM posts ORDER BY score DESC LIMIT 100000",
+        "strategy": "add LIMIT",
+        "predicted_ms": 19.12,
+        "predicted_speedup_ms": 812.75
+      }
+    ],
+    "top_candidate_verified": {
+      "cold_ms": 0.325,
+      "warm_median_ms": 0.241,
+      "all_runs_ms": [
+        0.325,
+        0.257,
+        0.225
+      ]
+    },
+    "measured_speedup_ms": 420.71
+  },
+  {
+    "type": "slow_query_handled",
+    "timestamp": "2026-05-09T06:51:58.312513",
+    "query": "SELECT u.display_name, (SELECT AVG(score) FROM posts WHERE owner_user_id = u.id) as avg_score FROM users u",
+    "pg_stat_mean_ms": 924.47,
+    "calls": 1,
+    "model": {
+      "p_slow": 1.0,
+      "predicted_ms": 9995.6,
+      "plan_total_cost": 14670411.65,
+      "has_seq_scan": 1,
+      "has_index_scan": 1
+    },
+    "reason": "Query optimization strategies: add LIMIT, add LIMIT, add LIMIT",
+    "index_suggestion": "NONE",
+    "llm_source": "sqlcoder_finetuned",
+    "similar_fix_used": false,
+    "candidates_ranked": [
+      {
+        "sql": "SELECT u.display_name, AVG(p.score) AS avg_score \nFROM users u \nLEFT JOIN posts p ON u.id = p.owner_user_id \nGROUP BY u.id, u.display_name \nORDER BY avg_score DESC \nLIMIT 1000",
+        "strategy": "add LIMIT",
+        "predicted_ms": 200.05,
+        "predicted_speedup_ms": 9795.55
+      },
+      {
+        "sql": "SELECT u.display_name, AVG(p.score) as avg_score \nFROM users u \nLEFT JOIN posts p ON u.id = p.owner_user_id \nGROUP BY u.id, u.display_name \nORDER BY avg_score DESC \nLIMIT 1000",
+        "strategy": "add LIMIT",
+        "predicted_ms": 200.05,
+        "predicted_speedup_ms": 9795.55
+      },
+      {
+        "sql": "SELECT u.display_name, AVG(p.score) as avg_score \nFROM users u \nLEFT JOIN posts p ON u.id = p.owner_user_id \nGROUP BY u.id, u.display_name \nORDER BY avg_score DESC \nLIMIT 10000",
+        "strategy": "add LIMIT",
+        "predicted_ms": 204.57,
+        "predicted_speedup_ms": 9791.03
+      }
+    ],
+    "top_candidate_verified": {
+      "cold_ms": 544.989,
+      "warm_median_ms": 546.2435,
+      "all_runs_ms": [
+        544.989,
+        548.02,
+        544.467
+      ]
+    },
+    "measured_speedup_ms": 378.23
   }
 ]

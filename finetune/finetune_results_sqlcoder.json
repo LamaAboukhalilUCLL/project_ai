@@ -1,0 +1,23 @@
+{
+  "model": "defog/sqlcoder-7b",
+  "epochs": 3,
+  "train_pairs": 225,
+  "val_pairs": 25,
+  "history": [
+    {
+      "epoch": 1.0,
+      "eval_loss": 0.09725816547870636,
+      "train_loss": null
+    },
+    {
+      "epoch": 2.0,
+      "eval_loss": 0.08409731090068817,
+      "train_loss": null
+    },
+    {
+      "epoch": 3.0,
+      "eval_loss": 0.08731406927108765,
+      "train_loss": null
+    }
+  ]
+}

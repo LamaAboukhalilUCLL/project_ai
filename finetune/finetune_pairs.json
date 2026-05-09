@@ -706,5 +706,297 @@
   {
     "slow": "SELECT u.display_name, p.score, AVG(p.score) OVER (PARTITION BY u.id) as user_avg_score FROM users u JOIN posts p ON p.owner_user_id = u.id",
     "optimized": "SELECT u.display_name, p.score, user_avg.user_avg_score \nFROM users u \nJOIN posts p ON p.owner_user_id = u.id \nJOIN (SELECT owner_user_id, AVG(score) as user_avg_score \n      FROM posts \n      GROUP BY owner_user_id) user_avg ON user_avg.owner_user_id = u.id"
+  },
+  {
+    "slow": "SELECT p.title, p.score, CASE WHEN p.score >= 150 THEN 'high'      WHEN p.score >= 30 THEN 'medium'      ELSE 'low' END AS score_tier FROM posts p JOIN users u ON p.owner_user_id = u.id ORDER BY p.score DESC",
+    "optimized": "SELECT p.title, p.score, CASE WHEN p.score >= 150 THEN 'high' WHEN p.score >= 30 THEN 'medium' ELSE 'low' END AS score_tier FROM posts p JOIN users u ON p.owner_user_id = u.id ORDER BY p.score DESC LIMIT 100"
+  },
+  {
+    "slow": "SELECT u.display_name, COUNT(CASE WHEN p.score > 1 THEN 1 END) AS good_posts, COUNT(CASE WHEN p.score <= 0 THEN 1 END) AS bad_posts, COUNT(p.id) AS total_posts FROM users u LEFT JOIN posts p ON p.owner_user_id = u.id GROUP BY u.id, u.display_name ORDER BY good_posts DESC",
+    "optimized": "SELECT u.display_name, \n       COUNT(CASE WHEN p.score > 1 THEN 1 END) AS good_posts, \n       COUNT(CASE WHEN p.score <= 0 THEN 1 END) AS bad_posts, \n       COUNT(p.id) AS total_posts \nFROM users u \nLEFT JOIN posts p ON p.owner_user_id = u.id \nGROUP BY u.id, u.display_name \nORDER BY good_posts DESC \nLIMIT 100"
+  },
+  {
+    "slow": "SELECT u.display_name, COUNT(CASE WHEN v.vote_type_id = 1 THEN 1 END) AS upvotes, COUNT(CASE WHEN v.vote_type_id = 2 THEN 1 END) AS downvotes, COUNT(CASE WHEN v.vote_type_id = 3 THEN 1 END) AS other_votes FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY u.id, u.display_name ORDER BY upvotes DESC",
+    "optimized": "SELECT u.display_name, \n       COUNT(CASE WHEN v.vote_type_id = 1 THEN 1 END) AS upvotes, \n       COUNT(CASE WHEN v.vote_type_id = 2 THEN 1 END) AS downvotes, \n       COUNT(CASE WHEN v.vote_type_id = 3 THEN 1 END) AS other_votes \nFROM users u \nJOIN posts p ON p.owner_user_id = u.id \nLEFT JOIN votes v ON v.post_id = p.id \nGROUP BY u.id, u.display_name \nORDER BY upvotes DESC \nLIMIT 100"
+  },
+  {
+    "slow": "SELECT p.title, p.score FROM posts p WHERE EXISTS (SELECT 1 FROM votes v WHERE v.post_id = p.id AND v.vote_type_id = 2) AND p.score > 10 ORDER BY p.score DESC",
+    "optimized": "SELECT p.title, p.score \nFROM posts p \nJOIN votes v ON v.post_id = p.id AND v.vote_type_id = 2 \nWHERE p.score > 10 \nORDER BY p.score DESC"
+  },
+  {
+    "slow": "SELECT u.display_name FROM users u WHERE NOT EXISTS (SELECT 1 FROM posts p WHERE p.owner_user_id = u.id) AND u.reputation > 1 ORDER BY u.reputation DESC LIMIT 50",
+    "optimized": "SELECT u.display_name \nFROM users u \nLEFT JOIN posts p ON p.owner_user_id = u.id \nWHERE p.owner_user_id IS NULL AND u.reputation > 1 \nORDER BY u.reputation DESC \nLIMIT 50"
+  },
+  {
+    "slow": "WITH top_users AS (   SELECT id, display_name, reputation FROM users WHERE reputation > 10 ) SELECT tu.display_name, COUNT(p.id) AS post_count FROM top_users tu LEFT JOIN posts p ON p.owner_user_id = tu.id GROUP BY tu.id, tu.display_name ORDER BY post_count DESC LIMIT 10",
+    "optimized": "SELECT tu.display_name, COUNT(p.id) AS post_count \nFROM users tu \nLEFT JOIN posts p ON p.owner_user_id = tu.id \nWHERE tu.reputation > 10 \nGROUP BY tu.id, tu.display_name \nORDER BY post_count DESC \nLIMIT 10"
+  },
+  {
+    "slow": "WITH vote_counts AS (   SELECT post_id, COUNT(*) AS cnt FROM votes WHERE vote_type_id = 8 GROUP BY post_id ) SELECT p.title, p.score, vc.cnt AS vote_count FROM posts p JOIN vote_counts vc ON vc.post_id = p.id ORDER BY vc.cnt DESC LIMIT 10",
+    "optimized": "SELECT p.title, p.score, COUNT(v.id) AS vote_count \nFROM posts p \nLEFT JOIN votes v ON v.post_id = p.id AND v.vote_type_id = 8 \nGROUP BY p.id \nORDER BY vote_count DESC \nLIMIT 10"
+  },
+  {
+    "slow": "SELECT EXTRACT(YEAR FROM p.creation_date) AS year, u.location, COUNT(p.id) AS posts, AVG(p.score) AS avg_score FROM posts p JOIN users u ON p.owner_user_id = u.id GROUP BY EXTRACT(YEAR FROM p.creation_date), u.location ORDER BY year DESC, posts DESC",
+    "optimized": "SELECT EXTRACT(YEAR FROM p.creation_date) AS year, u.location, COUNT(p.id) AS posts, AVG(p.score) AS avg_score \nFROM posts p \nJOIN users u ON p.owner_user_id = u.id \nGROUP BY year, u.location \nORDER BY year DESC, posts DESC"
+  },
+  {
+    "slow": "SELECT p.post_type_id, EXTRACT(YEAR FROM p.creation_date) AS year, COUNT(*) AS cnt, AVG(p.score) AS avg_score FROM posts p GROUP BY p.post_type_id, EXTRACT(YEAR FROM p.creation_date) ORDER BY year, p.post_type_id",
+    "optimized": "SELECT p.post_type_id, date_part('year', p.creation_date) AS year, COUNT(*) AS cnt, AVG(p.score) AS avg_score \nFROM posts p \nGROUP BY p.post_type_id, date_part('year', p.creation_date) \nORDER BY year, p.post_type_id"
+  },
+  {
+    "slow": "SELECT u.display_name, COUNT(p.id) AS posts, AVG(p.score) AS avg_score FROM users u JOIN posts p ON p.owner_user_id = u.id GROUP BY u.id, u.display_name HAVING COUNT(p.id) > 2 AND AVG(p.score) > 50 ORDER BY avg_score DESC",
+    "optimized": "SELECT u.display_name, COUNT(p.id) AS posts, AVG(p.score) AS avg_score \nFROM users u \nJOIN posts p ON p.owner_user_id = u.id \nGROUP BY u.id, u.display_name \nHAVING COUNT(p.id) > 2 AND AVG(p.score) > 50 \nORDER BY avg_score DESC \nLIMIT 100"
+  },
+  {
+    "slow": "SELECT u.location, COUNT(DISTINCT u.id) AS users, AVG(p.score) AS avg_score FROM users u JOIN posts p ON p.owner_user_id = u.id GROUP BY u.location HAVING COUNT(DISTINCT u.id) > 5 ORDER BY avg_score DESC LIMIT 50",
+    "optimized": "SELECT u.location, COUNT(DISTINCT u.id) AS users, AVG(p.score) AS avg_score \nFROM users u \nJOIN posts p ON p.owner_user_id = u.id \nGROUP BY u.location \nHAVING COUNT(DISTINCT u.id) > 5 \nORDER BY avg_score DESC \nLIMIT 50"
+  },
+  {
+    "slow": "SELECT p.id, p.title, u.display_name, 'author' AS role FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE p.score > 500 UNION SELECT p.id, p.title, u.display_name, 'voter' AS role FROM posts p JOIN votes v ON v.post_id = p.id JOIN users u ON u.id IS NOT NULL WHERE v.vote_type_id = 8 LIMIT 200",
+    "optimized": "SELECT p.id, p.title, u.display_name, 'author' AS role \nFROM posts p \nJOIN users u ON p.owner_user_id = u.id \nWHERE p.score > 500 \nUNION ALL \nSELECT p.id, p.title, u.display_name, 'voter' AS role \nFROM posts p \nJOIN votes v ON v.post_id = p.id \nJOIN users u ON u.id = p.owner_user_id \nWHERE v.vote_type_id = 8 \nLIMIT 200"
+  },
+  {
+    "slow": "SELECT u.location, SUM(p.answer_count) AS result FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY u.location ORDER BY result DESC LIMIT 10",
+    "optimized": "SELECT u.location, SUM(p.answer_count) AS result \nFROM users u \nJOIN posts p ON p.owner_user_id = u.id \nJOIN votes v ON v.post_id = p.id \nGROUP BY u.location \nORDER BY result DESC \nLIMIT 10"
+  },
+  {
+    "slow": "SELECT u.display_name, SUM(p.score) AS result FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY u.display_name ORDER BY result DESC LIMIT 10",
+    "optimized": "SELECT u.display_name, SUM(p.score) AS result \nFROM users u \nJOIN posts p ON p.owner_user_id = u.id \nJOIN votes v ON v.post_id = p.id \nGROUP BY u.display_name \nORDER BY result DESC \nLIMIT 10"
+  },
+  {
+    "slow": "SELECT u.display_name, MAX(p.score) AS result FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY u.display_name ORDER BY result DESC LIMIT 20",
+    "optimized": "SELECT u.display_name, p.owner_user_id, MAX(p.score) AS result \nFROM users u \nJOIN posts p ON p.owner_user_id = u.id \nJOIN votes v ON v.post_id = p.id \nGROUP BY u.display_name, p.owner_user_id \nORDER BY result DESC \nLIMIT 20"
+  },
+  {
+    "slow": "SELECT u.location, COUNT(p.score) AS result FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY u.location ORDER BY result DESC LIMIT 200",
+    "optimized": "SELECT u.location, COUNT(p.score) AS result \nFROM users u \nJOIN posts p ON p.owner_user_id = u.id \nJOIN votes v ON v.post_id = p.id \nGROUP BY u.location \nORDER BY result DESC \nLIMIT 200"
+  },
+  {
+    "slow": "SELECT p.post_type_id, MAX(p.answer_count) AS result FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY p.post_type_id ORDER BY result DESC LIMIT 20",
+    "optimized": "SELECT p.post_type_id, COUNT(v.id) AS result \nFROM posts p \nJOIN votes v ON v.post_id = p.id \nGROUP BY p.post_type_id \nORDER BY result DESC \nLIMIT 20"
+  },
+  {
+    "slow": "SELECT p.post_type_id, MAX(p.score) AS result FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY p.post_type_id ORDER BY result DESC LIMIT 5",
+    "optimized": "SELECT p.post_type_id, MAX(p.score) AS result \nFROM posts p \nJOIN votes v ON v.post_id = p.id \nWHERE p.owner_user_id IN (SELECT id FROM users) \nGROUP BY p.post_type_id \nORDER BY result DESC \nLIMIT 5"
+  },
+  {
+    "slow": "SELECT p.title, COUNT(v.id) AS votes FROM posts p JOIN votes v ON v.post_id = p.id WHERE v.vote_type_id = 2 AND p.score > 10 GROUP BY p.id, p.title ORDER BY votes DESC LIMIT 20",
+    "optimized": "SELECT p.title, COUNT(v.id) AS votes \nFROM posts p \nJOIN votes v ON v.post_id = p.id \nWHERE v.vote_type_id = 2 AND p.score > 10 \nGROUP BY p.id, p.title \nORDER BY votes DESC \nLIMIT 20"
+  },
+  {
+    "slow": "SELECT p.title, p.score, CASE WHEN p.score >= 500 THEN 'high'      WHEN p.score >= 150 THEN 'medium'      ELSE 'low' END AS score_tier FROM posts p JOIN users u ON p.owner_user_id = u.id ORDER BY p.score DESC",
+    "optimized": "SELECT p.title, p.score, CASE WHEN p.score >= 500 THEN 'high' WHEN p.score >= 150 THEN 'medium' ELSE 'low' END AS score_tier FROM posts p JOIN users u ON p.owner_user_id = u.id ORDER BY p.score DESC LIMIT 100"
+  },
+  {
+    "slow": "WITH scored_posts AS (   SELECT id, title, score, owner_user_id FROM posts WHERE score > 1 ) SELECT u.display_name, COUNT(sp.id) AS high_score_posts, AVG(sp.score) AS avg_score FROM users u JOIN scored_posts sp ON sp.owner_user_id = u.id GROUP BY u.id, u.display_name ORDER BY high_score_posts DESC",
+    "optimized": "SELECT u.display_name, COUNT(sp.id) AS high_score_posts, AVG(sp.score) AS avg_score \nFROM users u \nJOIN (SELECT id, owner_user_id, score FROM posts WHERE score > 1) sp ON sp.owner_user_id = u.id \nGROUP BY u.id, u.display_name \nORDER BY high_score_posts DESC"
+  },
+  {
+    "slow": "SELECT u.display_name, COUNT(p.id) AS posts, AVG(p.score) AS avg_score FROM users u JOIN posts p ON p.owner_user_id = u.id GROUP BY u.id, u.display_name HAVING COUNT(p.id) > 10 AND AVG(p.score) > 15 ORDER BY avg_score DESC",
+    "optimized": "SELECT u.display_name, COUNT(p.id) AS posts, AVG(p.score) AS avg_score \nFROM users u \nJOIN posts p ON p.owner_user_id = u.id \nGROUP BY u.id, u.display_name \nHAVING COUNT(p.id) > 10 AND AVG(p.score) > 15 \nORDER BY avg_score DESC \nLIMIT 100"
+  },
+  {
+    "slow": "SELECT u.location, COUNT(DISTINCT u.id) AS users, AVG(p.score) AS avg_score FROM users u JOIN posts p ON p.owner_user_id = u.id GROUP BY u.location HAVING COUNT(DISTINCT u.id) > 50 ORDER BY avg_score DESC LIMIT 200",
+    "optimized": "SELECT u.location, COUNT(DISTINCT u.id) AS users, AVG(p.score) AS avg_score \nFROM users u \nJOIN posts p ON p.owner_user_id = u.id \nGROUP BY u.location \nHAVING COUNT(DISTINCT u.id) > 50 \nORDER BY avg_score DESC \nLIMIT 200"
+  },
+  {
+    "slow": "SELECT p.id, p.title, u.display_name, 'author' AS role FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE p.score > 1 UNION SELECT p.id, p.title, u.display_name, 'voter' AS role FROM posts p JOIN votes v ON v.post_id = p.id JOIN users u ON u.id IS NOT NULL WHERE v.vote_type_id = 3 LIMIT 100",
+    "optimized": "SELECT p.id, p.title, u.display_name, 'author' AS role \nFROM posts p \nJOIN users u ON p.owner_user_id = u.id \nWHERE p.score > 1 \nUNION ALL \nSELECT p.id, p.title, u.display_name, 'voter' AS role \nFROM posts p \nJOIN votes v ON v.post_id = p.id \nJOIN users u ON u.id = v.user_id \nWHERE v.vote_type_id = 3 \nLIMIT 100"
+  },
+  {
+    "slow": "SELECT u.location, AVG(p.score) AS result FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY u.location ORDER BY result DESC LIMIT 200",
+    "optimized": "SELECT u.location, AVG(p.score) AS result \nFROM users u \nJOIN posts p ON p.owner_user_id = u.id \nJOIN votes v ON v.post_id = p.id \nGROUP BY u.location \nORDER BY result DESC \nLIMIT 200"
+  },
+  {
+    "slow": "SELECT p.post_type_id, AVG(p.answer_count) AS result FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY p.post_type_id ORDER BY result DESC LIMIT 5",
+    "optimized": "SELECT p.post_type_id, AVG(p.answer_count) AS result \nFROM posts p \nJOIN votes v ON v.post_id = p.id \nJOIN users u ON p.owner_user_id = u.id \nGROUP BY p.post_type_id \nORDER BY result DESC \nLIMIT 5"
+  },
+  {
+    "slow": "SELECT p.post_type_id, SUM(p.view_count) AS result FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY p.post_type_id ORDER BY result DESC LIMIT 50",
+    "optimized": "SELECT p.post_type_id, SUM(p.view_count) AS result \nFROM posts p \nJOIN votes v ON v.post_id = p.id \nWHERE p.owner_user_id IN (SELECT id FROM users) \nGROUP BY p.post_type_id \nORDER BY result DESC \nLIMIT 50"
+  },
+  {
+    "slow": "SELECT u.display_name, MIN(p.answer_count) AS result FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY u.display_name ORDER BY result DESC LIMIT 50",
+    "optimized": "SELECT u.display_name, COUNT(p.id) AS answer_count FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id WHERE p.post_type_id = 2 GROUP BY u.display_name ORDER BY answer_count DESC LIMIT 50"
+  },
+  {
+    "slow": "SELECT u.location, SUM(p.view_count) AS result FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY u.location ORDER BY result DESC LIMIT 100",
+    "optimized": "SELECT u.location, SUM(p.view_count) AS result \nFROM users u \nJOIN posts p ON p.owner_user_id = u.id \nJOIN votes v ON v.post_id = p.id \nGROUP BY u.location \nORDER BY result DESC \nLIMIT 100"
+  },
+  {
+    "slow": "SELECT u.location, MIN(p.score) AS result FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY u.location ORDER BY result DESC LIMIT 200",
+    "optimized": "SELECT u.location, MIN(p.score) AS result \nFROM users u \nJOIN posts p ON p.owner_user_id = u.id \nJOIN votes v ON v.post_id = p.id \nGROUP BY u.location \nORDER BY result DESC \nLIMIT 200"
+  },
+  {
+    "slow": "SELECT u.display_name, COUNT(CASE WHEN p.score > 10 THEN 1 END) AS good_posts, COUNT(CASE WHEN p.score <= 0 THEN 1 END) AS bad_posts, COUNT(p.id) AS total FROM users u LEFT JOIN posts p ON p.owner_user_id = u.id GROUP BY u.id, u.display_name ORDER BY good_posts DESC",
+    "optimized": "SELECT u.display_name, \n       COUNT(CASE WHEN p.score > 10 THEN 1 END) AS good_posts, \n       COUNT(CASE WHEN p.score <= 0 THEN 1 END) AS bad_posts, \n       COUNT(p.id) AS total \nFROM users u \nLEFT JOIN posts p ON p.owner_user_id = u.id \nGROUP BY u.id, u.display_name \nORDER BY good_posts DESC \nLIMIT 100"
+  },
+  {
+    "slow": "SELECT u.display_name, SUM(CASE WHEN p.post_type_id = 1 THEN 1 ELSE 0 END) AS questions, SUM(CASE WHEN p.post_type_id = 2 THEN 1 ELSE 0 END) AS answers FROM users u LEFT JOIN posts p ON p.owner_user_id = u.id GROUP BY u.id, u.display_name ORDER BY questions DESC",
+    "optimized": "SELECT u.display_name, \n       COUNT(CASE WHEN p.post_type_id = 1 THEN 1 END) AS questions, \n       COUNT(CASE WHEN p.post_type_id = 2 THEN 1 END) AS answers \nFROM users u \nLEFT JOIN posts p ON p.owner_user_id = u.id \nGROUP BY u.id, u.display_name \nORDER BY questions DESC \nLIMIT 100"
+  },
+  {
+    "slow": "SELECT u.display_name, COUNT(CASE WHEN v.vote_type_id = 1 THEN 1 END) AS upvotes, COUNT(CASE WHEN v.vote_type_id = 2 THEN 1 END) AS downvotes FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY u.id, u.display_name ORDER BY upvotes DESC",
+    "optimized": "SELECT u.display_name, \n       COUNT(CASE WHEN v.vote_type_id = 1 THEN 1 END) AS upvotes, \n       COUNT(CASE WHEN v.vote_type_id = 2 THEN 1 END) AS downvotes \nFROM users u \nJOIN posts p ON p.owner_user_id = u.id \nLEFT JOIN votes v ON v.post_id = p.id \nGROUP BY u.id, u.display_name \nORDER BY upvotes DESC \nLIMIT 100"
+  },
+  {
+    "slow": "SELECT p.title, p.score, CASE WHEN p.score >= 100 THEN 'viral'      WHEN p.score >= 10 THEN 'popular'      WHEN p.score > 0 THEN 'normal'      ELSE 'poor' END AS tier, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id ORDER BY p.score DESC",
+    "optimized": "SELECT p.title, p.score, \n       CASE WHEN p.score >= 100 THEN 'viral' \n            WHEN p.score >= 10 THEN 'popular' \n            WHEN p.score > 0 THEN 'normal' \n            ELSE 'poor' END AS tier, \n       u.display_name \nFROM posts p \nJOIN users u ON p.owner_user_id = u.id \nORDER BY p.score DESC \nLIMIT 100"
+  },
+  {
+    "slow": "SELECT u.location, AVG(CASE WHEN p.post_type_id = 1 THEN p.score END) AS avg_question_score, AVG(CASE WHEN p.post_type_id = 2 THEN p.score END) AS avg_answer_score FROM users u JOIN posts p ON p.owner_user_id = u.id GROUP BY u.location ORDER BY avg_question_score DESC",
+    "optimized": "SELECT u.location, \n       COALESCE(AVG(CASE WHEN p.post_type_id = 1 THEN p.score END), 0) AS avg_question_score, \n       COALESCE(AVG(CASE WHEN p.post_type_id = 2 THEN p.score END), 0) AS avg_answer_score \nFROM users u \nLEFT JOIN posts p ON p.owner_user_id = u.id \nGROUP BY u.location \nORDER BY avg_question_score DESC"
+  },
+  {
+    "slow": "SELECT u.display_name, SUM(CASE WHEN p.score > 0 THEN p.score ELSE 0 END) AS positive_score, SUM(CASE WHEN p.score < 0 THEN p.score ELSE 0 END) AS negative_score FROM users u JOIN posts p ON p.owner_user_id = u.id GROUP BY u.id, u.display_name ORDER BY positive_score DESC",
+    "optimized": "SELECT u.display_name, \n       COALESCE(SUM(CASE WHEN p.score > 0 THEN p.score ELSE 0 END), 0) AS positive_score, \n       COALESCE(SUM(CASE WHEN p.score < 0 THEN p.score ELSE 0 END), 0) AS negative_score \nFROM users u \nJOIN posts p ON p.owner_user_id = u.id \nGROUP BY u.id, u.display_name \nORDER BY positive_score DESC \nLIMIT 100"
+  },
+  {
+    "slow": "SELECT u.display_name, u.reputation FROM users u WHERE EXISTS (SELECT 1 FROM posts p WHERE p.owner_user_id = u.id   AND EXISTS (SELECT 1 FROM votes v WHERE v.post_id = p.id AND v.vote_type_id = 2)) ORDER BY u.reputation DESC",
+    "optimized": "SELECT u.display_name, u.reputation \nFROM users u \nJOIN posts p ON p.owner_user_id = u.id \nJOIN votes v ON v.post_id = p.id AND v.vote_type_id = 2 \nORDER BY u.reputation DESC"
+  },
+  {
+    "slow": "SELECT p.title, p.score FROM posts p WHERE EXISTS (SELECT 1 FROM votes v WHERE v.post_id = p.id AND v.vote_type_id = 2) AND p.score > 5 ORDER BY p.score DESC",
+    "optimized": "SELECT p.title, p.score \nFROM posts p \nJOIN votes v ON v.post_id = p.id AND v.vote_type_id = 2 \nWHERE p.score > 5 \nORDER BY p.score DESC"
+  },
+  {
+    "slow": "SELECT u.display_name FROM users u WHERE NOT EXISTS (SELECT 1 FROM posts p WHERE p.owner_user_id = u.id) ORDER BY u.reputation DESC",
+    "optimized": "SELECT u.display_name \nFROM users u \nLEFT JOIN posts p ON p.owner_user_id = u.id \nWHERE p.id IS NULL \nORDER BY u.reputation DESC"
+  },
+  {
+    "slow": "SELECT p.title, p.score FROM posts p WHERE NOT EXISTS (SELECT 1 FROM votes v WHERE v.post_id = p.id) AND p.score > 0 ORDER BY p.score DESC",
+    "optimized": "SELECT p.title, p.score \nFROM posts p \nLEFT JOIN votes v ON v.post_id = p.id \nWHERE v.post_id IS NULL AND p.score > 0 \nORDER BY p.score DESC"
+  },
+  {
+    "slow": "WITH post_stats AS (   SELECT owner_user_id, COUNT(*) AS cnt, AVG(score) AS avg_score, SUM(view_count) AS total_views   FROM posts GROUP BY owner_user_id ) SELECT u.display_name, ps.cnt, ps.avg_score, ps.total_views FROM users u JOIN post_stats ps ON ps.owner_user_id = u.id ORDER BY ps.total_views DESC",
+    "optimized": "SELECT u.display_name, COUNT(p.owner_user_id) AS cnt, AVG(p.score) AS avg_score, SUM(p.view_count) AS total_views \nFROM users u \nJOIN posts p ON p.owner_user_id = u.id \nGROUP BY u.id \nORDER BY total_views DESC"
+  },
+  {
+    "slow": "WITH vote_summary AS (   SELECT p.owner_user_id, COUNT(v.id) AS total_votes   FROM votes v JOIN posts p ON v.post_id = p.id   GROUP BY p.owner_user_id ) SELECT u.display_name, u.reputation, vs.total_votes FROM users u JOIN vote_summary vs ON vs.owner_user_id = u.id ORDER BY vs.total_votes DESC",
+    "optimized": "SELECT u.display_name, u.reputation, COUNT(v.id) AS total_votes \nFROM users u \nLEFT JOIN votes v ON v.post_id IN (SELECT id FROM posts WHERE owner_user_id = u.id) \nGROUP BY u.id, u.display_name, u.reputation \nORDER BY total_votes DESC"
+  },
+  {
+    "slow": "WITH top_posts AS (   SELECT id, title, score, owner_user_id   FROM posts WHERE score > 20 ), post_votes AS (   SELECT post_id, COUNT(*) AS vote_count FROM votes GROUP BY post_id ) SELECT tp.title, tp.score, COALESCE(pv.vote_count, 0) AS votes, u.display_name FROM top_posts tp JOIN users u ON tp.owner_user_id = u.id LEFT JOIN post_votes pv ON pv.post_id = tp.id ORDER BY votes DESC",
+    "optimized": "SELECT tp.title, tp.score, COALESCE(pv.vote_count, 0) AS votes, u.display_name \nFROM (SELECT id, title, score, owner_user_id \n      FROM posts \n      WHERE score > 20) tp \nJOIN users u ON tp.owner_user_id = u.id \nLEFT JOIN (SELECT post_id, COUNT(*) AS vote_count \n            FROM votes \n            GROUP BY post_id) pv ON pv.post_id = tp.id \nORDER BY votes DESC"
+  },
+  {
+    "slow": "WITH user_locations AS (   SELECT location, COUNT(*) AS user_count, AVG(reputation) AS avg_rep   FROM users WHERE location IS NOT NULL AND location != ''   GROUP BY location ) SELECT ul.location, ul.user_count, ul.avg_rep, COUNT(p.id) AS total_posts FROM user_locations ul JOIN users u ON u.location = ul.location JOIN posts p ON p.owner_user_id = u.id GROUP BY ul.location, ul.user_count, ul.avg_rep ORDER BY total_posts DESC",
+    "optimized": "SELECT u.location, COUNT(u.id) AS user_count, AVG(u.reputation) AS avg_rep, COUNT(p.id) AS total_posts \nFROM users u \nJOIN posts p ON p.owner_user_id = u.id \nWHERE u.location IS NOT NULL AND u.location != '' \nGROUP BY u.location \nORDER BY total_posts DESC"
+  },
+  {
+    "slow": "WITH ranked_users AS (   SELECT id, display_name, reputation,   RANK() OVER (ORDER BY reputation DESC) AS rep_rank   FROM users ) SELECT ru.display_name, ru.reputation, ru.rep_rank, COUNT(p.id) AS posts FROM ranked_users ru LEFT JOIN posts p ON p.owner_user_id = ru.id WHERE ru.rep_rank <= 1000 GROUP BY ru.id, ru.display_name, ru.reputation, ru.rep_rank ORDER BY ru.rep_rank",
+    "optimized": "SELECT ru.display_name, ru.reputation, RANK() OVER (ORDER BY ru.reputation DESC) AS rep_rank, COUNT(p.id) AS posts \nFROM users ru \nLEFT JOIN posts p ON p.owner_user_id = ru.id \nGROUP BY ru.id, ru.display_name, ru.reputation \nHAVING RANK() OVER (ORDER BY ru.reputation DESC) <= 1000 \nORDER BY rep_rank \nLIMIT 1000"
+  },
+  {
+    "slow": "SELECT u.id, u.display_name, u.reputation, 'high_rep' AS category FROM users u WHERE u.reputation > 1000 UNION ALL SELECT u.id, u.display_name, u.reputation, 'low_rep' AS category FROM users u WHERE u.reputation < 10 ORDER BY reputation DESC",
+    "optimized": "SELECT u.id, u.display_name, u.reputation, \n       CASE \n           WHEN u.reputation > 1000 THEN 'high_rep' \n           WHEN u.reputation < 10 THEN 'low_rep' \n       END AS category \nFROM users u \nWHERE u.reputation > 1000 OR u.reputation < 10 \nORDER BY u.reputation DESC"
+  },
+  {
+    "slow": "SELECT u.display_name, p.title, p.score, 'asked' AS involvement FROM users u JOIN posts p ON p.owner_user_id = u.id WHERE p.post_type_id = 1 UNION SELECT u.display_name, p.title, p.score, 'answered' AS involvement FROM users u JOIN posts p ON p.owner_user_id = u.id WHERE p.post_type_id = 2 ORDER BY score DESC",
+    "optimized": "SELECT u.display_name, p.title, p.score, \n       CASE WHEN p.post_type_id = 1 THEN 'asked' \n            WHEN p.post_type_id = 2 THEN 'answered' \n       END AS involvement \nFROM users u \nJOIN posts p ON p.owner_user_id = u.id \nWHERE p.post_type_id IN (1, 2) \nORDER BY p.score DESC"
+  },
+  {
+    "slow": "SELECT u.location, COUNT(*) AS count, 'users' AS type FROM users u WHERE u.location IS NOT NULL GROUP BY u.location UNION ALL SELECT u.location, COUNT(p.id), 'posts' AS type FROM users u JOIN posts p ON p.owner_user_id = u.id WHERE u.location IS NOT NULL GROUP BY u.location ORDER BY count DESC",
+    "optimized": "SELECT location, COUNT(*) AS count, 'users' AS type \nFROM users \nWHERE location IS NOT NULL \nGROUP BY location \nUNION ALL \nSELECT u.location, COUNT(p.id), 'posts' AS type \nFROM users u \nJOIN posts p ON p.owner_user_id = u.id \nWHERE u.location IS NOT NULL \nGROUP BY u.location \nORDER BY count DESC LIMIT 100"
+  },
+  {
+    "slow": "SELECT u.display_name, p.score, SUM(p.score) OVER (PARTITION BY u.id ORDER BY p.creation_date) AS running_score FROM users u JOIN posts p ON p.owner_user_id = u.id ORDER BY u.id, p.creation_date",
+    "optimized": "SELECT u.display_name, p.score, SUM(p.score) OVER (PARTITION BY u.id ORDER BY p.creation_date) AS running_score \nFROM users u \nJOIN posts p ON p.owner_user_id = u.id \nORDER BY u.id, p.creation_date \nLIMIT 1000"
+  },
+  {
+    "slow": "SELECT p.title, p.score, p.post_type_id, AVG(p.score) OVER (PARTITION BY p.post_type_id) AS type_avg, p.score - AVG(p.score) OVER (PARTITION BY p.post_type_id) AS diff_from_avg FROM posts p ORDER BY diff_from_avg DESC",
+    "optimized": "SELECT p.title, p.score, p.post_type_id, type_avg, p.score - type_avg AS diff_from_avg \nFROM posts p \nJOIN (SELECT post_type_id, AVG(score) AS type_avg FROM posts GROUP BY post_type_id) avg_scores \nON p.post_type_id = avg_scores.post_type_id \nORDER BY diff_from_avg DESC"
+  },
+  {
+    "slow": "SELECT u.display_name, u.reputation, NTILE(4) OVER (ORDER BY u.reputation DESC) AS quartile FROM users u ORDER BY u.reputation DESC",
+    "optimized": "SELECT u.display_name, u.reputation, NTILE(4) OVER (ORDER BY u.reputation DESC) AS quartile FROM users u ORDER BY u.reputation DESC LIMIT 1000"
+  },
+  {
+    "slow": "SELECT p.title, p.score, LAG(p.score) OVER (PARTITION BY p.post_type_id ORDER BY p.creation_date) AS prev_score, p.score - LAG(p.score) OVER (PARTITION BY p.post_type_id ORDER BY p.creation_date) AS delta FROM posts p ORDER BY p.creation_date",
+    "optimized": "SELECT p.title, p.score, prev_score, p.score - prev_score AS delta \nFROM (\n    SELECT p.title, p.score, p.creation_date, \n           LAG(p.score) OVER (PARTITION BY p.post_type_id ORDER BY p.creation_date) AS prev_score \n    FROM posts p\n) AS subquery \nORDER BY creation_date"
+  },
+  {
+    "slow": "SELECT u.display_name, p.score, ROW_NUMBER() OVER (PARTITION BY u.id ORDER BY p.score DESC) AS score_rank FROM users u JOIN posts p ON p.owner_user_id = u.id ORDER BY u.id, score_rank",
+    "optimized": "SELECT u.display_name, p.score, ROW_NUMBER() OVER (PARTITION BY u.id ORDER BY p.score DESC) AS score_rank \nFROM users u \nJOIN posts p ON p.owner_user_id = u.id \nWHERE p.score IS NOT NULL \nORDER BY u.id, score_rank \nLIMIT 1000"
+  },
+  {
+    "slow": "SELECT p.title, p.score, FIRST_VALUE(p.title) OVER (PARTITION BY p.post_type_id ORDER BY p.score DESC) AS top_post FROM posts p",
+    "optimized": "SELECT p.title, p.score, top_posts.top_post FROM posts p JOIN (SELECT post_type_id, FIRST_VALUE(title) OVER (PARTITION BY post_type_id ORDER BY score DESC) AS top_post FROM posts) top_posts ON p.post_type_id = top_posts.post_type_id"
+  },
+  {
+    "slow": "SELECT EXTRACT(YEAR FROM p.creation_date) AS year, EXTRACT(MONTH FROM p.creation_date) AS month, COUNT(*) AS posts, AVG(p.score) AS avg_score FROM posts p GROUP BY year, month ORDER BY year DESC, month DESC",
+    "optimized": "SELECT DATE_TRUNC('month', p.creation_date) AS month, COUNT(*) AS posts, AVG(p.score) AS avg_score \nFROM posts p \nGROUP BY month \nORDER BY month DESC LIMIT 100"
+  },
+  {
+    "slow": "SELECT EXTRACT(YEAR FROM u.creation_date) AS join_year, COUNT(*) AS new_users, AVG(u.reputation) AS avg_rep FROM users u GROUP BY join_year ORDER BY join_year DESC",
+    "optimized": "SELECT EXTRACT(YEAR FROM u.creation_date) AS join_year, COUNT(*) AS new_users, AVG(u.reputation) AS avg_rep \nFROM users u \nGROUP BY join_year \nORDER BY join_year DESC \nLIMIT 100"
+  },
+  {
+    "slow": "SELECT u.display_name, EXTRACT(YEAR FROM MIN(p.creation_date)) AS first_post_year, EXTRACT(YEAR FROM MAX(p.creation_date)) AS last_post_year, COUNT(p.id) AS total_posts FROM users u JOIN posts p ON p.owner_user_id = u.id GROUP BY u.id, u.display_name ORDER BY total_posts DESC",
+    "optimized": "SELECT u.display_name, \n       EXTRACT(YEAR FROM MIN(p.creation_date)) AS first_post_year, \n       EXTRACT(YEAR FROM MAX(p.creation_date)) AS last_post_year, \n       COUNT(p.id) AS total_posts \nFROM users u \nLEFT JOIN posts p ON p.owner_user_id = u.id \nGROUP BY u.id, u.display_name \nORDER BY total_posts DESC \nLIMIT 100"
+  },
+  {
+    "slow": "SELECT u.display_name, u.location, COUNT(DISTINCT p.id) AS posts, COUNT(DISTINCT v.id) AS votes_received, AVG(p.score) AS avg_score FROM users u JOIN posts p ON p.owner_user_id = u.id LEFT JOIN votes v ON v.post_id = p.id WHERE u.reputation > 100 AND p.score > 0 GROUP BY u.id, u.display_name, u.location ORDER BY votes_received DESC",
+    "optimized": "SELECT u.display_name, u.location, COUNT(DISTINCT p.id) AS posts, COUNT(DISTINCT v.id) AS votes_received, AVG(p.score) AS avg_score \nFROM users u \nJOIN posts p ON p.owner_user_id = u.id \nLEFT JOIN votes v ON v.post_id = p.id \nWHERE u.reputation > 100 AND p.score > 0 \nGROUP BY u.id, u.display_name, u.location \nORDER BY votes_received DESC \nLIMIT 100"
+  },
+  {
+    "slow": "SELECT p.post_type_id, u.location, COUNT(p.id) AS posts, AVG(p.score) AS avg_score, SUM(p.view_count) AS total_views FROM posts p JOIN users u ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id WHERE u.location IS NOT NULL GROUP BY p.post_type_id, u.location ORDER BY total_views DESC",
+    "optimized": "SELECT p.post_type_id, u.location, COUNT(p.id) AS posts, AVG(p.score) AS avg_score, SUM(p.view_count) AS total_views \nFROM posts p \nJOIN users u ON p.owner_user_id = u.id \nJOIN votes v ON v.post_id = p.id \nWHERE u.location IS NOT NULL \nGROUP BY p.post_type_id, u.location \nORDER BY total_views DESC \nLIMIT 100"
+  },
+  {
+    "slow": "SELECT p.title, p.score, CASE WHEN p.score >= 75 THEN 'high'      WHEN p.score >= 20 THEN 'medium'      ELSE 'low' END AS score_tier FROM posts p JOIN users u ON p.owner_user_id = u.id ORDER BY p.score DESC",
+    "optimized": "SELECT p.title, p.score, CASE WHEN p.score >= 75 THEN 'high' WHEN p.score >= 20 THEN 'medium' ELSE 'low' END AS score_tier FROM posts p JOIN users u ON p.owner_user_id = u.id ORDER BY p.score DESC LIMIT 100"
+  },
+  {
+    "slow": "SELECT u.display_name, COUNT(CASE WHEN p.score > 10 THEN 1 END) AS good_posts, COUNT(CASE WHEN p.score <= 0 THEN 1 END) AS bad_posts, COUNT(p.id) AS total_posts FROM users u LEFT JOIN posts p ON p.owner_user_id = u.id GROUP BY u.id, u.display_name ORDER BY good_posts DESC",
+    "optimized": "SELECT u.display_name, \n       COUNT(CASE WHEN p.score > 10 THEN 1 END) AS good_posts, \n       COUNT(CASE WHEN p.score <= 0 THEN 1 END) AS bad_posts, \n       COUNT(p.id) AS total_posts \nFROM users u \nLEFT JOIN posts p ON p.owner_user_id = u.id \nGROUP BY u.id, u.display_name \nORDER BY good_posts DESC \nLIMIT 100"
+  },
+  {
+    "slow": "SELECT p.title, p.score FROM posts p WHERE NOT EXISTS (SELECT 1 FROM votes v WHERE v.post_id = p.id) AND p.score > 2 ORDER BY p.score DESC LIMIT 100",
+    "optimized": "SELECT p.title, p.score \nFROM posts p \nLEFT JOIN votes v ON v.post_id = p.id \nWHERE v.post_id IS NULL AND p.score > 2 \nORDER BY p.score DESC \nLIMIT 100"
+  },
+  {
+    "slow": "WITH top_users AS (   SELECT id, display_name, reputation FROM users WHERE reputation > 10 ) SELECT tu.display_name, COUNT(p.id) AS post_count FROM top_users tu LEFT JOIN posts p ON p.owner_user_id = tu.id GROUP BY tu.id, tu.display_name ORDER BY post_count DESC LIMIT 5",
+    "optimized": "SELECT tu.display_name, COUNT(p.id) AS post_count \nFROM users tu \nLEFT JOIN posts p ON p.owner_user_id = tu.id \nWHERE tu.reputation > 10 \nGROUP BY tu.id, tu.display_name \nORDER BY post_count DESC \nLIMIT 5"
+  },
+  {
+    "slow": "SELECT u.location, COUNT(p.id) AS posts FROM users u JOIN posts p ON p.owner_user_id = u.id WHERE EXTRACT(YEAR FROM u.creation_date) >= 2013 GROUP BY u.location ORDER BY posts DESC",
+    "optimized": "SELECT u.location, COUNT(p.id) AS posts \nFROM users u \nJOIN posts p ON p.owner_user_id = u.id \nWHERE u.creation_date >= '2013-01-01' \nGROUP BY u.location \nORDER BY posts DESC"
+  },
+  {
+    "slow": "SELECT u.display_name, COUNT(p.id) AS posts, AVG(p.score) AS avg_score FROM users u JOIN posts p ON p.owner_user_id = u.id GROUP BY u.id, u.display_name HAVING COUNT(p.id) > 3 AND AVG(p.score) > 1 ORDER BY avg_score DESC",
+    "optimized": "SELECT u.display_name, COUNT(p.id) AS posts, AVG(p.score) AS avg_score \nFROM users u \nJOIN posts p ON p.owner_user_id = u.id \nGROUP BY u.id, u.display_name \nHAVING COUNT(p.id) > 3 AND AVG(p.score) > 1 \nORDER BY avg_score DESC \nLIMIT 100"
+  },
+  {
+    "slow": "SELECT u.location, COUNT(DISTINCT u.id) AS users, AVG(p.score) AS avg_score FROM users u JOIN posts p ON p.owner_user_id = u.id GROUP BY u.location HAVING COUNT(DISTINCT u.id) > 20 ORDER BY avg_score DESC LIMIT 25",
+    "optimized": "SELECT u.location, COUNT(DISTINCT u.id) AS users, AVG(p.score) AS avg_score \nFROM users u \nJOIN posts p ON p.owner_user_id = u.id \nGROUP BY u.location \nHAVING COUNT(DISTINCT u.id) > 20 \nORDER BY avg_score DESC \nLIMIT 25"
+  },
+  {
+    "slow": "SELECT p.id, p.title, u.display_name, 'author' AS role FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE p.score > 30 UNION SELECT p.id, p.title, u.display_name, 'voter' AS role FROM posts p JOIN votes v ON v.post_id = p.id JOIN users u ON u.id IS NOT NULL WHERE v.vote_type_id = 5 LIMIT 200",
+    "optimized": "SELECT p.id, p.title, u.display_name, 'author' AS role \nFROM posts p \nJOIN users u ON p.owner_user_id = u.id \nWHERE p.score > 30 \nUNION ALL \nSELECT p.id, p.title, u.display_name, 'voter' AS role \nFROM posts p \nJOIN votes v ON v.post_id = p.id \nJOIN users u ON u.id = p.owner_user_id \nWHERE v.vote_type_id = 5 \nLIMIT 200"
+  },
+  {
+    "slow": "SELECT p.post_type_id, AVG(p.score) AS result FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY p.post_type_id ORDER BY result DESC LIMIT 20",
+    "optimized": "SELECT p.post_type_id, AVG(p.score) AS result \nFROM posts p \nJOIN votes v ON v.post_id = p.id \nJOIN users u ON p.owner_user_id = u.id \nGROUP BY p.post_type_id \nORDER BY result DESC \nLIMIT 20"
+  },
+  {
+    "slow": "SELECT p.post_type_id, COUNT(p.score) AS result FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY p.post_type_id ORDER BY result DESC LIMIT 5",
+    "optimized": "SELECT p.post_type_id, COUNT(v.id) AS result \nFROM posts p \nJOIN votes v ON v.post_id = p.id \nJOIN users u ON p.owner_user_id = u.id \nGROUP BY p.post_type_id \nORDER BY result DESC \nLIMIT 5"
+  },
+  {
+    "slow": "SELECT u.display_name, AVG(p.score) AS result FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY u.display_name ORDER BY result DESC LIMIT 20",
+    "optimized": "SELECT u.display_name, AVG(p.score) AS result \nFROM users u \nJOIN posts p ON p.owner_user_id = u.id \nJOIN votes v ON v.post_id = p.id \nGROUP BY u.display_name \nORDER BY result DESC \nLIMIT 20"
+  },
+  {
+    "slow": "SELECT u.display_name, AVG(p.answer_count) AS result FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY u.display_name ORDER BY result DESC LIMIT 200",
+    "optimized": "SELECT u.display_name, AVG(p.answer_count) AS result \nFROM users u \nJOIN posts p ON p.owner_user_id = u.id \nJOIN votes v ON v.post_id = p.id \nGROUP BY u.display_name \nORDER BY result DESC \nLIMIT 200"
+  },
+  {
+    "slow": "SELECT u.location, MIN(p.view_count) AS result FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY u.location ORDER BY result DESC LIMIT 50",
+    "optimized": "SELECT u.location, MIN(p.view_count) AS result \nFROM users u \nJOIN posts p ON p.owner_user_id = u.id \nJOIN votes v ON v.post_id = p.id \nGROUP BY u.location \nORDER BY result DESC \nLIMIT 50"
+  },
+  {
+    "slow": "SELECT u.location, COUNT(p.answer_count) AS result FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY u.location ORDER BY result DESC LIMIT 20",
+    "optimized": "SELECT u.location, COUNT(p.id) AS result \nFROM users u \nJOIN posts p ON p.owner_user_id = u.id \nJOIN votes v ON v.post_id = p.id \nGROUP BY u.location \nORDER BY result DESC \nLIMIT 20"
   }
 ]

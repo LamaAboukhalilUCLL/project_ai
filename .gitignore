@@ -23,6 +23,7 @@ dashboard/query_log.json
 embeddings/history.json
 
 # Fine-tuned model files (too large for git, regeneratable from finetune.py)
+finetune/sqlcoder-finetuned/
 finetune/codet5-finetuned/
 finetune/codet5-finetuned.zip
 finetune/*.safetensors

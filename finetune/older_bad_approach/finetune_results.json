@@ -1,0 +1,112 @@
+{
+  "model": "Salesforce/codet5-small",
+  "epochs": 20,
+  "batch_size": 8,
+  "learning_rate": 0.0005,
+  "train_pairs": 160,
+  "val_pairs": 17,
+  "best_epoch": 15,
+  "best_val_loss": 0.0846,
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 1.3386,
+      "val_loss": 0.6293
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.3802,
+      "val_loss": 0.3277
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.2297,
+      "val_loss": 0.1691
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.1737,
+      "val_loss": 0.116
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.1522,
+      "val_loss": 0.1239
+    },
+    {
+      "epoch": 6,
+      "train_loss": 0.1314,
+      "val_loss": 0.1005
+    },
+    {
+      "epoch": 7,
+      "train_loss": 0.1284,
+      "val_loss": 0.1101
+    },
+    {
+      "epoch": 8,
+      "train_loss": 0.1113,
+      "val_loss": 0.1083
+    },
+    {
+      "epoch": 9,
+      "train_loss": 0.0922,
+      "val_loss": 0.0964
+    },
+    {
+      "epoch": 10,
+      "train_loss": 0.0736,
+      "val_loss": 0.1079
+    },
+    {
+      "epoch": 11,
+      "train_loss": 0.0601,
+      "val_loss": 0.0982
+    },
+    {
+      "epoch": 12,
+      "train_loss": 0.0529,
+      "val_loss": 0.0913
+    },
+    {
+      "epoch": 13,
+      "train_loss": 0.0512,
+      "val_loss": 0.0848
+    },
+    {
+      "epoch": 14,
+      "train_loss": 0.0482,
+      "val_loss": 0.0982
+    },
+    {
+      "epoch": 15,
+      "train_loss": 0.0378,
+      "val_loss": 0.0846
+    },
+    {
+      "epoch": 16,
+      "train_loss": 0.0362,
+      "val_loss": 0.0954
+    },
+    {
+      "epoch": 17,
+      "train_loss": 0.0385,
+      "val_loss": 0.0902
+    },
+    {
+      "epoch": 18,
+      "train_loss": 0.0392,
+      "val_loss": 0.099
+    },
+    {
+      "epoch": 19,
+      "train_loss": 0.0343,
+      "val_loss": 0.0973
+    },
+    {
+      "epoch": 20,
+      "train_loss": 0.0274,
+      "val_loss": 0.1024
+    }
+  ]
+}
