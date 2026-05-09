@@ -1,20 +1,5 @@
 """
 Live SQL slow-query monitor with model-in-the-loop optimization.
-
-Pipeline:
-  1. Poll pg_stat_statements for recent slow queries.
-  2. For each: QueryAnalyzer predicts p_slow + predicted_ms + plan features.
-  3. If predicted slow, use the fine-tuned CodeT5 LLM for K candidate rewrites.
-  4. Rank candidates by predicted speedup using the same neural model.
-  5. Verify the top candidate's actual time with a cold + warm measurement.
-  6. Log a structured response (original, predicted, ranked alternatives,
-     measured speedup) for the dashboard.
-  7. Store genuine wins in the embeddings history.
-
-Change from previous version:
-  ask_gpt_for_candidates() replaced by LLMOptimizer.suggest_candidates()
-  which uses the fine-tuned CodeT5 model. Falls back to GPT automatically
-  if the fine-tuned model is not yet available.
 """
 
 import time
@@ -75,19 +60,6 @@ def get_table_schema(conn):
 # ─────────────────────────── Candidate generation ───────────────────────────
 
 def get_candidates(optimizer, slow_query, schema, similar_fix=None, n=N_CANDIDATES):
-    """
-    Generate candidate rewrites using the fine-tuned CodeT5 LLM.
-    Falls back to GPT automatically via LLMOptimizer if model not found.
-
-    Returns a dict matching the old GPT structure so the rest of the
-    pipeline doesn't need to change:
-      {
-        "reason": str,
-        "candidates": [{"sql": str, "strategy": str}, ...],
-        "index_suggestion": str,
-        "llm_source": str,
-      }
-    """
     # If a similar past fix exists, add it as context hint
     context = schema
     if similar_fix:
@@ -158,8 +130,8 @@ def measure_query(conn, query, runs=3, timeout_ms=10000):
     if not times:
         return None
     return {
-        "cold_ms": times[0],
-        "warm_median_ms": statistics.median(times[1:]) if len(times) > 1 else times[0],
+        "cold_ms": round(times[0], 1),
+        "warm_median_ms": round(statistics.median(times[1:]) if len(times) > 1 else times[0], 1),
         "all_runs_ms": times,
     }
 
@@ -245,6 +217,9 @@ def process_one_query(query, mean_time_ms, calls, analyzer, optimizer, conn, sch
 
     # 4. Model-in-the-loop ranking — neural net ranks the LLM's candidates
     _, ranked = analyzer.rank_candidates(query, candidates, conn=conn)
+    # Recalculate speedup against actual pg_stat time, not model prediction
+    for r in ranked:
+        r["predicted_speedup_ms"] = mean_time_ms - r["predicted_ms"]
     print(f"  ranked {len(ranked)} candidates by predicted speedup:")
     for i, r in enumerate(ranked, 1):
         print(f"    [{i}] predicted={r['predicted_ms']:.1f}ms  "

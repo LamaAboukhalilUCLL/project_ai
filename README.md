@@ -1,7 +1,7 @@
 # AI-Powered PostgreSQL Slow Query Monitor
 
 **Course:** Advanced AI — University Project  
-**Authors:** Lama Abou Khalil & Lina  
+**Authors:** Lama Abou Khalil & Lina Belabed
 **Dataset:** Stats Stack Exchange dump (stats.stackexchange.com)
 
 ---

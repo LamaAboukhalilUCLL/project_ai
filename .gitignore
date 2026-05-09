@@ -2,7 +2,6 @@
 *.xml
 ai.stackexchange.com/
 
-echo finetune/codet5-finetuned/ >> .gitignore
 
 # Python
 __pycache__/
@@ -19,7 +18,6 @@ venv312/
 .idea/
 
 # Generated logs
-dashboard/query_log.json
 embeddings/history.json
 
 # Fine-tuned model files (too large for git, regeneratable from finetune.py)

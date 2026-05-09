@@ -224,16 +224,19 @@ class LLMOptimizer:
 def _infer_strategy(original, optimized):
     orig = original.upper()
     opt  = optimized.upper()
-    if "LIMIT" in opt and "LIMIT" not in orig:
-        return "add LIMIT"
+    # Check most specific patterns first
     if "SELECT *" in orig and "SELECT *" not in opt:
         return "remove SELECT *"
-    if opt.count("JOIN") < orig.count("JOIN"):
-        return "reduce JOINs"
+    if orig.count("SELECT") > 1 and "JOIN" in opt and "GROUP BY" in opt:
+        return "rewrite subquery as JOIN"
     if orig.count("SELECT") > 1 and opt.count("SELECT") <= orig.count("SELECT"):
         return "rewrite subquery as JOIN"
+    if opt.count("JOIN") < orig.count("JOIN"):
+        return "reduce JOINs"
     if "WHERE" in opt and "WHERE" not in orig:
         return "add WHERE filter"
+    if "LIMIT" in opt and "LIMIT" not in orig:
+        return "add LIMIT"
     return "rewrite query"
 
 
