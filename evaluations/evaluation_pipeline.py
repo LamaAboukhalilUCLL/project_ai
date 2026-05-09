@@ -128,7 +128,8 @@ def main():
     print("Loading dataset and models...")
     df = pd.read_csv(os.path.join(os.path.dirname(SCRIPT_DIR), "training_data.csv"))
 
-    slow = df[df["label"] == "slow"].copy()
+    slow = df[(df["label"] == "slow") & (df["timed_out_runs"] == 0)].copy()
+
 
     # Stratify: half moderately slow (100-500ms), half very slow (>500ms)
     moderate = slow[

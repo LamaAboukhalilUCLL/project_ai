@@ -1,0 +1,17 @@
+{
+  "GPT only": {
+    "avg_speedup_pct": -11.92347612951562,
+    "win_rate_pct": 62.5,
+    "broken_rate_pct": 0.0
+  },
+  "GPT + verify": {
+    "avg_speedup_pct": -11.92347612951562,
+    "win_rate_pct": 62.5,
+    "broken_rate_pct": 0.0
+  },
+  "Full pipeline": {
+    "avg_speedup_pct": 18.125268050300228,
+    "win_rate_pct": 75.0,
+    "broken_rate_pct": 0.0
+  }
+}
