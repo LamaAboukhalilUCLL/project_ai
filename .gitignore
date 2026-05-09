@@ -9,6 +9,7 @@ __pycache__/
 *.pyc
 .venv/
 venv/
+venv312/
 
 # Environment
 .env
