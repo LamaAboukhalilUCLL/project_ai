@@ -550,5 +550,47 @@
       ]
     },
     "measured_speedup_ms": 381.58
+  },
+  {
+    "type": "slow_query_handled",
+    "timestamp": "2026-05-09T16:09:34.943075",
+    "query": "SELECT DISTINCT u.display_name, u.location FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id",
+    "pg_stat_mean_ms": 835.56,
+    "calls": 1,
+    "model": {
+      "p_slow": 0.9999,
+      "predicted_ms": 196.36,
+      "plan_total_cost": 181644.85,
+      "has_seq_scan": 1,
+      "has_index_scan": 0
+    },
+    "reason": "Query optimization strategies: add LIMIT, add LIMIT",
+    "index_suggestion": "NONE",
+    "llm_source": "sqlcoder_finetuned",
+    "similar_fix_used": true,
+    "candidates_ranked": [
+      {
+        "sql": "SELECT u.display_name, u.location FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY u.display_name, u.location ORDER BY u.display_name, u.location LIMIT 100000",
+        "strategy": "add LIMIT",
+        "predicted_ms": 194.21,
+        "predicted_speedup_ms": 641.34
+      },
+      {
+        "sql": "SELECT u.display_name, u.location FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id = p.id GROUP BY u.display_name, u.location ORDER BY u.display_name, u.location LIMIT 1000000",
+        "strategy": "add LIMIT",
+        "predicted_ms": 216.05,
+        "predicted_speedup_ms": 619.51
+      }
+    ],
+    "top_candidate_verified": {
+      "cold_ms": 716.5,
+      "warm_median_ms": 831.1,
+      "all_runs_ms": [
+        716.467,
+        947.067,
+        715.058
+      ]
+    },
+    "measured_speedup_ms": 4.46
   }
 ]

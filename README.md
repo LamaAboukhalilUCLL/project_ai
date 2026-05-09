@@ -1,8 +1,12 @@
 # AI-Powered PostgreSQL Slow Query Monitor
 
 **Course:** Advanced AI 
+
 **Authors:** Lama Abou Khalil & Lina Belabed
+
 **Dataset:** Stats Stack Exchange dump (stats.stackexchange.com)
+
+**Demo:** watch our demo if you get lost  https://youtu.be/NJoafY40k3c
 
 ---
 
