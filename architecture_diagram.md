@@ -1,4 +1,5 @@
 # System Architecture
+Download mermaid preview extension for markdown files to be able to see this file correctly!
 
 ```mermaid
 flowchart TD

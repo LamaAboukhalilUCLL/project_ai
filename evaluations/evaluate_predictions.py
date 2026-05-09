@@ -9,6 +9,10 @@ This is the "spot check" version — it doesn't replace the held-out test
 set evaluation in the notebook, but lets us eyeball calibration on
 specific queries (e.g. queries near the boundary, very slow queries, etc.)
 """
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 import random
 import psycopg2
@@ -33,7 +37,8 @@ random.seed(RANDOM_SEED)
 
 def main():
     print("Loading data...")
-    df = pd.read_csv("training_data.csv")
+    df = pd.read_csv(os.path.join(os.path.dirname(SCRIPT_DIR), "training_data.csv"))
+
     print(f"  {len(df)} queries available")
 
     # Sample with stratification: half slow, half fast, so we see both regimes
@@ -89,7 +94,7 @@ def main():
     conn.close()
 
     out = pd.DataFrame(rows)
-    out.to_csv("evaluation_sample.csv", index=False)
+    out.to_csv(os.path.join(SCRIPT_DIR, "evaluation_sample.csv"), index=False)
     print(f"\nSaved details to evaluation_sample.csv")
 
     # Summary metrics
@@ -120,7 +125,8 @@ def main():
     ax.grid(True, alpha=0.3)
 
     plt.tight_layout()
-    plt.savefig("evaluation.png", dpi=120)
+    plt.savefig(os.path.join(SCRIPT_DIR, "evaluation.png"), dpi=120)
+
     print("Saved scatter plot to evaluation.png")
 
 

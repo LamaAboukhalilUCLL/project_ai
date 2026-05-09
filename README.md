@@ -1,6 +1,6 @@
 # AI-Powered PostgreSQL Slow Query Monitor
 
-**Course:** Advanced AI — University Project  
+**Course:** Advanced AI 
 **Authors:** Lama Abou Khalil & Lina Belabed
 **Dataset:** Stats Stack Exchange dump (stats.stackexchange.com)
 
@@ -45,7 +45,7 @@ Trains a multi-task PyTorch neural network on `training_data.csv`.
 - Classification head → P(slow), trained with binary cross-entropy
 - Regression head → predicted log-execution-time in ms, trained with quantile loss (τ=0.7)
 
-**Joint loss:** `α × BCE + (1 − α) × QuantileLoss`, with α=0.6. Quantile loss was chosen over MSE to reduce systematic under-prediction of slow queries — the asymmetric penalty penalises under-prediction more than over-prediction.
+**Joint loss:** `α × BCE + (1 − α) × QuantileLoss`, with α=0.6. Quantile loss was chosen over MSE to reduce systematic under-prediction of slow queries; the asymmetric penalty penalises under-prediction more than over-prediction.
 
 **Input features (20 total):**
 
@@ -76,8 +76,8 @@ Trains a multi-task PyTorch neural network on `training_data.csv`.
 
 ### `classifier/inference.py`
 Inference wrapper. Provides `QueryAnalyzer` with two methods:
-- `analyze(query, conn)` — returns `{p_slow, predicted_ms, features}`
-- `rank_candidates(original, candidates, conn)` — scores each rewrite candidate and returns them sorted by predicted speedup
+- `analyze(query, conn)` : returns `{p_slow, predicted_ms, features}`
+- `rank_candidates(original, candidates, conn)` : scores each rewrite candidate and returns them sorted by predicted speedup
 
 Plan features require a live DB connection. Falls back to text-only features (plan features zeroed) if the connection is unavailable.
 
@@ -209,7 +209,7 @@ project_ai/
 │   ├── build_dataset.py       # GPT-4o pair generation script
 │   ├── build_dataset_with_schema.py   # Schema-aware variant
 │   ├── finetune_evalutation.ipynb     # Fine-tune evaluation notebook
-│   └── older_bad_approach/    # Archived t5-small / codet5-small attempts
+│   └── older_bad_approach/    # Archived t5-small / codet5-small attempts, both failed, but we put them here to show our efforts in making a model learn sql given the time limitation and data limitation, we focused more on giving you good results regardless of the complexity of the new model
 │
 ├── monitor/
 │   └── monitor.py             # Main 6-stage pipeline
@@ -230,7 +230,7 @@ project_ai/
 │
 ├── loading_data/
 │   └── local_data.py          # XML → PostgreSQL loader
-│
+----extras (for rubric):--------
 ├── evaluation_pipeline.py     # End-to-end pipeline comparison
 ├── evaluate_predictions.py    # Classifier evaluation script
 ├── training_data.csv          # 1,438-row labeled dataset
@@ -240,7 +240,28 @@ project_ai/
 └── README.md
 ```
 
-> **Note:** `finetune/sqlcoder-finetuned/` (the fine-tuned model weights, ~800MB) is excluded from version control via `.gitignore`. Re-generate by running `finetune/finetune_sqlcoder.py` with `venv312` active.
+> **Note:** `finetune/sqlcoder-finetuned/` is excluded from version control (too large for GitHub). The fine-tuned adapter is hosted on HuggingFace at [lamahugface/sqlcoder-stackexchange](https://huggingface.co/lamahugface/sqlcoder-stackexchange/tree/main). See **Downloading the fine-tuned model** below.
+
+---
+
+## Downloading the fine-tuned model
+
+The QLoRA adapter (~800MB) is hosted on HuggingFace and excluded from this repository via `.gitignore`.
+
+```bash
+hf download lamahugface/sqlcoder-stackexchange --local-dir finetune/sqlcoder-finetuned
+```
+
+Or in Python:
+```python
+from huggingface_hub import snapshot_download
+snapshot_download(
+    repo_id="lamahugface/sqlcoder-stackexchange",
+    local_dir="finetune/sqlcoder-finetuned"
+)
+```
+
+Once downloaded, the monitor will find the adapter automatically at `finetune/sqlcoder-finetuned/` and load it on startup. If the model is missing, `llm_optimizer.py` falls back to GPT-4o-mini (requires `OPENAI_API_KEY` in `.env`).
 
 ---
 
@@ -248,27 +269,19 @@ project_ai/
 
 ### Prerequisites
 
-- Python 3.13 (project runtime) and Python 3.12 (model training + LLM inference)
+- Python 3.12.9 (model training + LLM inference)- it won't work on something else like 3.13.3 for example
 - PostgreSQL 16+ (developed against PostgreSQL 18)
 - NVIDIA GPU with CUDA 12.8+ for LLM inference (recommended; CPU fallback is very slow)
 - ~20 GB free disk space for the sqlcoder-7b model weights
 
 ### 1. Create environments
 
-**Project runtime (Python 3.13):**
-```powershell
-python -m venv venv
-venv\Scripts\activate
-pip install -r requirements.txt
-```
-
 **Model training and LLM inference (Python 3.12 + CUDA):**
 ```powershell
-py -3.12 -m venv venv312
-venv312\Scripts\activate
+py -3.12 -m venv venv
+venv\Scripts\activate
 pip install --pre torch torchvision --index-url https://download.pytorch.org/whl/nightly/cu128
-pip install --upgrade transformers peft bitsandbytes accelerate datasets
-pip install psycopg2-binary python-dotenv openai sentence-transformers flask pandas scikit-learn
+pip install -r requirements_312.txt
 ```
 
 > `venv312` is required for `finetune/finetune_sqlcoder.py` and `monitor/monitor.py`. The CUDA nightly build is needed for RTX 40/50 series GPUs (sm_89+, sm_120).
@@ -295,7 +308,7 @@ psql -U postgres -d stackexchange_db -c "SELECT (SELECT COUNT(*) FROM users) AS 
 
 Expected: ~345k users, ~425k posts, ~1.7M votes.
 
-### 4. Generate training data
+### 4. Generate training data (already done but if you want)
 
 ```powershell
 python queries_generation/all_queries.py
@@ -303,7 +316,7 @@ python queries_generation/all_queries.py
 
 Runtime: ~35 minutes. Output: `training_data.csv` (~1,438 rows).
 
-### 5. Train the classifier
+### 5. Train the classifier (already done but if you want)
 
 Open and run `classifier/classifier.ipynb`, or:
 ```powershell
@@ -312,14 +325,19 @@ python classifier/classifier.py
 
 Output: `classifier/query_classifier.pth`, `classifier/scaler.pkl`, `classifier/model_meta.json`.
 
-### 6. Fine-tune the LLM
+### 6. Get the fine-tuned LLM adapter
 
+**Download from HuggingFace (recommended, ~800MB):**
+```powershell
+hf download lamahugface/sqlcoder-stackexchange --local-dir finetune/sqlcoder-finetuned
+```
+
+**Optionally — Retrain locally (~10 minutes on RTX GPU):**
 ```powershell
 venv312\Scripts\activate
 python finetune/finetune_sqlcoder.py
 ```
-
-Downloads `defog/sqlcoder-7b` (~14.5 GB) on first run, then trains the QLoRA adapter for approximately 10 minutes. Output: `finetune/sqlcoder-finetuned/`.
+Downloads `defog/sqlcoder-7b` (~14.5 GB) on first run, then trains the QLoRA adapter. Output saved to `finetune/sqlcoder-finetuned/`.
 
 ### 7. Run the monitor
 

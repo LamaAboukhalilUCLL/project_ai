@@ -1,18 +1,16 @@
 """
-Pipeline evaluation summary.
+Pipeline results summary.
 
-Reads pipeline_evaluation_results.json and prints a formatted
+Reads one_run_results.json and prints a formatted
 summary table with aggregate metrics for the report.
 
-Run from project root:
-    python evaluate_pipeline_results.py
 """
 
 import json
 import numpy as np
 import os 
 
-RESULTS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "pipeline_evaluation_results.json")
+RESULTS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "one_run_results.json")
 
 with open(RESULTS_FILE) as f:
     results = json.load(f)

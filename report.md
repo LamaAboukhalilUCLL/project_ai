@@ -1,7 +1,7 @@
 # AI-Powered SQL Slow-Query Monitor
 
 **Course**: Advanced AI (BCS) [MBI36j]  
-**Authors**: Lama Aboukhalil, Lina Belabed
+**Authors**: Lama Abou Khalil, Lina Belabed 
 **Date**: 9 May 2026
 
 ---
@@ -9,14 +9,14 @@
 ## 1. Problem
 
 Modern web applications run thousands of SQL queries per minute. Slow queries
-degrade user experience invisibly — they don't crash, they just take longer than
+degrade user experience invisibly; they don't crash, they just take longer than
 they should. We built **a live monitor that detects slow PostgreSQL queries,
 predicts how slow they are, generates and ranks candidate optimizations, and
 verifies the top candidate against the database** before presenting a structured
 response.
 
 The system monitors a Stats Stack Exchange dump (~345k users, 425k posts, 1.7M
-votes) and routes any query whose mean execution time exceeds 100ms through the
+votes) and routes any query whose mean execution time exceeds 100ms (100ms is the threshold we use in slow vs fast) through the
 AI pipeline below.
 
 ---
@@ -24,7 +24,7 @@ AI pipeline below.
 ## 2. System architecture
 
 ```
-pg_stat_statements (poll every 5s)
+pg_stat_statements enabled from pgAdmin (poll every 5s)
         ↓
 [1] Feature extraction — 8 lexical + 12 plan = 20 features
         ↓
@@ -109,7 +109,7 @@ AdamW optimizer.
 
 The regression head predicts log-execution-time; predictions are
 exponentiated at inference time. A log-MAE of 0.716 corresponds to predictions
-being off by an average factor of approximately 2.0× — sufficient for
+being off by an average factor of approximately 2.0× ; sufficient for
 distinguishing fast candidates from slow ones in the ranking step.
 
 ### 3.2 Fine-tuned query generator (second-stage domain adaptation)
@@ -206,8 +206,8 @@ anti-patterns in our training data:
 | Multiple correlated subqueries | 539.8 | 434.5 | 105.3 | 1.24× |
 | `DISTINCT` with 3-table `JOIN` | 672.5 | 290.9 | 381.6 | 2.31× |
 
-†The `LIKE` query was correctly skipped by the classifier (p_slow = 9.7%,
-below the 0.5 threshold) — the planner features indicated the query was not
++ The `LIKE` query was correctly skipped by the classifier (p_slow = 9.7%,
+below the 0.5 threshold), the planner features indicated the query was not
 actually slow despite its textual appearance.
 
 **Aggregate results (7 attempted queries):**
@@ -255,7 +255,7 @@ actually slow despite its textual appearance.
 
 ---
 
-## 5. Lecturer's feedback addressed
+## 5. Your feedback addressed (Last class of Advanced AI)
 
 | Concern | How addressed |
 |---|---|
@@ -309,11 +309,11 @@ python classifier/classifier.py
 
 # 4. LLM fine-tuning (requires venv312 + GPU)
 python finetune/build_dataset.py                  # generate pairs via GPT-4o-mini
-python finetune/finetune_sqlcoder.py              # QLoRA fine-tune (~10 minutes on RTX 5070)
+python finetune/finetune_sqlcoder.py              # QLoRA fine-tune (~10 minutes on my GPU, will be different for you)
 
 # 5. Run the system
-python monitor/monitor.py                         # live pipeline
-python dashboard/app.py                           # dashboard at localhost:5000
+python monitor/monitor.py                         # live pipeline, you write queries in pgAdmin, and you watch our model either in the terminal or the dashboard doing its work
+python dashboard/app.py                           # dashboard at localhost:5000, provides graphs at the end too, index.html is an ai-generated template, but that does not matter
 ```
 
 See `README.md` for full setup details including environment variables and

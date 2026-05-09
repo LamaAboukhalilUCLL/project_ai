@@ -15,6 +15,11 @@ Outputs:
   - evaluation_pipeline.png  (bar chart of summary metrics)
 """
 
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+
+
 import csv
 import json
 import os
@@ -121,7 +126,8 @@ def evaluate_single_suggestion(conn, baseline_ms, suggestion):
 
 def main():
     print("Loading dataset and models...")
-    df = pd.read_csv("training_data.csv")
+    df = pd.read_csv(os.path.join(os.path.dirname(SCRIPT_DIR), "training_data.csv"))
+
     slow = df[df["label"] == "slow"].copy()
 
     # Stratify: half moderately slow (100-500ms), half very slow (>500ms)
@@ -218,12 +224,12 @@ def main():
             "full_n_candidates": full.get("n_candidates", 0),
             
         })
-        pd.DataFrame(rows).to_csv("evaluation_pipeline.csv", index=False)
+        pd.DataFrame(rows).to_csv(os.path.join(SCRIPT_DIR, "evaluation_pipeline.csv"), index=False)
 
     conn.close()
 
     out_df = pd.DataFrame(rows)
-    out_df.to_csv("evaluation_pipeline.csv", index=False)
+    out_df.to_csv(os.path.join(SCRIPT_DIR, "evaluation_pipeline.csv"), index=False)
     print(f"\nSaved per-query results to evaluation_pipeline.csv")
 
     # ─── Summary ───
@@ -252,7 +258,7 @@ def main():
         brk = f"{s['broken_rate_pct']:.0f}%"
         print(f"{name:<18} {avg:>12} {win:>10} {brk:>10}")
 
-    with open("evaluation_pipeline_summary.json", "w") as f:
+    with open(os.path.join(SCRIPT_DIR, "evaluation_pipeline_summary.json"), "w") as f:
         json.dump(summary, f, indent=2)
 
     # ─── Plot ───
@@ -278,7 +284,7 @@ def main():
                     f"{v:.1f}", ha='center', fontweight='bold')
 
     plt.tight_layout()
-    plt.savefig("evaluation_pipeline.png", dpi=120)
+    plt.savefig(os.path.join(SCRIPT_DIR, "evaluation_pipeline.png"), dpi=120)
     print("\nSaved plot to evaluation_pipeline.png")
 
 

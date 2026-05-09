@@ -72,7 +72,7 @@ class LLMOptimizer:
         else:
             print(
                 f"[LLMOptimizer] Fine-tuned model not found at '{FINETUNED_MODEL_DIR}'.\n"
-                f"  Run 'python finetune/finetune_sqlcoder.py' to train it.\n"
+                f"  Download from HuggingFace: huggingface-cli download lamahugface/sqlcoder-stackexchange --local-dir finetune/sqlcoder-finetuned\n"
                 f"  Falling back to GPT-4o-mini."
             )
             self._use_fallback = True

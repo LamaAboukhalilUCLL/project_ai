@@ -1,21 +1,21 @@
 query,actual_ms,predicted_ms,p_slow,actual_label,predicted_label,error_ms
-"SELECT u.display_name, MIN(v.vote_type_id) FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id",548.45,297.8733294868781,0.9987974166870117,slow,slow,-250.57667051312194
-"SELECT p.title, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE p.creation_date > '2021-01-01' ",7.62,14.21688871169865,0.00027224727091379464,fast,fast,6.596888711698649
-"SELECT u.display_name, SUM(p.view_count) FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id =",429.67,297.8733294868781,0.9987974166870117,slow,slow,-131.7966705131219
-"SELECT u.display_name, MAX(p.answer_count) FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id",434.89,297.87275943178537,0.9987974166870117,slow,slow,-137.01724056821462
-SELECT DISTINCT location FROM users,40.49,18.565685540195272,0.022256676107645035,fast,fast,-21.92431445980473
-"SELECT u.display_name, p.title FROM users u JOIN posts p ON p.owner_user_id = u.id WHERE p.title LIKE '%ai%' OR u.displa",144.61,113.92128738843803,0.8202915191650391,slow,slow,-30.688712611561982
-SELECT * FROM votes WHERE id > 0,27.94,37.21293884368937,0.011282551102340221,fast,fast,9.27293884368937
-"SELECT u.display_name, SUM(p.answer_count) FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id",309.37,297.87275943178537,0.9987974166870117,slow,slow,-11.497240568214636
-SELECT * FROM users WHERE id = 66238,0.12,0.427537357905324,3.190965799149126e-06,fast,fast,0.307537357905324
-"SELECT title, score, view_count FROM posts WHERE id = 3170",0.1,0.47073228015610913,1.4855557310511358e-05,fast,fast,0.37073228015610915
-SELECT * FROM users WHERE id = 3906,0.05,0.427537357905324,3.190965799149126e-06,fast,fast,0.377537357905324
-SELECT * FROM posts WHERE title LIKE '%linear%',10.15,22.515903458926648,0.00024948263308033347,fast,fast,12.365903458926647
-"SELECT u.display_name, (SELECT COUNT(*) FROM posts p WHERE p.owner_user_id = u.id) AS post_count, (SELECT AVG(p.score) F",10000.0,9995.596859437876,0.9999593496322632,slow,slow,-4.403140562124463
-"SELECT p.title, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE u.location LIKE '%California%'",52.53,40.55930125420223,0.0028746293392032385,fast,fast,-11.970698745797769
-"SELECT p.post_type_id, MAX(p.answer_count) FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id",289.75,225.46734133370555,0.9960171580314636,slow,slow,-64.28265866629445
-SELECT * FROM posts WHERE title LIKE '%bayesian%',18.61,22.523860610408484,0.00024744842085056007,fast,fast,3.9138606104084843
-"SELECT display_name, reputation, (SELECT MAX(reputation) FROM users) as max_rep FROM users ORDER BY reputation DESC",180.38,713.1776252340017,0.9944384098052979,slow,slow,532.7976252340017
-"SELECT u.location, COUNT(p.answer_count) FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id =",168.32,230.96403018785784,0.9964816570281982,slow,slow,62.64403018785785
-SELECT * FROM posts p JOIN users u ON p.owner_user_id = u.id ORDER BY p.score DESC,133.78,183.02974964043264,0.9847548007965088,slow,slow,49.24974964043264
-SELECT * FROM users WHERE UPPER(display_name) = 'user',50.16,57.51390462698014,0.4052870273590088,fast,fast,7.353904626980146
+SELECT * FROM users WHERE LOWER(display_name) = 'john',129.92,43.63246179550516,0.0990879014134407,slow,fast,-86.28753820449484
+"SELECT p.title, u.display_name FROM posts p JOIN users u ON p.owner_user_id = u.id WHERE p.score > 50",34.14,1.2799462624519276,1.5484198229387403e-05,fast,fast,-32.86005373754807
+"SELECT title, score, (SELECT MAX(score) FROM posts) as max_score, (SELECT AVG(score) FROM posts) as avg_score FROM posts",167.1,172.78498109962175,0.9975661039352417,slow,slow,5.684981099621751
+"SELECT p.post_type_id, AVG(p.answer_count) FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id",305.53,204.6221513783107,0.9999439716339111,slow,slow,-100.90784862168928
+SELECT * FROM posts WHERE score > 1000 ORDER BY view_count DESC,0.03,0.16728125537993238,2.2349125572418416e-07,fast,fast,0.13728125537993238
+"SELECT display_name, reputation, RANK() OVER (ORDER BY reputation DESC) as rank FROM users",220.39,234.97864236812583,0.9996939897537231,slow,slow,14.588642368125846
+"SELECT title, score, view_count FROM posts WHERE post_type_id = 1 ORDER BY score DESC LIMIT 10",0.04,0.1621582150443712,1.1291233477095375e-06,fast,fast,0.12215821504437119
+"SELECT u.id, u.display_name, u.reputation, 'high_rep' AS category FROM users u WHERE u.reputation > 1000 UNION ALL SELEC",142.52,202.44745252552724,0.9633380174636841,slow,slow,59.92745252552723
+"SELECT id, display_name FROM users WHERE reputation = 1 LIMIT 10",0.16,2.734666572765864,0.004712872672826052,fast,fast,2.5746665727658637
+"SELECT title, score, view_count FROM posts WHERE id = 274433",0.02,0.15766837625399732,5.961106239738001e-07,fast,fast,0.13766837625399733
+"SELECT p.id, p.score FROM posts p JOIN votes v ON v.post_id = p.id WHERE v.vote_type_id = 2 LIMIT 10",0.49,4.002074226068074,0.0020210393704473972,fast,fast,3.5120742260680737
+SELECT * FROM users WHERE id = 3279,0.02,0.17267191136688664,5.375748628466681e-07,fast,fast,0.15267191136688665
+SELECT * FROM posts WHERE owner_user_id IN (SELECT id FROM users WHERE creation_date > '2018-01-01'),114.29,75.48340605182943,0.5398049354553223,slow,slow,-38.80659394817057
+"SELECT id, title, score FROM posts ORDER BY score ASC",24.65,193.3449598634116,0.9998588562011719,fast,slow,168.69495986341158
+"SELECT p.title, p.score, CASE WHEN p.score >= 75 THEN 'high'      WHEN p.score >= 20 THEN 'medium'      ELSE 'low' END A",504.21,258.2209033435646,0.9999837875366211,slow,slow,-245.98909665643538
+SELECT * FROM users WHERE id = 117554,0.02,0.17267177157350955,5.375989644562651e-07,fast,fast,0.15267177157350956
+"SELECT u.location, COUNT(p.answer_count) FROM users u JOIN posts p ON p.owner_user_id = u.id JOIN votes v ON v.post_id =",330.41,204.05846147803874,0.9999396800994873,slow,slow,-126.35153852196129
+"SELECT u.display_name, COUNT(p.id) AS posts, SUM(p.score) AS total_score FROM users u JOIN posts p ON p.owner_user_id = ",170.65,250.48691412617472,0.999900221824646,slow,slow,79.83691412617472
+"SELECT u.location, COUNT(p.id), AVG(p.score), SUM(p.view_count), MAX(p.score) FROM users u JOIN posts p ON p.owner_user_",173.62,119.8309074219684,0.9182097315788269,slow,slow,-53.7890925780316
+"SELECT u.display_name, p.title FROM users u JOIN posts p ON p.owner_user_id = u.id WHERE p.title LIKE '%data%' OR u.disp",98.59,82.037630158999,0.5006266236305237,fast,slow,-16.55236984100101

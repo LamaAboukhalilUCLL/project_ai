@@ -17,6 +17,10 @@ venv312/
 .vscode/
 .idea/
 
+# !!!!!!!!!!!!!!!!!!!!!!!! Fine-tuned model weights (too large for git) !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# Hosted on HuggingFace: https://huggingface.co/lamahugface/sqlcoder-stackexchange
+# Download with: huggingface-cli download lamahugface/sqlcoder-stackexchange --local-dir finetune/sqlcoder-finetuned
+
 # Generated logs
 embeddings/history.json
 
